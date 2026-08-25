@@ -6,6 +6,7 @@ import com.example.data.local.ProductDao
 import com.example.data.local.ProductEntity
 import com.example.data.local.ScanHistoryEntity
 import com.example.data.local.toEntity
+import com.example.data.model.AppLanguage
 import com.example.data.model.EAdditive
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
@@ -26,7 +27,7 @@ class ProductRepository(
         }
     }
 
-    suspend fun checkBarcode(barcode: String): FoodProduct = withContext(Dispatchers.IO) {
+    suspend fun checkBarcode(barcode: String, language: AppLanguage = AppLanguage.EN): FoodProduct = withContext(Dispatchers.IO) {
         ensureDatabaseSeeded()
         val cleanedBarcode = barcode.trim()
         val localProduct = productDao.getProductByBarcode(cleanedBarcode)
@@ -34,27 +35,28 @@ class ProductRepository(
         val product = if (localProduct != null) {
             localProduct.toDomainModel()
         } else {
-            // Check if it matches any barcode in preloaded data directly
+            // Check if it matches any barcode in preloaded sample dataset
             val fallbackMatch = InitialData.sampleProducts.find { it.barcode == cleanedBarcode }
             if (fallbackMatch != null) {
                 fallbackMatch.toDomainModel()
             } else {
-                // Query Open Food Facts API (The primary European/Global food database)
+                // Query Open Food Facts API (Global US & EU Food database)
                 try {
                     val response = openFoodFactsApi.getProductByBarcode(cleanedBarcode)
                     if (response.status == 1 && response.product != null) {
                         val analyzedProduct = HalalAnalyzer.analyzeOpenFoodFactsProduct(
                             cleanedBarcode,
-                            response.product
+                            response.product,
+                            language
                         )
-                        // Save in local DB for fast future scans
+                        // Cache in local DB
                         productDao.insertProduct(analyzedProduct.toEntity())
                         analyzedProduct
                     } else {
-                        createNotFoundProduct(cleanedBarcode)
+                        createNotFoundProduct(cleanedBarcode, language)
                     }
                 } catch (e: Exception) {
-                    createNotFoundProduct(cleanedBarcode)
+                    createNotFoundProduct(cleanedBarcode, language)
                 }
             }
         }
@@ -64,17 +66,38 @@ class ProductRepository(
         product
     }
 
-    private fun createNotFoundProduct(barcode: String): FoodProduct {
+    private fun createNotFoundProduct(barcode: String, language: AppLanguage): FoodProduct {
+        val name = when (language) {
+            AppLanguage.EN -> "Unregistered Product"
+            AppLanguage.DE -> "Nicht registriertes Produkt"
+            AppLanguage.FR -> "Produit non répertorié"
+            AppLanguage.TR -> "Kayıtsız Ürün"
+            AppLanguage.AR -> "منتج غير مسجل"
+        }
+        val brand = when (language) {
+            AppLanguage.EN -> "Unknown Brand"
+            AppLanguage.DE -> "Unbekannte Marke"
+            AppLanguage.FR -> "Marque inconnue"
+            AppLanguage.TR -> "Bilinmeyen Marka"
+            AppLanguage.AR -> "علامة غير معروفة"
+        }
+        val reason = when (language) {
+            AppLanguage.EN -> "Barcode ($barcode) was not found in Open Food Facts (EU/US). Please check ingredients list on the packaging for E-additives."
+            AppLanguage.DE -> "Barcode ($barcode) wurde in Open Food Facts nicht gefunden. Bitte Zutatenliste auf der Packung prüfen."
+            AppLanguage.FR -> "Code-barres ($barcode) non trouvé dans Open Food Facts. Veuillez inspecter la liste des ingrédients sur l'emballage."
+            AppLanguage.TR -> "Bu barkod ($barcode) küresel veri tabanında bulunamadı. Lütfen paket üzerindeki içindekiler kısmını inceleyin."
+            AppLanguage.AR -> "لم يتم العثور على هذا الباركود ($barcode) في قاعدة البيانات. يرجى مراجعة المكونات على الغلاف."
+        }
         return FoodProduct(
             barcode = barcode,
-            name = "Kayıtsız Ürün",
-            brand = "Bilinmiyor",
-            category = "Genel Gıda",
+            name = name,
+            brand = brand,
+            category = "Global Food",
             status = HalalStatus.BULUNAMADI,
             halalCertificate = null,
             harmfulOrSuspiciousIngredients = emptyList(),
             allIngredients = emptyList(),
-            reasonOrDetails = "Bu barkod ($barcode) yerel ve Avrupa veri tabanında (Open Food Facts) henüz bulunamadı. Lütfen paket üzerindeki içindekiler kısmını E-Kodları Rehberimiz ile karşılaştırın.",
+            reasonOrDetails = reason,
             alternatives = emptyList(),
             imageUrl = null
         )

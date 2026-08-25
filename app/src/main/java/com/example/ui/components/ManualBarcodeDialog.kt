@@ -42,6 +42,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.local.InitialData
+import com.example.data.model.AppLanguage
+import com.example.data.model.AppStrings
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextMuted
@@ -52,6 +54,7 @@ import com.example.ui.theme.NaturalWarmSurface
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManualBarcodeDialog(
+    language: AppLanguage,
     onDismiss: () -> Unit,
     onSubmitBarcode: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -77,7 +80,7 @@ fun ManualBarcodeDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Manuel Barkod Sorgula",
+                    text = AppStrings.getManualBarcodeTitle(language),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = NaturalTextDark
@@ -85,7 +88,7 @@ fun ManualBarcodeDialog(
                 IconButton(onClick = onDismiss) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Kapat",
+                        contentDescription = "Close",
                         tint = NaturalTextDark
                     )
                 }
@@ -94,7 +97,13 @@ fun ManualBarcodeDialog(
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = "Ürün paketinin üzerindeki 8 veya 13 haneli barkod numarasını girin:",
+                text = when (language) {
+                    AppLanguage.EN -> "Enter the 8, 12, or 13-digit barcode on the packaging (US UPC / EU EAN):"
+                    AppLanguage.DE -> "Geben Sie den Barcode (EAN / UPC) auf der Verpackung ein:"
+                    AppLanguage.FR -> "Entrez le code-barres (EAN / UPC) figurant sur l'emballage:"
+                    AppLanguage.TR -> "Ürün paketinin üzerindeki barkod numarasını (EAN / UPC) girin:"
+                    AppLanguage.AR -> "أدخل رقم الباركود المدون على عبوة المنتج:"
+                },
                 fontSize = 13.sp,
                 color = NaturalTextMuted
             )
@@ -107,7 +116,7 @@ fun ManualBarcodeDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("manual_barcode_text_field"),
-                placeholder = { Text("Örn: 8690526055554", color = NaturalTextMuted) },
+                placeholder = { Text("e.g. 4001686301265 / 7622210700544", color = NaturalTextMuted) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.QrCode,
@@ -159,13 +168,22 @@ fun ManualBarcodeDialog(
             ) {
                 Icon(imageVector = Icons.Default.Search, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Ürünü Sorgula", fontWeight = FontWeight.Bold)
+                Text(
+                    text = when (language) {
+                        AppLanguage.EN -> "Verify Product"
+                        AppLanguage.DE -> "Produkt prüfen"
+                        AppLanguage.FR -> "Vérifier le produit"
+                        AppLanguage.TR -> "Ürünü Sorgula"
+                        AppLanguage.AR -> "فحص المنتج"
+                    },
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Hızlı Test Barkodları:",
+                text = AppStrings.getQuickTestTitle(language),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -212,4 +230,3 @@ fun ManualBarcodeDialog(
         }
     }
 }
-

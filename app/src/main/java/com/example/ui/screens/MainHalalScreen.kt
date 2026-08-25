@@ -1,7 +1,6 @@
 package com.example.ui.screens
 
 import android.Manifest
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -38,23 +37,16 @@ import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Keyboard
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -69,7 +61,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -77,12 +68,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.local.InitialData
+import com.example.data.model.AppLanguage
+import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.ui.camera.CameraScannerView
 import com.example.ui.components.EAdditiveSheet
 import com.example.ui.components.HalalStatusBadge
+import com.example.ui.components.LanguageSelectionDialog
 import com.example.ui.components.ManualBarcodeDialog
 import com.example.ui.components.ProductResultBottomSheet
 import com.example.ui.theme.EmeraldGreenBg
@@ -107,7 +100,6 @@ import com.example.ui.theme.NaturalTextMuted
 import com.example.ui.theme.NaturalWarmBg
 import com.example.ui.theme.NaturalWarmBorder
 import com.example.ui.theme.NaturalWarmSurface
-import com.example.ui.theme.NaturalWarmSurfaceVariant
 import com.example.ui.theme.SuspiciousAmber
 import com.example.ui.theme.SuspiciousAmberBadge
 import com.example.ui.theme.SuspiciousAmberBg
@@ -124,10 +116,12 @@ fun MainHalalScreen(
     viewModel: HalalScannerViewModel,
     modifier: Modifier = Modifier
 ) {
+    val language by viewModel.selectedLanguage.collectAsState()
     val isScannerOpen by viewModel.isScannerOpen.collectAsState()
     val activeProduct by viewModel.activeProduct.collectAsState()
     val isManualEntryOpen by viewModel.isManualEntryOpen.collectAsState()
     val isEAdditivesOpen by viewModel.isEAdditivesOpen.collectAsState()
+    val isLanguageDialogOpen by viewModel.isLanguageDialogOpen.collectAsState()
     val scanHistory by viewModel.scanHistory.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -144,13 +138,13 @@ fun MainHalalScreen(
         }
     }
 
-    // Main Scaffold with Natural Tones background & bottom navigation
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = NaturalWarmBg,
         bottomBar = {
             NaturalBottomNavigation(
                 selectedIndex = selectedBottomNavIndex,
+                language = language,
                 onSelectIndex = { index ->
                     when (index) {
                         0 -> selectedBottomNavIndex = 0
@@ -163,10 +157,10 @@ fun MainHalalScreen(
         }
     ) { innerPadding ->
         if (selectedBottomNavIndex == 1) {
-            // Dedicated Scan History Screen (Sorted newest to oldest)
             ScanHistoryScreen(
                 scanHistory = scanHistory,
                 selectedFilter = selectedFilter,
+                language = language,
                 onSelectFilter = { viewModel.setFilter(it) },
                 onProductClick = { product -> viewModel.selectHistoryItem(product) },
                 onClearHistory = { viewModel.clearAllHistory() },
@@ -182,45 +176,53 @@ fun MainHalalScreen(
                     .padding(innerPadding),
                 contentPadding = PaddingValues(bottom = 24.dp)
             ) {
-                // Natural Tones Header
+                // Header with Language Selector & E-Codes info trigger
                 item {
                     NaturalAppHeader(
-                        onProfileClick = { viewModel.openEAdditives() }
+                        language = language,
+                        onLanguageClick = { viewModel.openLanguageDialog() },
+                        onECodesClick = { viewModel.openEAdditives() }
                     )
                 }
 
-                // Hero Circle "Barkod Okut" Button with floating pill badge
+                // Big Hero "Scan Barcode" Button
                 item {
                     NaturalHeroScanButton(
+                        language = language,
                         onScanClick = onTriggerScanner
                     )
                 }
 
-                // Quick Demo Barcode Carousel
+                // Europe & USA Quick Demo Barcode Carousel
                 item {
                     QuickDemoBarcodesSection(
+                        language = language,
                         onSelectBarcode = { barcode ->
                             viewModel.onBarcodeScanned(barcode)
                         }
                     )
                 }
 
-                // Stats / Summary in Natural Warm Surface
+                // Stats in Natural Warm Surface
                 item {
-                    NaturalStatsCard(scanHistory = scanHistory)
+                    NaturalStatsCard(
+                        scanHistory = scanHistory,
+                        language = language
+                    )
                 }
 
-                // Son Sorgulama / Tarama Geçmişi Section Header
+                // Recent Scans Section Header
                 item {
                     NaturalHistoryHeader(
                         historyCount = scanHistory.size,
                         selectedFilter = selectedFilter,
+                        language = language,
                         onSelectFilter = { viewModel.setFilter(it) },
                         onClearHistory = { viewModel.clearAllHistory() }
                     )
                 }
 
-                // Scan History Items with Natural Tones Cards
+                // Scan History Items
                 val filteredHistory = scanHistory.filter { item ->
                     selectedFilter == null || item.status == selectedFilter
                 }
@@ -228,6 +230,7 @@ fun MainHalalScreen(
                 if (filteredHistory.isEmpty()) {
                     item {
                         NaturalEmptyHistoryCard(
+                            language = language,
                             onScanClick = onTriggerScanner
                         )
                     }
@@ -235,12 +238,24 @@ fun MainHalalScreen(
                     items(filteredHistory, key = { it.barcode + it.scannedAt }) { product ->
                         NaturalHistoryItemCard(
                             product = product,
+                            language = language,
                             onClick = { viewModel.selectHistoryItem(product) }
                         )
                     }
                 }
             }
         }
+    }
+
+    // Language Selection Modal Dialog
+    if (isLanguageDialogOpen) {
+        LanguageSelectionDialog(
+            currentLanguage = language,
+            onSelectLanguage = { newLang ->
+                viewModel.setLanguage(newLang)
+            },
+            onDismiss = { viewModel.closeLanguageDialog() }
+        )
     }
 
     // Camera Scanner Overlay
@@ -263,6 +278,7 @@ fun MainHalalScreen(
     activeProduct?.let { product ->
         ProductResultBottomSheet(
             product = product,
+            language = language,
             onDismiss = { viewModel.dismissResult() },
             onScanAgain = {
                 viewModel.dismissResult()
@@ -274,6 +290,7 @@ fun MainHalalScreen(
     // Manual Barcode Entry Sheet
     if (isManualEntryOpen) {
         ManualBarcodeDialog(
+            language = language,
             onDismiss = { viewModel.closeManualEntry() },
             onSubmitBarcode = { barcode ->
                 viewModel.onBarcodeScanned(barcode)
@@ -284,6 +301,7 @@ fun MainHalalScreen(
     // E-Additives Sheet
     if (isEAdditivesOpen) {
         EAdditiveSheet(
+            language = language,
             onDismiss = { viewModel.closeEAdditives() }
         )
     }
@@ -291,7 +309,9 @@ fun MainHalalScreen(
 
 @Composable
 fun NaturalAppHeader(
-    onProfileClick: () -> Unit
+    language: AppLanguage,
+    onLanguageClick: () -> Unit,
+    onECodesClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -303,7 +323,7 @@ fun NaturalAppHeader(
     ) {
         Column {
             Text(
-                text = "HOŞ GELDİNİZ",
+                text = AppStrings.getWelcome(language),
                 color = EmeraldPrimaryDeep,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -311,7 +331,7 @@ fun NaturalAppHeader(
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = "Helal Rehberi",
+                text = AppStrings.getAppName(language),
                 color = NaturalTextDark,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -319,22 +339,50 @@ fun NaturalAppHeader(
             )
         }
 
-        // Profile / Info Circle
-        Surface(
-            onClick = onProfileClick,
-            shape = CircleShape,
-            color = EmeraldGreenContainer,
-            modifier = Modifier
-                .size(48.dp)
-                .testTag("header_profile_button")
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Bilgi",
-                    tint = EmeraldPrimaryDeep,
-                    modifier = Modifier.size(24.dp)
-                )
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Language Selection Chip Button
+            Surface(
+                onClick = onLanguageClick,
+                shape = CircleShape,
+                color = NaturalWarmSurface,
+                border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreenBorder),
+                modifier = Modifier.testTag("language_selector_button")
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = language.flag,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = language.code.uppercase(),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = EmeraldPrimaryDeep
+                    )
+                }
+            }
+
+            // E-Codes Info Button
+            Surface(
+                onClick = onECodesClick,
+                shape = CircleShape,
+                color = EmeraldGreenContainer,
+                modifier = Modifier
+                    .size(42.dp)
+                    .testTag("header_ecodes_button")
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.AutoStories,
+                        contentDescription = "E-Codes",
+                        tint = EmeraldPrimaryDeep,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }
@@ -342,6 +390,7 @@ fun NaturalAppHeader(
 
 @Composable
 fun NaturalHeroScanButton(
+    language: AppLanguage,
     onScanClick: () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "pulse_transition")
@@ -358,14 +407,13 @@ fun NaturalHeroScanButton(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 28.dp),
+            .padding(top = 14.dp, bottom = 28.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
-            // Main Big Circular Button (w-56 h-56 / 210dp)
             Box(
                 modifier = Modifier
                     .scale(pulseScale)
@@ -389,7 +437,7 @@ fun NaturalHeroScanButton(
                 ) {
                     Icon(
                         imageVector = Icons.Default.QrCodeScanner,
-                        contentDescription = "Barkod Okut",
+                        contentDescription = AppStrings.getScanBarcode(language),
                         tint = Color.White,
                         modifier = Modifier.size(54.dp)
                     )
@@ -397,7 +445,7 @@ fun NaturalHeroScanButton(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Text(
-                        text = "Barkod Okut",
+                        text = AppStrings.getScanBarcode(language),
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
@@ -407,7 +455,7 @@ fun NaturalHeroScanButton(
             }
         }
 
-        // Floating Pill Badge directly below the button
+        // Floating Pill Badge
         Surface(
             shape = CircleShape,
             color = Color.White,
@@ -418,7 +466,7 @@ fun NaturalHeroScanButton(
                 .offset(y = 12.dp)
         ) {
             Text(
-                text = "Saniyeler İçinde Kontrol Et",
+                text = AppStrings.getScanSubtitle(language),
                 color = EmeraldPrimaryDark,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -430,6 +478,7 @@ fun NaturalHeroScanButton(
 
 @Composable
 fun QuickDemoBarcodesSection(
+    language: AppLanguage,
     onSelectBarcode: (String) -> Unit
 ) {
     Column(
@@ -445,14 +494,14 @@ fun QuickDemoBarcodesSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "HIZLI TEST BARKODLARI",
+                text = AppStrings.getQuickTestTitle(language),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
                 color = NaturalTextMuted
             )
             Text(
-                text = "Tek tıkla dene",
+                text = AppStrings.getQuickTestSubtitle(language),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = EmeraldPrimary
@@ -465,42 +514,58 @@ fun QuickDemoBarcodesSection(
         ) {
             item {
                 QuickDemoNaturalCard(
-                    title = "Haribo Jelibon",
-                    subtitle = "Domuz Jelatini (E441)",
+                    title = "Haribo Bears (EU)",
+                    subtitle = "Pork Gelatin (E441)",
                     status = HalalStatus.HARAM,
                     onClick = { onSelectBarcode("4001686301265") }
                 )
             }
             item {
                 QuickDemoNaturalCard(
-                    title = "Eti Karam %70",
-                    subtitle = "TSE Helal Sertifikalı",
+                    title = "Kraft Marshmallows (US)",
+                    subtitle = "Pork Gelatin",
+                    status = HalalStatus.HARAM,
+                    onClick = { onSelectBarcode("0021000612803") }
+                )
+            }
+            item {
+                QuickDemoNaturalCard(
+                    title = "Oreo Original (US/EU)",
+                    subtitle = "Plant-Based / Halal",
                     status = HalalStatus.HELAL,
-                    onClick = { onSelectBarcode("8690526055554") }
+                    onClick = { onSelectBarcode("7622210700544") }
                 )
             }
             item {
                 QuickDemoNaturalCard(
-                    title = "Çıtır Cips",
-                    subtitle = "E471 Şüpheli Katkı",
+                    title = "Doritos Nacho (USA)",
+                    subtitle = "Animal Enzymes / Whey",
                     status = HalalStatus.SUPHELI,
-                    onClick = { onSelectBarcode("8690637012345") }
+                    onClick = { onSelectBarcode("0028400090896") }
                 )
             }
             item {
                 QuickDemoNaturalCard(
-                    title = "Milka Daim",
-                    subtitle = "Likör / Alkol Aroması",
+                    title = "Skittles Fruits (EU/US)",
+                    subtitle = "Gelatin & Carmine Free",
+                    status = HalalStatus.HELAL,
+                    onClick = { onSelectBarcode("5000159461122") }
+                )
+            }
+            item {
+                QuickDemoNaturalCard(
+                    title = "Nutella Spread (EU/US)",
+                    subtitle = "Plant Lecithin (E322)",
+                    status = HalalStatus.HELAL,
+                    onClick = { onSelectBarcode("3017620422003") }
+                )
+            }
+            item {
+                QuickDemoNaturalCard(
+                    title = "Milka Daim (EU)",
+                    subtitle = "Liqueur / Alcohol",
                     status = HalalStatus.HARAM,
                     onClick = { onSelectBarcode("7622210449283") }
-                )
-            }
-            item {
-                QuickDemoNaturalCard(
-                    title = "Torku Banada",
-                    subtitle = "GİMDES Helal Belgeli",
-                    status = HalalStatus.HELAL,
-                    onClick = { onSelectBarcode("8690637000001") }
                 )
             }
         }
@@ -525,7 +590,7 @@ fun QuickDemoNaturalCard(
         color = bgColor,
         shape = RoundedCornerShape(20.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
-        modifier = Modifier.width(168.dp)
+        modifier = Modifier.width(170.dp)
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             HalalStatusBadge(
@@ -557,7 +622,10 @@ fun QuickDemoNaturalCard(
 }
 
 @Composable
-fun NaturalStatsCard(scanHistory: List<FoodProduct>) {
+fun NaturalStatsCard(
+    scanHistory: List<FoodProduct>,
+    language: AppLanguage
+) {
     val halalCount = scanHistory.count { it.status == HalalStatus.HELAL }
     val haramCount = scanHistory.count { it.status == HalalStatus.HARAM }
     val suspiciousCount = scanHistory.count { it.status == HalalStatus.SUPHELI }
@@ -579,7 +647,7 @@ fun NaturalStatsCard(scanHistory: List<FoodProduct>) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             NaturalStatItem(
-                label = "Toplam Tarama",
+                label = AppStrings.getTotalScans(language),
                 count = scanHistory.size.toString(),
                 color = EmeraldPrimaryDeep
             )
@@ -590,7 +658,7 @@ fun NaturalStatsCard(scanHistory: List<FoodProduct>) {
                     .background(NaturalWarmBorder)
             )
             NaturalStatItem(
-                label = "Helal Ürün",
+                label = AppStrings.getHalalProducts(language),
                 count = halalCount.toString(),
                 color = HalalGreenDark
             )
@@ -601,7 +669,7 @@ fun NaturalStatsCard(scanHistory: List<FoodProduct>) {
                     .background(NaturalWarmBorder)
             )
             NaturalStatItem(
-                label = "Haram / Şüpheli",
+                label = AppStrings.getHaramOrDoubtful(language),
                 count = (haramCount + suspiciousCount).toString(),
                 color = HaramRed
             )
@@ -636,6 +704,7 @@ fun NaturalStatItem(
 fun NaturalHistoryHeader(
     historyCount: Int,
     selectedFilter: HalalStatus?,
+    language: AppLanguage,
     onSelectFilter: (HalalStatus?) -> Unit,
     onClearHistory: () -> Unit
 ) {
@@ -650,7 +719,7 @@ fun NaturalHistoryHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "SON SORGULAMALAR",
+                text = AppStrings.getRecentScans(language),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
@@ -665,7 +734,7 @@ fun NaturalHistoryHeader(
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteSweep,
-                            contentDescription = "Geçmişi Temizle",
+                            contentDescription = AppStrings.getClearHistory(language),
                             tint = NaturalTextMuted,
                             modifier = Modifier.size(18.dp)
                         )
@@ -676,7 +745,7 @@ fun NaturalHistoryHeader(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Filter chips with Natural Tones styling
+        // Filter chips
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -684,7 +753,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == null,
                 onClick = { onSelectFilter(null) },
-                label = { Text("Tümü ($historyCount)", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                label = { Text("${AppStrings.getAll(language)} ($historyCount)", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = EmeraldPrimary,
@@ -702,7 +771,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.HARAM,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HARAM) null else HalalStatus.HARAM) },
-                label = { Text("Haram", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = HaramRed,
@@ -714,7 +783,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.SUPHELI,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.SUPHELI) null else HalalStatus.SUPHELI) },
-                label = { Text("Şüpheli", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = SuspiciousAmber,
@@ -726,7 +795,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.HELAL,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HELAL) null else HalalStatus.HELAL) },
-                label = { Text("Helal", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = HalalGreenDark,
@@ -742,6 +811,7 @@ fun NaturalHistoryHeader(
 @Composable
 fun NaturalHistoryItemCard(
     product: FoodProduct,
+    language: AppLanguage,
     onClick: () -> Unit
 ) {
     val (cardBg, cardBorder, iconBoxBg, iconColor, iconVector, titleColor, bodyTextColor) = when (product.status) {
@@ -797,7 +867,6 @@ fun NaturalHistoryItemCard(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.Top
         ) {
-            // Icon rounded container (w-14 h-14 rounded-2xl)
             Box(
                 modifier = Modifier
                     .size(48.dp)
@@ -840,14 +909,13 @@ fun NaturalHistoryItemCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Detail line matching Natural Tones style
                 when (product.status) {
                     HalalStatus.HARAM -> {
                         Text(
                             text = if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
-                                "Riskli Maddeler: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
+                                "Prohibited: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
                             } else {
-                                product.reasonOrDetails.ifBlank { "Tüketilmesi uygun olmayan maddeler içerir." }
+                                product.reasonOrDetails.ifBlank { "Contains non-halal animal or alcohol derivatives." }
                             },
                             fontSize = 12.sp,
                             color = bodyTextColor,
@@ -859,9 +927,9 @@ fun NaturalHistoryItemCard(
                     HalalStatus.SUPHELI -> {
                         Text(
                             text = if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
-                                "Şüpheli Maddeler: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
+                                "Doubtful: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
                             } else {
-                                product.reasonOrDetails.ifBlank { "Katkı kaynağı belirsizdir." }
+                                product.reasonOrDetails.ifBlank { "Contains additives of unverified origin." }
                             },
                             fontSize = 12.sp,
                             color = bodyTextColor,
@@ -872,8 +940,8 @@ fun NaturalHistoryItemCard(
                     }
                     HalalStatus.HELAL -> {
                         Text(
-                            text = product.halalCertificate?.let { "Sertifika: $it" }
-                                ?: product.reasonOrDetails.ifBlank { "Katkı maddesi bulunamadı. Tamamen doğal kaynaklıdır." },
+                            text = product.halalCertificate?.let { "Certification: $it" }
+                                ?: product.reasonOrDetails.ifBlank { "No prohibited additives. Safe and verified." },
                             fontSize = 12.sp,
                             color = bodyTextColor,
                             lineHeight = 16.sp,
@@ -883,7 +951,7 @@ fun NaturalHistoryItemCard(
                     }
                     HalalStatus.BULUNAMADI -> {
                         Text(
-                            text = "Barkod veritabanında henüz kayıtlı değildir.",
+                            text = "Barcode not found in Open Food Facts.",
                             fontSize = 12.sp,
                             color = bodyTextColor,
                             lineHeight = 16.sp
@@ -896,7 +964,10 @@ fun NaturalHistoryItemCard(
 }
 
 @Composable
-fun NaturalEmptyHistoryCard(onScanClick: () -> Unit) {
+fun NaturalEmptyHistoryCard(
+    language: AppLanguage,
+    onScanClick: () -> Unit
+) {
     Surface(
         color = NaturalWarmSurface,
         shape = RoundedCornerShape(24.dp),
@@ -924,14 +995,26 @@ fun NaturalEmptyHistoryCard(onScanClick: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Henüz sorgulama yapılmadı",
+                text = when (language) {
+                    AppLanguage.EN -> "No Scans Yet"
+                    AppLanguage.DE -> "Noch keine Scans vorhanden"
+                    AppLanguage.FR -> "Aucun scan pour le moment"
+                    AppLanguage.TR -> "Henüz sorgulama yapılmadı"
+                    AppLanguage.AR -> "لا توجد عمليات مسح حتى الآن"
+                },
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
                 color = NaturalTextDark
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Kamerayı açarak bir ürünün barkodunu okutun veya yukarıdaki hızlı test ürünlerini deneyin.",
+                text = when (language) {
+                    AppLanguage.EN -> "Tap the big button above or try one of the quick test barcodes from USA & Europe."
+                    AppLanguage.DE -> "Tippen Sie auf den Scan-Button oder testen Sie die Demo-Produkte oben."
+                    AppLanguage.FR -> "Appuyez sur le bouton ci-dessus ou essayez les produits de démonstration."
+                    AppLanguage.TR -> "Kamerayı açarak bir barkod okutun veya yukarıdaki hızlı test ürünlerini deneyin."
+                    AppLanguage.AR -> "اضغط على زر المسح أعلاه أو جرب أحد الرموز السريعة."
+                },
                 fontSize = 12.sp,
                 color = NaturalTextMuted,
                 textAlign = TextAlign.Center,
@@ -943,7 +1026,11 @@ fun NaturalEmptyHistoryCard(onScanClick: () -> Unit) {
                 colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                 shape = CircleShape
             ) {
-                Text("Hemen Tara", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                Text(
+                    text = AppStrings.getScanBarcode(language),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp
+                )
             }
         }
     }
@@ -952,6 +1039,7 @@ fun NaturalEmptyHistoryCard(onScanClick: () -> Unit) {
 @Composable
 fun NaturalBottomNavigation(
     selectedIndex: Int,
+    language: AppLanguage,
     onSelectIndex: (Int) -> Unit
 ) {
     Surface(
@@ -969,25 +1057,25 @@ fun NaturalBottomNavigation(
         ) {
             NaturalNavButton(
                 icon = Icons.Default.Home,
-                label = "Ana Sayfa",
+                label = AppStrings.getNavHome(language),
                 isSelected = selectedIndex == 0,
                 onClick = { onSelectIndex(0) }
             )
             NaturalNavButton(
                 icon = Icons.Default.History,
-                label = "Geçmiş",
+                label = AppStrings.getNavHistory(language),
                 isSelected = selectedIndex == 1,
                 onClick = { onSelectIndex(1) }
             )
             NaturalNavButton(
                 icon = Icons.Default.AutoStories,
-                label = "E-Kodları",
+                label = AppStrings.getNavECodes(language),
                 isSelected = selectedIndex == 2,
                 onClick = { onSelectIndex(2) }
             )
             NaturalNavButton(
                 icon = Icons.Default.Keyboard,
-                label = "Barkod Gir",
+                label = AppStrings.getNavManual(language),
                 isSelected = selectedIndex == 3,
                 onClick = { onSelectIndex(3) }
             )
@@ -1028,4 +1116,3 @@ fun NaturalNavButton(
 private data class Septuple<A, B, C, D, E, F, G>(
     val first: A, val second: B, val third: C, val fourth: D, val fifth: E, val sixth: F, val seventh: G
 )
-

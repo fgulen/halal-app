@@ -1,7 +1,6 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +48,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +55,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.data.model.AppLanguage
+import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.ui.components.HalalStatusBadge
@@ -92,6 +92,7 @@ import java.util.Locale
 fun ScanHistoryScreen(
     scanHistory: List<FoodProduct>,
     selectedFilter: HalalStatus?,
+    language: AppLanguage,
     onSelectFilter: (HalalStatus?) -> Unit,
     onProductClick: (FoodProduct) -> Unit,
     onClearHistory: () -> Unit,
@@ -101,8 +102,6 @@ fun ScanHistoryScreen(
     var searchQuery by remember { mutableStateOf("") }
     var showClearDialog by remember { mutableStateOf(false) }
 
-    // Filter products by search text and status
-    // Note: scanHistory is already received ordered from newest to oldest (ORDER BY scannedAt DESC)
     val filteredList = scanHistory.filter { product ->
         val matchesFilter = selectedFilter == null || product.status == selectedFilter
         val matchesSearch = searchQuery.isBlank() ||
@@ -117,7 +116,7 @@ fun ScanHistoryScreen(
             onDismissRequest = { showClearDialog = false },
             title = {
                 Text(
-                    text = "Geçmişi Temizle",
+                    text = AppStrings.getClearHistory(language),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = NaturalTextDark
@@ -125,7 +124,13 @@ fun ScanHistoryScreen(
             },
             text = {
                 Text(
-                    text = "Tüm tarama ve sorgulama geçmişinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+                    text = when (language) {
+                        AppLanguage.EN -> "Are you sure you want to clear your local scan history? This action cannot be undone."
+                        AppLanguage.DE -> "Möchten Sie Ihren gesamten Scan-Verlauf wirklich löschen?"
+                        AppLanguage.FR -> "Êtes-vous sûr de vouloir effacer l'historique des scans?"
+                        AppLanguage.TR -> "Tüm tarama geçmişinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+                        AppLanguage.AR -> "هل أنت متأكد من رغبتك في مسح سجل الفحوصات كاملاً؟"
+                    },
                     fontSize = 14.sp,
                     color = NaturalTextMuted,
                     lineHeight = 20.sp
@@ -140,12 +145,31 @@ fun ScanHistoryScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = HaramRed),
                     shape = CircleShape
                 ) {
-                    Text("Evet, Temizle", fontWeight = FontWeight.Bold)
+                    Text(
+                        text = when (language) {
+                            AppLanguage.EN -> "Yes, Clear"
+                            AppLanguage.DE -> "Ja, Löschen"
+                            AppLanguage.FR -> "Oui, Effacer"
+                            AppLanguage.TR -> "Evet, Temizle"
+                            AppLanguage.AR -> "نعم، احذف"
+                        },
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) {
-                    Text("İptal", color = NaturalTextMuted, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = when (language) {
+                            AppLanguage.EN -> "Cancel"
+                            AppLanguage.DE -> "Abbrechen"
+                            AppLanguage.FR -> "Annuler"
+                            AppLanguage.TR -> "İptal"
+                            AppLanguage.AR -> "إلغاء"
+                        },
+                        color = NaturalTextMuted,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             },
             containerColor = NaturalWarmSurface,
@@ -172,7 +196,7 @@ fun ScanHistoryScreen(
             ) {
                 Column {
                     Text(
-                        text = "YEREL HAFIZA",
+                        text = "ON-DEVICE STORAGE",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldPrimaryDeep,
@@ -181,7 +205,7 @@ fun ScanHistoryScreen(
                     Spacer(modifier = Modifier.height(2.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Tarama Geçmişi",
+                            text = AppStrings.getHistoryTitle(language),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = NaturalTextDark,
@@ -194,7 +218,7 @@ fun ScanHistoryScreen(
                             border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder)
                         ) {
                             Text(
-                                text = "${scanHistory.size} Ürün",
+                                text = "${scanHistory.size} Items",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldPrimaryDeep,
@@ -218,13 +242,19 @@ fun ScanHistoryScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.DeleteSweep,
-                                contentDescription = "Tümünü Temizle",
+                                contentDescription = "Clear All",
                                 tint = HaramRed,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Temizle",
+                                text = when (language) {
+                                    AppLanguage.EN -> "Clear"
+                                    AppLanguage.DE -> "Löschen"
+                                    AppLanguage.FR -> "Effacer"
+                                    AppLanguage.TR -> "Temizle"
+                                    AppLanguage.AR -> "مسح"
+                                },
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = HaramRed
@@ -245,7 +275,7 @@ fun ScanHistoryScreen(
                     .testTag("history_search_input"),
                 placeholder = {
                     Text(
-                        "Geçmişte ürün, marka veya barkod ara...",
+                        AppStrings.getSearchPlaceholder(language),
                         fontSize = 13.sp,
                         color = NaturalTextLight
                     )
@@ -253,7 +283,7 @@ fun ScanHistoryScreen(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Ara",
+                        contentDescription = "Search",
                         tint = NaturalTextMuted,
                         modifier = Modifier.size(20.dp)
                     )
@@ -263,7 +293,7 @@ fun ScanHistoryScreen(
                         IconButton(onClick = { searchQuery = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Temizle",
+                                contentDescription = "Clear",
                                 tint = NaturalTextMuted,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -290,7 +320,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == null,
                     onClick = { onSelectFilter(null) },
-                    label = { Text("Tümü (${scanHistory.size})", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text("${AppStrings.getAll(language)} (${scanHistory.size})", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = EmeraldPrimary,
@@ -308,7 +338,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HELAL,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HELAL) null else HalalStatus.HELAL) },
-                    label = { Text("Helal", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HalalGreenDark,
@@ -320,7 +350,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.SUPHELI,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.SUPHELI) null else HalalStatus.SUPHELI) },
-                    label = { Text("Şüpheli", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = SuspiciousAmber,
@@ -332,7 +362,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HARAM,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HARAM) null else HalalStatus.HARAM) },
-                    label = { Text("Haram", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HaramRed,
@@ -377,7 +407,7 @@ fun ScanHistoryScreen(
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = if (searchQuery.isNotBlank() || selectedFilter != null) "Aramaya uygun ürün bulunamadı" else "Henüz Kayıtlı Ürün Yok",
+                            text = if (searchQuery.isNotBlank() || selectedFilter != null) "No matching products found" else "No Scanned Products Yet",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             color = NaturalTextDark,
@@ -385,7 +415,7 @@ fun ScanHistoryScreen(
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = if (searchQuery.isNotBlank() || selectedFilter != null) "Filtreleri sıfırlayarak tekrar arayabilirsiniz." else "Okuttuğunuz barkodlar ve ürünlerin helallik durumları cihazınızda en yeniden eskiye doğru burada saklanır.",
+                            text = if (searchQuery.isNotBlank() || selectedFilter != null) "Try adjusting filters or searching a different term." else "Your scanned products and their halal status will be stored here in chronological order.",
                             fontSize = 13.sp,
                             color = NaturalTextMuted,
                             textAlign = TextAlign.Center,
@@ -400,7 +430,7 @@ fun ScanHistoryScreen(
                         ) {
                             Icon(imageVector = Icons.Default.QrCodeScanner, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Yeni Barkod Oku", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text(AppStrings.getScanBarcode(language), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
                 }
@@ -415,7 +445,7 @@ fun ScanHistoryScreen(
             ) {
                 item {
                     Text(
-                        text = "EN YENİDEN ESKİYE SIRALANDI",
+                        text = "CHRONOLOGICAL HISTORY (NEWEST FIRST)",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.2.sp,
@@ -430,6 +460,7 @@ fun ScanHistoryScreen(
                 ) { product ->
                     HistoryProductCard(
                         product = product,
+                        language = language,
                         onClick = { onProductClick(product) }
                     )
                 }
@@ -441,6 +472,7 @@ fun ScanHistoryScreen(
 @Composable
 fun HistoryProductCard(
     product: FoodProduct,
+    language: AppLanguage,
     onClick: () -> Unit
 ) {
     val (cardBg, cardBorder, iconBoxBg, iconColor, iconVector, titleColor) = when (product.status) {
@@ -480,7 +512,7 @@ fun HistoryProductCard(
 
     val formattedDate = remember(product.scannedAt) {
         val date = Date(product.scannedAt)
-        val sdf = SimpleDateFormat("dd MMM, HH:mm", Locale("tr"))
+        val sdf = SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault())
         sdf.format(date)
     }
 
@@ -566,7 +598,7 @@ fun HistoryProductCard(
                 if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Sakıncalı: " + product.harmfulOrSuspiciousIngredients.first(),
+                        text = "Flagged: " + product.harmfulOrSuspiciousIngredients.first(),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = if (product.status == HalalStatus.HARAM) HaramRedDark else SuspiciousAmberDark,
@@ -576,7 +608,7 @@ fun HistoryProductCard(
                 } else if (!product.halalCertificate.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Sertifika: " + product.halalCertificate,
+                        text = "Cert: " + product.halalCertificate,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = HalalGreenDark,
@@ -588,10 +620,9 @@ fun HistoryProductCard(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            // Navigation Arrow indicating clickable item to open details
             Icon(
                 imageVector = Icons.Default.ArrowForwardIos,
-                contentDescription = "Detayları Gör",
+                contentDescription = "Details",
                 tint = NaturalTextLight,
                 modifier = Modifier.size(14.dp)
             )

@@ -9,29 +9,37 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
 @JsonClass(generateAdapter = true)
 data class OffResponse(
     @Json(name = "status") val status: Int?,
     @Json(name = "status_verbose") val statusVerbose: String?,
+    @Json(name = "code") val code: String?,
     @Json(name = "product") val product: OffProduct?
 )
 
 @JsonClass(generateAdapter = true)
 data class OffProduct(
     @Json(name = "product_name") val productName: String?,
-    @Json(name = "product_name_tr") val productNameTr: String?,
     @Json(name = "product_name_en") val productNameEn: String?,
     @Json(name = "product_name_de") val productNameDe: String?,
     @Json(name = "product_name_fr") val productNameFr: String?,
+    @Json(name = "product_name_es") val productNameEs: String?,
+    @Json(name = "product_name_tr") val productNameTr: String?,
+    @Json(name = "product_name_ar") val productNameAr: String?,
     @Json(name = "brands") val brands: String?,
     @Json(name = "categories") val categories: String?,
+    @Json(name = "countries_tags") val countriesTags: List<String>?,
+    @Json(name = "labels_tags") val labelsTags: List<String>?,
     @Json(name = "ingredients_text") val ingredientsText: String?,
-    @Json(name = "ingredients_text_tr") val ingredientsTextTr: String?,
     @Json(name = "ingredients_text_en") val ingredientsTextEn: String?,
     @Json(name = "ingredients_text_de") val ingredientsTextDe: String?,
     @Json(name = "ingredients_text_fr") val ingredientsTextFr: String?,
+    @Json(name = "ingredients_text_es") val ingredientsTextEs: String?,
+    @Json(name = "ingredients_text_tr") val ingredientsTextTr: String?,
+    @Json(name = "ingredients_text_ar") val ingredientsTextAr: String?,
     @Json(name = "additives_tags") val additivesTags: List<String>?,
     @Json(name = "ingredients_analysis_tags") val ingredientsAnalysisTags: List<String>?,
     @Json(name = "image_url") val imageUrl: String?,
@@ -40,18 +48,21 @@ data class OffProduct(
 
 interface OpenFoodFactsApi {
     @GET("api/v2/product/{barcode}.json")
-    suspend fun getProductByBarcode(@Path("barcode") barcode: String): OffResponse
+    suspend fun getProductByBarcode(
+        @Path("barcode") barcode: String,
+        @Query("fields") fields: String = "code,product_name,product_name_en,product_name_de,product_name_fr,product_name_es,product_name_tr,product_name_ar,brands,categories,countries_tags,labels_tags,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_es,ingredients_text_tr,ingredients_text_ar,additives_tags,ingredients_analysis_tags,image_url,image_front_url"
+    ): OffResponse
 
     companion object {
         private const val BASE_URL = "https://world.openfoodfacts.org/"
 
         fun create(): OpenFoodFactsApi {
             val okHttpClient = OkHttpClient.Builder()
-                .connectTimeout(8, TimeUnit.SECONDS)
-                .readTimeout(8, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .addInterceptor { chain ->
                     val request = chain.request().newBuilder()
-                        .header("User-Agent", "HalalKontrolApp/1.0 (Android; Contact: support@halalkontrol.app)")
+                        .header("User-Agent", "HalalGlobalFoodScanner/1.0 (Android; Global-US-EU-Contact: support@halalglobal.app)")
                         .build()
                     chain.proceed(request)
                 }

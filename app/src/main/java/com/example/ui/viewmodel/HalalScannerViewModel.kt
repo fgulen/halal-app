@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.local.AppDatabase
+import com.example.data.model.AppLanguage
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.data.repository.ProductRepository
@@ -18,6 +19,9 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     private val repository: ProductRepository
 
+    private val _selectedLanguage = MutableStateFlow(AppLanguage.EN)
+    val selectedLanguage: StateFlow<AppLanguage> = _selectedLanguage.asStateFlow()
+
     private val _isScannerOpen = MutableStateFlow(false)
     val isScannerOpen: StateFlow<Boolean> = _isScannerOpen.asStateFlow()
 
@@ -29,6 +33,9 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     private val _isEAdditivesOpen = MutableStateFlow(false)
     val isEAdditivesOpen: StateFlow<Boolean> = _isEAdditivesOpen.asStateFlow()
+
+    private val _isLanguageDialogOpen = MutableStateFlow(false)
+    val isLanguageDialogOpen: StateFlow<Boolean> = _isLanguageDialogOpen.asStateFlow()
 
     private val _selectedFilter = MutableStateFlow<HalalStatus?>(null)
     val selectedFilter: StateFlow<HalalStatus?> = _selectedFilter.asStateFlow()
@@ -50,6 +57,18 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    fun setLanguage(language: AppLanguage) {
+        _selectedLanguage.value = language
+    }
+
+    fun openLanguageDialog() {
+        _isLanguageDialogOpen.value = true
+    }
+
+    fun closeLanguageDialog() {
+        _isLanguageDialogOpen.value = false
+    }
 
     fun openScanner() {
         _isScannerOpen.value = true
@@ -88,10 +107,10 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             _isLoading.value = true
             _isScannerOpen.value = false
             try {
-                val product = repository.checkBarcode(barcode)
+                val product = repository.checkBarcode(barcode, _selectedLanguage.value)
                 _activeProduct.value = product
             } catch (e: Exception) {
-                // handle
+                // handle error
             } finally {
                 _isLoading.value = false
             }

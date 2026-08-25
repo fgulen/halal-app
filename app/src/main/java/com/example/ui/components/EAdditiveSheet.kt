@@ -40,13 +40,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.local.InitialData
+import com.example.data.model.AppLanguage
+import com.example.data.model.AppStrings
 import com.example.data.model.EAdditive
 import com.example.data.model.HalalStatus
 import com.example.ui.theme.EmeraldGreenBg
-import com.example.ui.theme.EmeraldGreenBorder
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.EmeraldPrimaryDeep
-import com.example.ui.theme.HalalGreen
 import com.example.ui.theme.HalalGreenBg
 import com.example.ui.theme.HalalGreenBorder
 import com.example.ui.theme.HalalGreenDark
@@ -55,7 +55,6 @@ import com.example.ui.theme.HaramRedBg
 import com.example.ui.theme.HaramRedBorder
 import com.example.ui.theme.HaramRedDark
 import com.example.ui.theme.NaturalTextDark
-import com.example.ui.theme.NaturalTextLight
 import com.example.ui.theme.NaturalTextMuted
 import com.example.ui.theme.NaturalWarmBg
 import com.example.ui.theme.NaturalWarmBorder
@@ -68,6 +67,7 @@ import com.example.ui.theme.SuspiciousAmberDark
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EAdditiveSheet(
+    language: AppLanguage,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -108,13 +108,19 @@ fun EAdditiveSheet(
             ) {
                 Column {
                     Text(
-                        text = "E-Kodları & Katkı Rehberi",
+                        text = AppStrings.getEAdditivesTitle(language),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = NaturalTextDark
                     )
                     Text(
-                        text = "Gıda katkı maddelerinin helallik durumları",
+                        text = when (language) {
+                            AppLanguage.EN -> "Comprehensive EU & US E-numbers & additives directory"
+                            AppLanguage.DE -> "E-Nummern und Zusatzstoffdatenbank für Europa & USA"
+                            AppLanguage.FR -> "Base de données des additifs pour l'Europe et les USA"
+                            AppLanguage.TR -> "Avrupa ve ABD gıda katkı maddeleri helallik rehberi"
+                            AppLanguage.AR -> "دليل شامل لأرقام E والمضافات الغذائية"
+                        },
                         fontSize = 12.sp,
                         color = NaturalTextMuted
                     )
@@ -122,7 +128,7 @@ fun EAdditiveSheet(
                 IconButton(onClick = onDismiss) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Kapat",
+                        contentDescription = "Close",
                         tint = NaturalTextDark
                     )
                 }
@@ -137,7 +143,19 @@ fun EAdditiveSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("e_additive_search_input"),
-                placeholder = { Text("E471, Jelatin, Karmin, E120 ara...", color = NaturalTextMuted) },
+                placeholder = {
+                    Text(
+                        text = when (language) {
+                            AppLanguage.EN -> "Search E471, Gelatin, Carmine, E120..."
+                            AppLanguage.DE -> "E471, Gelatine, Karmin, E120 suchen..."
+                            AppLanguage.FR -> "Rechercher E471, Gélatine, Carmin..."
+                            AppLanguage.TR -> "E471, Jelatin, Karmin, E120 ara..."
+                            AppLanguage.AR -> "ابحث عن E471، جيلاتين، كارمين..."
+                        },
+                        color = NaturalTextMuted,
+                        fontSize = 13.sp
+                    )
+                },
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = EmeraldPrimary)
                 },
@@ -162,7 +180,7 @@ fun EAdditiveSheet(
                 FilterChip(
                     selected = selectedFilter == null,
                     onClick = { selectedFilter = null },
-                    label = { Text("Tümü (${InitialData.eAdditivesDirectory.size})", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text("${AppStrings.getAll(language)} (${InitialData.eAdditivesDirectory.size})", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = EmeraldPrimary,
@@ -180,7 +198,7 @@ fun EAdditiveSheet(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HARAM,
                     onClick = { selectedFilter = if (selectedFilter == HalalStatus.HARAM) null else HalalStatus.HARAM },
-                    label = { Text("Haram", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HaramRed,
@@ -192,7 +210,7 @@ fun EAdditiveSheet(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.SUPHELI,
                     onClick = { selectedFilter = if (selectedFilter == HalalStatus.SUPHELI) null else HalalStatus.SUPHELI },
-                    label = { Text("Şüpheli", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = SuspiciousAmber,
@@ -204,7 +222,7 @@ fun EAdditiveSheet(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HELAL,
                     onClick = { selectedFilter = if (selectedFilter == HalalStatus.HELAL) null else HalalStatus.HELAL },
-                    label = { Text("Helal", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HalalGreenDark,
@@ -225,7 +243,7 @@ fun EAdditiveSheet(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(filteredList, key = { it.code }) { item ->
-                    EAdditiveCard(item = item)
+                    EAdditiveCard(item = item, language = language)
                 }
             }
         }
@@ -233,7 +251,7 @@ fun EAdditiveSheet(
 }
 
 @Composable
-fun EAdditiveCard(item: EAdditive) {
+fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
     val (cardBg, cardBorder) = when (item.status) {
         HalalStatus.HELAL -> Pair(HalalGreenBg, HalalGreenBorder)
         HalalStatus.HARAM -> Pair(HaramRedBg, HaramRedBorder)
@@ -277,7 +295,7 @@ fun EAdditiveCard(item: EAdditive) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Köken: ${item.origin}",
+                text = "Origin: ${item.origin}",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = EmeraldPrimaryDeep
@@ -295,11 +313,10 @@ fun EAdditiveCard(item: EAdditive) {
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Kullanıldığı Yerler: ${item.commonUsage}",
+                text = "Usage: ${item.commonUsage}",
                 fontSize = 11.sp,
                 color = NaturalTextMuted
             )
         }
     }
 }
-
