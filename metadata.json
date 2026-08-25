@@ -1,0 +1,6 @@
+{
+  "name": "Helal Kontrol",
+  "description": "Barkod okutarak gıdaların Helal, Haram veya Şüpheli durumunu ve katkı maddelerini (E471, Domuz Jelatini vb.) anında sorgulayan akıllı kontrol uygulaması.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Helal Kontrol</string>
+    <string name="scan_barcode">Barkod Okut</string>
+    <string name="scan_description">Kamera ile ürün barkodunu tarayın veya listeden seçin</string>
+    <string name="status_halal">HELAL</string>
+    <string name="status_haram">HARAM</string>
+    <string name="status_suspicious">ŞÜPHELİ</string>
+    <string name="status_not_found">KAYIT BULUNAMADI</string>
+    <string name="camera_permission_required">Barkod tarayabilmek için kamera izni gereklidir.</string>
+    <string name="grant_permission">İzin Ver</string>
+</resources>

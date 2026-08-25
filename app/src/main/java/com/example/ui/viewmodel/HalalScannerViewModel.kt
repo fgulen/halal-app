@@ -1,0 +1,110 @@
+package com.example.ui.viewmodel
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.data.local.AppDatabase
+import com.example.data.model.FoodProduct
+import com.example.data.model.HalalStatus
+import com.example.data.repository.ProductRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+
+class HalalScannerViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repository: ProductRepository
+
+    private val _isScannerOpen = MutableStateFlow(false)
+    val isScannerOpen: StateFlow<Boolean> = _isScannerOpen.asStateFlow()
+
+    private val _activeProduct = MutableStateFlow<FoodProduct?>(null)
+    val activeProduct: StateFlow<FoodProduct?> = _activeProduct.asStateFlow()
+
+    private val _isManualEntryOpen = MutableStateFlow(false)
+    val isManualEntryOpen: StateFlow<Boolean> = _isManualEntryOpen.asStateFlow()
+
+    private val _isEAdditivesOpen = MutableStateFlow(false)
+    val isEAdditivesOpen: StateFlow<Boolean> = _isEAdditivesOpen.asStateFlow()
+
+    private val _selectedFilter = MutableStateFlow<HalalStatus?>(null)
+    val selectedFilter: StateFlow<HalalStatus?> = _selectedFilter.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    init {
+        val database = AppDatabase.getDatabase(application, viewModelScope)
+        repository = ProductRepository(database.productDao())
+        viewModelScope.launch {
+            repository.ensureDatabaseSeeded()
+        }
+    }
+
+    val scanHistory: StateFlow<List<FoodProduct>> = repository.getScanHistory()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    fun openScanner() {
+        _isScannerOpen.value = true
+    }
+
+    fun closeScanner() {
+        _isScannerOpen.value = false
+    }
+
+    fun openManualEntry() {
+        _isManualEntryOpen.value = true
+    }
+
+    fun closeManualEntry() {
+        _isManualEntryOpen.value = false
+    }
+
+    fun openEAdditives() {
+        _isEAdditivesOpen.value = true
+    }
+
+    fun closeEAdditives() {
+        _isEAdditivesOpen.value = false
+    }
+
+    fun dismissResult() {
+        _activeProduct.value = null
+    }
+
+    fun setFilter(status: HalalStatus?) {
+        _selectedFilter.value = status
+    }
+
+    fun onBarcodeScanned(barcode: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _isScannerOpen.value = false
+            try {
+                val product = repository.checkBarcode(barcode)
+                _activeProduct.value = product
+            } catch (e: Exception) {
+                // handle
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun selectHistoryItem(product: FoodProduct) {
+        _activeProduct.value = product
+    }
+
+    fun clearAllHistory() {
+        viewModelScope.launch {
+            repository.clearScanHistory()
+        }
+    }
+}
