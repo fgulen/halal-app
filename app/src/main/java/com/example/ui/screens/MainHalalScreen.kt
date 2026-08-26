@@ -39,14 +39,18 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -54,6 +58,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,12 +67,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
@@ -138,6 +151,8 @@ fun MainHalalScreen(
         }
     }
 
+    var homeSearchQuery by remember { mutableStateOf("") }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = NaturalWarmBg,
@@ -184,6 +199,205 @@ fun MainHalalScreen(
                         onECodesClick = { viewModel.openEAdditives() }
                     )
                 }
+
+                // Direct Fast Search Input Bar on Home Screen
+                item {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp, vertical = 6.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        color = NaturalWarmSurface,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                                tint = EmeraldPrimary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            OutlinedTextField(
+                                value = homeSearchQuery,
+                                onValueChange = { homeSearchQuery = it },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .testTag("home_search_input"),
+                                placeholder = {
+                                    Text(
+                                        text = when (language) {
+                                            AppLanguage.TR -> "Nutella, Haribo veya Barkod yazın..."
+                                            AppLanguage.DE -> "Nutella, Haribo oder Barcode eingeben..."
+                                            AppLanguage.FR -> "Entrez Nutella, Haribo ou code-barres..."
+                                            AppLanguage.AR -> "ابحث عن نوتيلا، هاريبو أو باركود..."
+                                            AppLanguage.EN -> "Type Nutella, Haribo or barcode..."
+                                        },
+                                        fontSize = 13.sp,
+                                        color = NaturalTextMuted
+                                    )
+                                },
+                                singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Transparent,
+                                    unfocusedBorderColor = Color.Transparent,
+                                    cursorColor = EmeraldPrimary
+                                ),
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(onSearch = {
+                                    if (homeSearchQuery.isNotBlank()) {
+                                        viewModel.onBarcodeScanned(homeSearchQuery)
+                                        homeSearchQuery = ""
+                                    }
+                                })
+                            )
+                            if (homeSearchQuery.isNotBlank()) {
+                                Button(
+                                    onClick = {
+                                        viewModel.onBarcodeScanned(homeSearchQuery)
+                                        homeSearchQuery = ""
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                                    shape = RoundedCornerShape(10.dp),
+                                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Text(
+                                        text = when (language) {
+                                            AppLanguage.TR -> "Bul"
+                                            AppLanguage.DE -> "Suchen"
+                                            AppLanguage.FR -> "Chercher"
+                                            AppLanguage.AR -> "بحث"
+                                            AppLanguage.EN -> "Find"
+                                        },
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (homeSearchQuery.isNotBlank()) {
+                    val matchingProducts = com.example.data.local.InitialData.sampleProducts.filter {
+                        val q = homeSearchQuery.trim().lowercase()
+                        it.name.lowercase().contains(q) ||
+                        it.brand.lowercase().contains(q) ||
+                        it.barcode.contains(q) ||
+                        it.category.lowercase().contains(q)
+                    }
+                    item {
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 4.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            color = NaturalWarmSurface,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
+                            shadowElevation = 4.dp
+                        ) {
+                            Column(modifier = Modifier.padding(8.dp)) {
+                                Surface(
+                                    onClick = {
+                                        viewModel.onBarcodeScanned(homeSearchQuery.trim())
+                                        homeSearchQuery = ""
+                                    },
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = EmeraldPrimary.copy(alpha = 0.08f),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Search,
+                                            contentDescription = null,
+                                            tint = EmeraldPrimary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = when (language) {
+                                                AppLanguage.TR -> "\"${homeSearchQuery.trim()}\" için Canlı Küresel Arama Yap"
+                                                AppLanguage.DE -> "Live-Suche nach „${homeSearchQuery.trim()}“"
+                                                AppLanguage.FR -> "Recherche mondiale pour « ${homeSearchQuery.trim()} »"
+                                                AppLanguage.AR -> "بحث عالمي مباشر عن \"${homeSearchQuery.trim()}\""
+                                                AppLanguage.EN -> "Live Global Search for \"${homeSearchQuery.trim()}\""
+                                            },
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = EmeraldPrimary
+                                        )
+                                    }
+                                }
+                                    matchingProducts.take(5).forEach { match ->
+                                        Surface(
+                                            onClick = {
+                                                viewModel.onBarcodeScanned(match.barcode)
+                                                homeSearchQuery = ""
+                                            },
+                                            shape = RoundedCornerShape(12.dp),
+                                            color = Color.Transparent,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                if (!match.imageUrl.isNullOrBlank()) {
+                                                    Surface(
+                                                        shape = RoundedCornerShape(8.dp),
+                                                        color = Color.White,
+                                                        border = androidx.compose.foundation.BorderStroke(0.8.dp, NaturalWarmBorder),
+                                                        modifier = Modifier.size(36.dp)
+                                                    ) {
+                                                        AsyncImage(
+                                                            model = ImageRequest.Builder(LocalContext.current)
+                                                                .data(match.imageUrl)
+                                                                .setHeader("User-Agent", "HalalFoodChecker/1.0 (Android; OpenFoodFacts-Viewer)")
+                                                                .crossfade(true)
+                                                                .build(),
+                                                            contentDescription = match.name,
+                                                            contentScale = ContentScale.Fit,
+                                                            modifier = Modifier.fillMaxSize().padding(2.dp)
+                                                        )
+                                                    }
+                                                    Spacer(modifier = Modifier.width(10.dp))
+                                                }
+                                                Column(modifier = Modifier.weight(1f)) {
+                                                    Text(
+                                                        text = match.name,
+                                                        fontSize = 13.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        color = NaturalTextDark,
+                                                        maxLines = 1
+                                                    )
+                                                    Text(
+                                                        text = "${match.brand} • ${match.barcode}",
+                                                        fontSize = 11.sp,
+                                                        color = NaturalTextMuted
+                                                    )
+                                                }
+                                                HalalStatusBadge(
+                                                    status = match.status,
+                                                    fontSize = 9.sp,
+                                                    paddingHorizontal = 6.dp,
+                                                    paddingVertical = 2.dp
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                 // Big Hero "Scan Barcode" Button
                 item {
@@ -304,6 +518,55 @@ fun MainHalalScreen(
             language = language,
             onDismiss = { viewModel.closeEAdditives() }
         )
+    }
+
+    // Loading Dialog Indicator
+    if (isLoading) {
+        Dialog(onDismissRequest = {}) {
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = NaturalWarmSurface,
+                shadowElevation = 10.dp,
+                border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
+            ) {
+                Row(
+                    modifier = Modifier.padding(24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    CircularProgressIndicator(
+                        color = EmeraldPrimary,
+                        strokeWidth = 3.dp,
+                        modifier = Modifier.size(36.dp)
+                    )
+                    Column {
+                        Text(
+                            text = when (language) {
+                                AppLanguage.TR -> "Ürün Analiz Ediliyor..."
+                                AppLanguage.DE -> "Produkt wird analysiert..."
+                                AppLanguage.FR -> "Analyse du produit..."
+                                AppLanguage.AR -> "جاري تحليل المنتج..."
+                                AppLanguage.EN -> "Analyzing Product..."
+                            },
+                            fontWeight = FontWeight.Bold,
+                            color = NaturalTextDark,
+                            fontSize = 15.sp
+                        )
+                        Text(
+                            text = when (language) {
+                                AppLanguage.TR -> "Helal ve içerik kontrolü yapılıyor"
+                                AppLanguage.DE -> "Halal-Zutaten werden geprüft"
+                                AppLanguage.FR -> "Vérification des ingrédients"
+                                AppLanguage.AR -> "فحص المكونات الحلال"
+                                AppLanguage.EN -> "Verifying Halal compliance"
+                            },
+                            color = NaturalTextMuted,
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -512,60 +775,13 @@ fun QuickDemoBarcodesSection(
             contentPadding = PaddingValues(horizontal = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            item {
+            items(com.example.data.local.InitialData.sampleProducts) { sample ->
                 QuickDemoNaturalCard(
-                    title = "Haribo Bears (EU)",
-                    subtitle = "Pork Gelatin (E441)",
-                    status = HalalStatus.HARAM,
-                    onClick = { onSelectBarcode("4001686301265") }
-                )
-            }
-            item {
-                QuickDemoNaturalCard(
-                    title = "Kraft Marshmallows (US)",
-                    subtitle = "Pork Gelatin",
-                    status = HalalStatus.HARAM,
-                    onClick = { onSelectBarcode("0021000612803") }
-                )
-            }
-            item {
-                QuickDemoNaturalCard(
-                    title = "Oreo Original (US/EU)",
-                    subtitle = "Plant-Based / Halal",
-                    status = HalalStatus.HELAL,
-                    onClick = { onSelectBarcode("7622210700544") }
-                )
-            }
-            item {
-                QuickDemoNaturalCard(
-                    title = "Doritos Nacho (USA)",
-                    subtitle = "Animal Enzymes / Whey",
-                    status = HalalStatus.SUPHELI,
-                    onClick = { onSelectBarcode("0028400090896") }
-                )
-            }
-            item {
-                QuickDemoNaturalCard(
-                    title = "Skittles Fruits (EU/US)",
-                    subtitle = "Gelatin & Carmine Free",
-                    status = HalalStatus.HELAL,
-                    onClick = { onSelectBarcode("5000159461122") }
-                )
-            }
-            item {
-                QuickDemoNaturalCard(
-                    title = "Nutella Spread (EU/US)",
-                    subtitle = "Plant Lecithin (E322)",
-                    status = HalalStatus.HELAL,
-                    onClick = { onSelectBarcode("3017620422003") }
-                )
-            }
-            item {
-                QuickDemoNaturalCard(
-                    title = "Milka Daim (EU)",
-                    subtitle = "Liqueur / Alcohol",
-                    status = HalalStatus.HARAM,
-                    onClick = { onSelectBarcode("7622210449283") }
+                    title = sample.name,
+                    subtitle = "${sample.brand} • ${sample.barcode}",
+                    status = sample.status,
+                    imageUrl = sample.imageUrl,
+                    onClick = { onSelectBarcode(sample.barcode) }
                 )
             }
         }
@@ -577,6 +793,7 @@ fun QuickDemoNaturalCard(
     title: String,
     subtitle: String,
     status: HalalStatus,
+    imageUrl: String? = null,
     onClick: () -> Unit
 ) {
     val (bgColor, borderColor) = when (status) {
@@ -590,17 +807,45 @@ fun QuickDemoNaturalCard(
         color = bgColor,
         shape = RoundedCornerShape(20.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
-        modifier = Modifier.width(170.dp)
+        modifier = Modifier.width(185.dp)
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            HalalStatusBadge(
-                status = status,
-                fontSize = 9.sp,
-                iconSize = 10.dp,
-                paddingHorizontal = 6.dp,
-                paddingVertical = 2.dp
-            )
-            Spacer(modifier = Modifier.height(10.dp))
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                HalalStatusBadge(
+                    status = status,
+                    fontSize = 9.sp,
+                    iconSize = 10.dp,
+                    paddingHorizontal = 6.dp,
+                    paddingVertical = 2.dp
+                )
+
+                if (!imageUrl.isNullOrBlank()) {
+                    Surface(
+                        color = Color.White,
+                        shape = RoundedCornerShape(8.dp),
+                        border = androidx.compose.foundation.BorderStroke(0.8.dp, borderColor.copy(alpha = 0.5f)),
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(imageUrl)
+                                .setHeader("User-Agent", "HalalFoodChecker/1.0 (Android; OpenFoodFacts-Viewer)")
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = title,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(2.dp)
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = title,
                 fontSize = 13.sp,
@@ -867,18 +1112,40 @@ fun NaturalHistoryItemCard(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(iconBoxBg, RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = iconVector,
-                    contentDescription = null,
-                    tint = iconColor,
-                    modifier = Modifier.size(26.dp)
-                )
+            // Product image thumbnail or status icon
+            if (!product.imageUrl.isNullOrBlank()) {
+                Surface(
+                    color = Color.White,
+                    shape = RoundedCornerShape(16.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(product.imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = product.name,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(4.dp)
+                    )
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(iconBoxBg, RoundedCornerShape(16.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = iconVector,
+                        contentDescription = null,
+                        tint = iconColor,
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(14.dp))

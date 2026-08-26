@@ -2,6 +2,8 @@ package com.example.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -82,7 +84,8 @@ fun EAdditiveSheet(
                     item.code.lowercase().contains(q) ||
                     item.name.lowercase().contains(q) ||
                     item.description.lowercase().contains(q) ||
-                    item.origin.lowercase().contains(q)
+                    item.origin.lowercase().contains(q) ||
+                    item.alternateNames.any { it.lowercase().contains(q) }
             val matchesFilter = selectedFilter == null || item.status == selectedFilter
             matchesQuery && matchesFilter
         }
@@ -118,7 +121,7 @@ fun EAdditiveSheet(
                             AppLanguage.EN -> "Comprehensive EU & US E-numbers & additives directory"
                             AppLanguage.DE -> "E-Nummern und Zusatzstoffdatenbank für Europa & USA"
                             AppLanguage.FR -> "Base de données des additifs pour l'Europe et les USA"
-                            AppLanguage.TR -> "Avrupa ve ABD gıda katkı maddeleri helallik rehberi"
+                            AppLanguage.TR -> "Katkı maddesi veri tabanı ve helallik rehberi"
                             AppLanguage.AR -> "دليل شامل لأرقام E والمضافات الغذائية"
                         },
                         fontSize = 12.sp,
@@ -146,10 +149,10 @@ fun EAdditiveSheet(
                 placeholder = {
                     Text(
                         text = when (language) {
-                            AppLanguage.EN -> "Search E471, Gelatin, Carmine, E120..."
+                            AppLanguage.EN -> "Search E471, Gelatin, Carmine, E120, DATEM..."
                             AppLanguage.DE -> "E471, Gelatine, Karmin, E120 suchen..."
                             AppLanguage.FR -> "Rechercher E471, Gélatine, Carmin..."
-                            AppLanguage.TR -> "E471, Jelatin, Karmin, E120 ara..."
+                            AppLanguage.TR -> "E471, Jelatin, Karmin, E120, Şellak ara..."
                             AppLanguage.AR -> "ابحث عن E471، جيلاتين، كارمين..."
                         },
                         color = NaturalTextMuted,
@@ -239,7 +242,7 @@ fun EAdditiveSheet(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(380.dp),
+                    .height(390.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(filteredList, key = { it.code }) { item ->
@@ -250,6 +253,7 @@ fun EAdditiveSheet(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
     val (cardBg, cardBorder) = when (item.status) {
@@ -295,7 +299,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Origin: ${item.origin}",
+                text = "Kaynak: ${item.origin}",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = EmeraldPrimaryDeep
@@ -310,10 +314,29 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                 lineHeight = 16.sp
             )
 
+            if (item.alternateNames.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.Top) {
+                    Text(
+                        text = "Alternatif İsimler: ",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = NaturalTextMuted
+                    )
+                    Text(
+                        text = item.alternateNames.joinToString(", "),
+                        fontSize = 11.sp,
+                        color = NaturalTextMuted,
+                        lineHeight = 15.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Usage: ${item.commonUsage}",
+                text = "Kullanım Alanı: ${item.commonUsage}",
                 fontSize = 11.sp,
                 color = NaturalTextMuted
             )

@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -41,6 +44,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import com.example.data.local.InitialData
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
@@ -98,11 +105,11 @@ fun ManualBarcodeDialog(
 
             Text(
                 text = when (language) {
-                    AppLanguage.EN -> "Enter the 8, 12, or 13-digit barcode on the packaging (US UPC / EU EAN):"
-                    AppLanguage.DE -> "Geben Sie den Barcode (EAN / UPC) auf der Verpackung ein:"
-                    AppLanguage.FR -> "Entrez le code-barres (EAN / UPC) figurant sur l'emballage:"
-                    AppLanguage.TR -> "Ürün paketinin üzerindeki barkod numarasını (EAN / UPC) girin:"
-                    AppLanguage.AR -> "أدخل رقم الباركود المدون على عبوة المنتج:"
+                    AppLanguage.EN -> "Enter a barcode (e.g. 4008400404127) or search by product name (e.g. Nutella):"
+                    AppLanguage.DE -> "Geben Sie einen Barcode (z.B. 4008400404127) oder Produktnamen (z.B. Nutella) ein:"
+                    AppLanguage.FR -> "Entrez un code-barres (ex. 4008400404127) ou le nom du produit (ex. Nutella):"
+                    AppLanguage.TR -> "Barkod numarasını (örn. 4008400404127) veya ürün adını (örn. Nutella) girin:"
+                    AppLanguage.AR -> "أدخل رقم الباركود (مثل 4008400404127) أو اسم المنتج (مثل نوتيلا):"
                 },
                 fontSize = 13.sp,
                 color = NaturalTextMuted
@@ -112,11 +119,11 @@ fun ManualBarcodeDialog(
 
             OutlinedTextField(
                 value = barcodeInput,
-                onValueChange = { barcodeInput = it.filter { ch -> ch.isDigit() } },
+                onValueChange = { barcodeInput = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("manual_barcode_text_field"),
-                placeholder = { Text("e.g. 4001686301265 / 7622210700544", color = NaturalTextMuted) },
+                placeholder = { Text("e.g. 4008400404127 or Nutella", color = NaturalTextMuted) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.QrCode,
@@ -125,7 +132,7 @@ fun ManualBarcodeDialog(
                     )
                 },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Search
                 ),
                 keyboardActions = KeyboardActions(
@@ -156,7 +163,7 @@ fun ManualBarcodeDialog(
                         onDismiss()
                     }
                 },
-                enabled = barcodeInput.length >= 4,
+                enabled = barcodeInput.trim().length >= 2,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
@@ -170,11 +177,11 @@ fun ManualBarcodeDialog(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = when (language) {
-                        AppLanguage.EN -> "Verify Product"
-                        AppLanguage.DE -> "Produkt prüfen"
-                        AppLanguage.FR -> "Vérifier le produit"
-                        AppLanguage.TR -> "Ürünü Sorgula"
-                        AppLanguage.AR -> "فحص المنتج"
+                        AppLanguage.EN -> "Search & Verify Product"
+                        AppLanguage.DE -> "Produkt suchen & prüfen"
+                        AppLanguage.FR -> "Rechercher et vérifier"
+                        AppLanguage.TR -> "Ürünü Ara ve Doğrula"
+                        AppLanguage.AR -> "بحث وفحص المنتج"
                     },
                     fontWeight = FontWeight.Bold
                 )
@@ -192,38 +199,132 @@ fun ManualBarcodeDialog(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            InitialData.sampleProducts.take(4).forEach { sample ->
-                Surface(
-                    onClick = {
-                        onSubmitBarcode(sample.barcode)
-                        onDismiss()
-                    },
-                    color = NaturalWarmSurface,
-                    border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+            val displayProducts = remember(barcodeInput) {
+                val q = barcodeInput.trim().lowercase()
+                if (q.isBlank()) {
+                    InitialData.sampleProducts
+                } else {
+                    InitialData.sampleProducts.filter {
+                        it.name.lowercase().contains(q) ||
+                        it.brand.lowercase().contains(q) ||
+                        it.barcode.contains(q) ||
+                        it.category.lowercase().contains(q)
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // If user entered a query, always show a prominent live online lookup option
+                if (barcodeInput.trim().isNotBlank()) {
+                    Surface(
+                        onClick = {
+                            onSubmitBarcode(barcodeInput.trim())
+                            onDismiss()
+                        },
+                        color = EmeraldPrimary.copy(alpha = 0.1f),
+                        border = androidx.compose.foundation.BorderStroke(1.2.dp, EmeraldPrimary),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = sample.name,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = NaturalTextDark
+                        Row(
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                                tint = EmeraldPrimary,
+                                modifier = Modifier.size(22.dp)
                             )
-                            Text(
-                                text = "${sample.brand} • ${sample.barcode}",
-                                fontSize = 11.sp,
-                                color = NaturalTextMuted
-                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = when (language) {
+                                        AppLanguage.EN -> "Live Global Search for \"${barcodeInput.trim()}\""
+                                        AppLanguage.DE -> "Globale Live-Suche nach „${barcodeInput.trim()}“"
+                                        AppLanguage.FR -> "Recherche mondiale pour « ${barcodeInput.trim()} »"
+                                        AppLanguage.TR -> "Canlı Küresel Arama: \"${barcodeInput.trim()}\""
+                                        AppLanguage.AR -> "بحث عالمي مباشر عن \"${barcodeInput.trim()}\""
+                                    },
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = EmeraldPrimary
+                                )
+                                Text(
+                                    text = when (language) {
+                                        AppLanguage.EN -> "Search billions of products across Open Food Facts"
+                                        AppLanguage.DE -> "Über 3 Millionen Produkte weltweit durchsuchen"
+                                        AppLanguage.FR -> "Rechercher parmi des millions de produits"
+                                        AppLanguage.TR -> "Tüm dünya veri tabanından canlı sorgula"
+                                        AppLanguage.AR -> "ابحث في ملايين المنتجات حول العالم"
+                                    },
+                                    fontSize = 11.sp,
+                                    color = NaturalTextMuted
+                                )
+                            }
                         }
-                        HalalStatusBadge(status = sample.status)
+                    }
+                }
+
+                displayProducts.forEach { sample ->
+                    Surface(
+                        onClick = {
+                            onSubmitBarcode(sample.barcode)
+                            onDismiss()
+                        },
+                        color = NaturalWarmSurface,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (!sample.imageUrl.isNullOrBlank()) {
+                                Surface(
+                                    color = Color.White,
+                                    shape = RoundedCornerShape(10.dp),
+                                    border = androidx.compose.foundation.BorderStroke(0.8.dp, NaturalWarmBorder),
+                                    modifier = Modifier.size(44.dp)
+                                ) {
+                                    AsyncImage(
+                                        model = sample.imageUrl,
+                                        contentDescription = sample.name,
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(4.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                            }
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = sample.name,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = NaturalTextDark,
+                                    maxLines = 1
+                                )
+                                Text(
+                                    text = "${sample.brand} • ${sample.barcode}",
+                                    fontSize = 11.sp,
+                                    color = NaturalTextMuted
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(6.dp))
+                            HalalStatusBadge(status = sample.status)
+                        }
                     }
                 }
             }

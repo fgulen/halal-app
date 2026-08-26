@@ -1,7 +1,6 @@
 package com.example.ui.components
 
 import android.content.Intent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,10 +23,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Dangerous
+import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ReportProblem
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Warning
@@ -44,17 +47,24 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
+import com.example.data.model.FlaggedIngredient
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.ui.theme.EmeraldPrimary
@@ -103,7 +113,7 @@ fun ProductResultBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = 32.dp)
+                .padding(bottom = 36.dp)
         ) {
             // Header Top Bar with close button
             Box(
@@ -128,6 +138,16 @@ fun ProductResultBottomSheet(
             // Big Status Result Banner Card
             StatusHeaderCard(product = product, language = language)
 
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Product Image Showcase (from Open Food Facts / High Res)
+            ProductShowcaseImageCard(
+                imageUrl = product.imageUrl,
+                productName = product.name,
+                status = product.status,
+                language = language
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // Main Details Container
@@ -148,7 +168,7 @@ fun ProductResultBottomSheet(
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier.testTag("result_product_name")
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Barcode Pill & Category
                 Row(
@@ -161,7 +181,7 @@ fun ProductResultBottomSheet(
                         shape = CircleShape
                     ) {
                         Text(
-                            text = "Barcode: ${product.barcode}",
+                            text = "Barkod: ${product.barcode}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = NaturalTextMuted,
@@ -184,7 +204,7 @@ fun ProductResultBottomSheet(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 // Specific Sections Based on Status
                 when (product.status) {
@@ -202,7 +222,12 @@ fun ProductResultBottomSheet(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(18.dp))
+
+                // Important Legal / Fiqh Disclaimer Card
+                LegalDisclaimerCard(language = language)
+
+                Spacer(modifier = Modifier.height(22.dp))
 
                 // Bottom Action Buttons
                 Row(
@@ -239,18 +264,18 @@ fun ProductResultBottomSheet(
                                 type = "text/plain"
                                 putExtra(
                                     Intent.EXTRA_SUBJECT,
-                                    "Halal Checker: ${product.name}"
+                                    "Helal Gıda Kontrolü: ${product.name}"
                                 )
                                 putExtra(
                                     Intent.EXTRA_TEXT,
-                                    "Halal Food Check Result:\n" +
-                                            "Product: ${product.name} (${product.brand})\n" +
-                                            "Barcode: ${product.barcode}\n" +
-                                            "Status: ${AppStrings.getStatusLabel(product.status, language)}\n" +
-                                            "${if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) "Flagged Ingredients: " + product.harmfulOrSuspiciousIngredients.joinToString(", ") else ""}"
+                                    "Helal Gıda Kontrol Sonucu:\n" +
+                                            "Ürün: ${product.name} (${product.brand})\n" +
+                                            "Barkod: ${product.barcode}\n" +
+                                            "Durum: ${AppStrings.getStatusLabel(product.status, language)}\n" +
+                                            "${if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) "Sakıncalı/Şüpheli Maddeler: " + product.harmfulOrSuspiciousIngredients.joinToString(", ") else ""}"
                                 )
                             }
-                            context.startActivity(Intent.createChooser(shareIntent, "Share Result"))
+                            context.startActivity(Intent.createChooser(shareIntent, "Sonucu Paylaş"))
                         },
                         modifier = Modifier.height(52.dp),
                         shape = CircleShape
@@ -366,7 +391,7 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
         product.halalCertificate?.let { cert ->
             Surface(
                 color = HalalGreenBg,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(18.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -407,8 +432,9 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
         // Details / Reason
         if (product.reasonOrDetails.isNotBlank()) {
             Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(16.dp),
+                color = NaturalWarmSurface,
+                shape = RoundedCornerShape(18.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -416,46 +442,66 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
                         text = AppStrings.getAnalysisReport(language),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = NaturalTextDark
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = product.reasonOrDetails,
                         fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = NaturalTextMuted,
                         lineHeight = 18.sp
                     )
                 }
             }
         }
 
-        // All Ingredients list (if available)
+        // All Ingredients list
         if (product.allIngredients.isNotEmpty()) {
-            Text(
-                text = AppStrings.getIngredientsTitle(language),
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+            Surface(
+                color = NaturalWarmSurface,
+                shape = RoundedCornerShape(18.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                product.allIngredients.forEach { ingredient ->
-                    Surface(
-                        color = HalalGreenBg,
-                        shape = RoundedCornerShape(8.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder.copy(alpha = 0.7f))
-                    ) {
-                        Text(
-                            text = ingredient,
-                            color = HalalGreenDark,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.MenuBook,
+                            contentDescription = null,
+                            tint = EmeraldPrimary,
+                            modifier = Modifier.size(18.dp)
                         )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = AppStrings.getIngredientsTitle(language),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = NaturalTextDark
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        product.allIngredients.forEach { ingredient ->
+                            Surface(
+                                color = HalalGreenBg,
+                                shape = RoundedCornerShape(8.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder.copy(alpha = 0.7f))
+                            ) {
+                                Text(
+                                    text = ingredient,
+                                    color = HalalGreenDark,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -463,12 +509,14 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        // Flagged Prohibited Ingredients with Short Reason
         Surface(
             color = HaramRedBg,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(18.dp),
             border = androidx.compose.foundation.BorderStroke(1.5.dp, HaramRedBorder),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -489,20 +537,25 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
-                    product.harmfulOrSuspiciousIngredients.forEach { harmfulItem ->
+                // If flaggedDetails is available, display name + short reason
+                if (product.flaggedDetails.isNotEmpty()) {
+                    product.flaggedDetails.forEach { flagged ->
+                        FlaggedProblematicItemCard(flagged = flagged, isHaram = true)
+                    }
+                } else if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
+                    product.harmfulOrSuspiciousIngredients.forEach { itemText ->
                         Surface(
                             color = Color.White,
-                            shape = RoundedCornerShape(10.dp),
+                            shape = RoundedCornerShape(12.dp),
                             border = androidx.compose.foundation.BorderStroke(1.dp, HaramRedBorder),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp)
+                                .padding(vertical = 3.dp)
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Box(
@@ -512,7 +565,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
-                                    text = harmfulItem,
+                                    text = itemText,
                                     color = HaramRedDark,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold
@@ -524,11 +577,12 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
             }
         }
 
-        // Details explanation
+        // Analysis details
         if (product.reasonOrDetails.isNotBlank()) {
             Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(16.dp),
+                color = NaturalWarmSurface,
+                shape = RoundedCornerShape(18.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -536,24 +590,29 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                         text = AppStrings.getAnalysisReport(language),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = NaturalTextDark
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = product.reasonOrDetails,
                         fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = NaturalTextMuted,
                         lineHeight = 18.sp
                     )
                 }
             }
         }
 
+        // All Ingredients List
+        if (product.allIngredients.isNotEmpty()) {
+            IngredientsListCard(allIngredients = product.allIngredients, language = language)
+        }
+
         // Halal Alternatives
         if (product.alternatives.isNotEmpty()) {
             Surface(
                 color = HalalGreenBg,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(18.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -592,12 +651,14 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        // Flagged Suspicious Ingredients with Short Reason
         Surface(
             color = SuspiciousAmberBg,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(18.dp),
             border = androidx.compose.foundation.BorderStroke(1.5.dp, SuspiciousAmberBorder),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -618,33 +679,39 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                product.harmfulOrSuspiciousIngredients.forEach { suspiciousItem ->
-                    Surface(
-                        color = Color.White,
-                        shape = RoundedCornerShape(10.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, SuspiciousAmberBorder),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                if (product.flaggedDetails.isNotEmpty()) {
+                    product.flaggedDetails.forEach { flagged ->
+                        FlaggedProblematicItemCard(flagged = flagged, isHaram = false)
+                    }
+                } else {
+                    product.harmfulOrSuspiciousIngredients.forEach { itemText ->
+                        Surface(
+                            color = Color.White,
+                            shape = RoundedCornerShape(12.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, SuspiciousAmberBorder),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 3.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .background(SuspiciousAmber, CircleShape)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(
-                                text = suspiciousItem,
-                                color = SuspiciousAmberDark,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .background(SuspiciousAmber, CircleShape)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = itemText,
+                                    color = SuspiciousAmberDark,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                     }
                 }
@@ -654,8 +721,9 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
         // Details
         if (product.reasonOrDetails.isNotBlank()) {
             Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(16.dp),
+                color = NaturalWarmSurface,
+                shape = RoundedCornerShape(18.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -663,24 +731,29 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
                         text = AppStrings.getAnalysisReport(language),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = NaturalTextDark
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = product.reasonOrDetails,
                         fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = NaturalTextMuted,
                         lineHeight = 18.sp
                     )
                 }
             }
         }
 
+        // All Ingredients List
+        if (product.allIngredients.isNotEmpty()) {
+            IngredientsListCard(allIngredients = product.allIngredients, language = language)
+        }
+
         // Alternatives
         if (product.alternatives.isNotEmpty()) {
             Surface(
                 color = HalalGreenBg,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(18.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -707,10 +780,167 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
 }
 
 @Composable
+fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean) {
+    val borderColor = if (isHaram) HaramRedBorder else SuspiciousAmberBorder
+    val titleColor = if (isHaram) HaramRedDark else SuspiciousAmberDark
+    val dotColor = if (isHaram) HaramRed else SuspiciousAmber
+
+    Surface(
+        color = Color.White,
+        shape = RoundedCornerShape(14.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .background(dotColor, CircleShape)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = flagged.name,
+                    color = titleColor,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                if (flagged.origin != null) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = flagged.origin,
+                        color = NaturalTextMuted,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Short reason shown beside / underneath the item
+            Text(
+                text = "Sebep: " + flagged.reason,
+                color = NaturalTextDark.copy(alpha = 0.85f),
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage) {
+    Surface(
+        color = NaturalWarmSurface,
+        shape = RoundedCornerShape(18.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.MenuBook,
+                    contentDescription = null,
+                    tint = NaturalTextDark,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = AppStrings.getIngredientsTitle(language),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = NaturalTextDark
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                allIngredients.forEach { ingredient ->
+                    Surface(
+                        color = Color.White,
+                        shape = RoundedCornerShape(8.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
+                    ) {
+                        Text(
+                            text = ingredient,
+                            color = NaturalTextDark,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LegalDisclaimerCard(language: AppLanguage) {
+    Surface(
+        color = NaturalWarmSurface,
+        shape = RoundedCornerShape(16.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(14.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Icon(
+                imageVector = Icons.Default.Security,
+                contentDescription = null,
+                tint = EmeraldPrimaryDeep,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Column {
+                Text(
+                    text = when (language) {
+                        AppLanguage.EN -> "Important Note & Disclaimer"
+                        AppLanguage.DE -> "Wichtiger Hinweis & Disclaimer"
+                        AppLanguage.FR -> "Avertissement important"
+                        AppLanguage.TR -> "Önemli Fıkhi & Yasal Bilgilendirme"
+                        AppLanguage.AR -> "تنويه وإخلاء مسؤولية مهم"
+                    },
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = EmeraldPrimaryDeep
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = when (language) {
+                        AppLanguage.EN -> "This app provides dietary guidance based on Open Food Facts data and recognized Halal standards. It does not issue definitive religious rulings. Unspecified origin additives (e.g. E471) are classified as doubtful, not directly haram."
+                        AppLanguage.DE -> "Diese App gibt keine verbindlichen religiösen Urteile ab. Ergebnisse basieren auf Open Food Facts und allgemeinen Halal-Kriterien. Unklare Zusätze (E471) werden als zweifelhaft eingestuft."
+                        AppLanguage.FR -> "Cette application ne délivre pas de fatwa religieuse. Les résultats reposent sur Open Food Facts. Les additifs d'origine non précisée (E471) sont classés comme douteux."
+                        AppLanguage.TR -> "Bu uygulama kesin dini hüküm/fetva vermez. Sonuçlar ürün içeriği ve helal gıda kriterlerine göre açıklanır. Kaynağı belirsiz katkılar (E471 vb.) doğrudan haram sayılmayıp şüpheli olarak sınıflandırılır."
+                        AppLanguage.AR -> "هذا التطبيق لا يقدم فتاوى دينية قطعية. تعتمد النتائج على مكونات المنتج والمعايير العامة. المضافات غير محددة المصدر تصنف كمشبوهة وليست محرمة مباشرة."
+                    },
+                    fontSize = 11.sp,
+                    color = NaturalTextMuted,
+                    lineHeight = 15.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun NotFoundSection(product: FoodProduct, language: AppLanguage) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
-        shape = RoundedCornerShape(16.dp),
+        color = NaturalWarmSurface,
+        shape = RoundedCornerShape(18.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -724,7 +954,7 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage) {
                 },
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = NaturalTextDark
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -736,9 +966,162 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage) {
                     AppLanguage.AR -> "1. راجع قائمة المكونات على الغلاف.\n2. ابحث عن E441 (جيلاتين)، E120 (كارمين) أو E471.\n3. ابحث عن شعار حلال أو نباتي.\n4. استخدم دليل أكواد E في التطبيق."
                 },
                 fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = NaturalTextMuted,
                 lineHeight = 20.sp
             )
+        }
+    }
+}
+
+@Composable
+fun ProductShowcaseImageCard(
+    imageUrl: String?,
+    productName: String,
+    status: HalalStatus,
+    language: AppLanguage,
+    modifier: Modifier = Modifier
+) {
+    val (statusBorder, statusBg) = when (status) {
+        HalalStatus.HELAL -> Pair(HalalGreenBorder, HalalGreenBg)
+        HalalStatus.HARAM -> Pair(HaramRedBorder, HaramRedBg)
+        HalalStatus.SUPHELI -> Pair(SuspiciousAmberBorder, SuspiciousAmberBg)
+        HalalStatus.BULUNAMADI -> Pair(NaturalWarmBorder, NaturalWarmSurface)
+    }
+
+    Surface(
+        color = Color.White,
+        shape = RoundedCornerShape(22.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
+        shadowElevation = 2.dp,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .testTag("product_showcase_image_card")
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(190.dp)
+                .background(Color.White),
+            contentAlignment = Alignment.Center
+        ) {
+            if (!imageUrl.isNullOrBlank()) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .setHeader("User-Agent", "HalalGlobalFoodScanner/1.0 (Android; Linux; OpenFoodFacts-Viewer)")
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = productName,
+                    contentScale = ContentScale.Fit,
+                    loading = {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(28.dp),
+                                color = EmeraldPrimary,
+                                strokeWidth = 2.5.dp
+                            )
+                        }
+                    },
+                    error = {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(54.dp)
+                                    .background(NaturalWarmBg, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Fastfood,
+                                    contentDescription = null,
+                                    tint = EmeraldPrimary,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = productName,
+                                fontSize = 12.sp,
+                                color = NaturalTextDark,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(14.dp)
+                        .testTag("product_async_image")
+                )
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(54.dp)
+                            .background(NaturalWarmBg, CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Fastfood,
+                            contentDescription = null,
+                            tint = NaturalTextMuted,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = when (language) {
+                            AppLanguage.EN -> "Product image from Open Food Facts"
+                            AppLanguage.DE -> "Produktbild aus Open Food Facts"
+                            AppLanguage.FR -> "Image produit Open Food Facts"
+                            AppLanguage.TR -> "Open Food Facts Ürün Görseli"
+                            AppLanguage.AR -> "صورة المنتج من Open Food Facts"
+                        },
+                        fontSize = 12.sp,
+                        color = NaturalTextMuted,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            // Top-right Source Pill
+            Surface(
+                color = NaturalWarmBg.copy(alpha = 0.95f),
+                shape = CircleShape,
+                border = androidx.compose.foundation.BorderStroke(0.8.dp, NaturalWarmBorder),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .background(EmeraldPrimary, CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Text(
+                        text = "Open Food Facts (DE/EU/US)",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = NaturalTextDark
+                    )
+                }
+            }
         }
     }
 }
