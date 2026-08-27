@@ -58,7 +58,11 @@ object HalalAnalyzer {
             origin = "Insect (Dactylopius coccus)"
         ),
         HaramRule(
-            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "bourbon", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake", "wine vinegar", "red wine vinegar", "white wine vinegar"),
+            // Note: no bare "bourbon" - "Bourbon-Vanille" (Bourbon vanilla, named after Île
+            // Bourbon/Réunion) is a completely alcohol-free, extremely common ingredient term
+            // in German product listings, and would collide with a plain "bourbon" keyword.
+            // Real bourbon-whiskey mentions are still caught by "whiskey"/"whisky" below.
+            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake", "wine vinegar", "red wine vinegar", "white wine vinegar"),
             nameEn = "Alcohol / Liqueur / Wine Additive",
             nameTr = "Alkol / Likör / Şarap Bileşeni",
             reasonEn = "Intoxicating alcoholic beverages or flavourings. Non-permissible in foods.",

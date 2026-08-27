@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Dangerous
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ReportProblem
@@ -328,23 +327,23 @@ fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
         Box(
             modifier = Modifier
                 .background(cardBg)
-                .padding(vertical = 24.dp, horizontal = 20.dp)
+                .padding(vertical = 14.dp, horizontal = 20.dp)
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Large Status Emblem Icon
+                // Status Emblem Icon
                 Box(
                     modifier = Modifier
-                        .size(76.dp)
+                        .size(52.dp)
                         .background(Color.White.copy(alpha = 0.2f), CircleShape)
-                        .padding(6.dp),
+                        .padding(5.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(64.dp)
+                            .size(42.dp)
                             .background(Color.White, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
@@ -357,28 +356,28 @@ fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
                                 HalalStatus.SUPHELI -> SuspiciousAmber
                                 else -> Color(0xFF64748B)
                             },
-                            modifier = Modifier.size(38.dp)
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = title,
                     color = Color.White,
-                    fontSize = 22.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Black,
-                    letterSpacing = 0.8.sp,
+                    letterSpacing = 0.6.sp,
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(3.dp))
 
                 Text(
                     text = subtitle,
                     color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 13.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 12.dp)
@@ -585,47 +584,6 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
         if (product.allIngredients.isNotEmpty()) {
             IngredientsListCard(allIngredients = product.allIngredients, language = language)
         }
-
-        // Halal Alternatives
-        if (product.alternatives.isNotEmpty()) {
-            Surface(
-                color = HalalGreenBg,
-                shape = RoundedCornerShape(18.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Lightbulb,
-                            contentDescription = null,
-                            tint = EmeraldPrimary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = AppStrings.getHalalAlternatives(language),
-                            color = HalalGreenDark,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    product.alternatives.forEach { alt ->
-                        Row(
-                            modifier = Modifier.padding(vertical = 3.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "✓", color = HalalGreenDark, fontWeight = FontWeight.Black)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = alt, color = HalalGreenDark, fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -725,34 +683,6 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
         // All Ingredients List
         if (product.allIngredients.isNotEmpty()) {
             IngredientsListCard(allIngredients = product.allIngredients, language = language)
-        }
-
-        // Alternatives
-        if (product.alternatives.isNotEmpty()) {
-            Surface(
-                color = HalalGreenBg,
-                shape = RoundedCornerShape(18.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = AppStrings.getHalalAlternatives(language),
-                        color = HalalGreenDark,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    product.alternatives.forEach { alt ->
-                        Text(
-                            text = "• $alt",
-                            color = HalalGreenDark,
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(vertical = 2.dp)
-                        )
-                    }
-                }
-            }
         }
     }
 }
