@@ -58,7 +58,7 @@ object HalalAnalyzer {
             origin = "Insect (Dactylopius coccus)"
         ),
         HaramRule(
-            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "beer", "bier", "bière", "brandy", "cognac", "bourbon", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake", "wine vinegar", "red wine vinegar", "white wine vinegar"),
+            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "bourbon", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake", "wine vinegar", "red wine vinegar", "white wine vinegar"),
             nameEn = "Alcohol / Liqueur / Wine Additive",
             nameTr = "Alkol / Likör / Şarap Bileşeni",
             reasonEn = "Intoxicating alcoholic beverages or flavourings. Non-permissible in foods.",
@@ -204,7 +204,7 @@ object HalalAnalyzer {
 
         // 1. Check for Haram rules (Strict)
         for (rule in HARAM_RULES) {
-            val matchedInText = rule.keywords.any { kw -> ingredientsLower.contains(kw) }
+            val matchedInText = rule.keywords.any { kw -> containsKeyword(ingredientsLower, kw) }
             val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> tag.contains(kw) } }
             if (matchedInText || matchedInAdditives) {
                 val displayName = if (language == AppLanguage.TR) rule.nameTr else rule.nameEn
@@ -225,7 +225,7 @@ object HalalAnalyzer {
 
         // 2. Check for Suspicious rules (Doubtful / Mushbooh)
         for (rule in SUSPICIOUS_RULES) {
-            val matchedInText = rule.keywords.any { kw -> ingredientsLower.contains(kw) }
+            val matchedInText = rule.keywords.any { kw -> containsKeyword(ingredientsLower, kw) }
             val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> tag == kw || tag.contains(kw) } }
             if (matchedInText || matchedInAdditives) {
                 // If gelatin is already identified as pork gelatin, skip general gelatin
@@ -361,12 +361,24 @@ object HalalAnalyzer {
         )
     }
 
+    private val keywordPatternCache = mutableMapOf<String, Regex>()
+
+    // Word-boundary match instead of plain substring: a short keyword like "rum" or "vin"
+    // must not fire on "sérum" (whey) or "vinegar" just because it appears inside the word.
+    // (?U) makes \b Unicode-aware so accented letters (é, è...) count as word characters too.
+    private fun containsKeyword(text: String, keyword: String): Boolean {
+        val pattern = keywordPatternCache.getOrPut(keyword) {
+            Regex("(?U)\\b" + Regex.escape(keyword) + "\\b")
+        }
+        return pattern.containsMatchIn(text)
+    }
+
     fun classifyIngredientToken(token: String): HalalStatus {
         val lower = token.lowercase(Locale.ROOT)
-        if (HARAM_RULES.any { rule -> rule.keywords.any { kw -> lower.contains(kw) } }) {
+        if (HARAM_RULES.any { rule -> rule.keywords.any { kw -> containsKeyword(lower, kw) } }) {
             return HalalStatus.HARAM
         }
-        if (SUSPICIOUS_RULES.any { rule -> rule.keywords.any { kw -> lower.contains(kw) } }) {
+        if (SUSPICIOUS_RULES.any { rule -> rule.keywords.any { kw -> containsKeyword(lower, kw) } }) {
             return HalalStatus.SUPHELI
         }
         return HalalStatus.HELAL
