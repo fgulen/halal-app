@@ -12,7 +12,10 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [ProductEntity::class, ScanHistoryEntity::class],
-    version = 1,
+    // Bumped so cached rows written before the "Open Food Facts Verified" fabricated
+    // certificate was removed (see HalalAnalyzer.kt) get cleared instead of lingering
+    // with a claim the app no longer makes.
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -31,6 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "halal_kontrol_database"
                 )
                 .addCallback(DatabaseCallback(scope))
+                .fallbackToDestructiveMigration(dropAllTables = true)
                 .build()
                 INSTANCE = instance
                 instance

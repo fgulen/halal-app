@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -154,9 +153,17 @@ fun MainHalalScreen(
         }
     }
 
+    // With the manual-entry tab removed from the bottom nav, a denied permission needs a way
+    // out: a request was already made and still isn't granted (a data-class equality check
+    // on PermissionStatus.Denied can't reliably tell "just requested" from "resolved, denied",
+    // so this checks at the tap site instead) means the user answered the dialog and said no,
+    // so the second tap routes to manual entry rather than doing nothing.
     val onTriggerScanner = {
         if (cameraPermissionState.status.isGranted) {
             viewModel.openScanner()
+        } else if (scannerOpenPending) {
+            scannerOpenPending = false
+            viewModel.openManualEntry()
         } else {
             scannerOpenPending = true
             cameraPermissionState.launchPermissionRequest()
@@ -177,7 +184,6 @@ fun MainHalalScreen(
                         0 -> selectedBottomNavIndex = 0
                         1 -> selectedBottomNavIndex = 1
                         2 -> viewModel.openEAdditives()
-                        3 -> viewModel.openManualEntry()
                     }
                 }
             )
@@ -419,16 +425,6 @@ fun MainHalalScreen(
                     )
                 }
 
-                // Europe & USA Quick Demo Barcode Carousel
-                item {
-                    QuickDemoBarcodesSection(
-                        language = language,
-                        onSelectBarcode = { barcode ->
-                            viewModel.onBarcodeScanned(barcode)
-                        }
-                    )
-                }
-
                 // Stats in Natural Warm Surface
                 item {
                     NaturalStatsCard(
@@ -618,14 +614,6 @@ fun NaturalAppHeader(
     ) {
         Column {
             Text(
-                text = AppStrings.getWelcome(language),
-                color = EmeraldPrimaryDeep,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.8.sp
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
                 text = AppStrings.getAppName(language),
                 color = NaturalTextDark,
                 fontSize = 24.sp,
@@ -766,133 +754,6 @@ fun NaturalHeroScanButton(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun QuickDemoBarcodesSection(
-    language: AppLanguage,
-    onSelectBarcode: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 12.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = AppStrings.getQuickTestTitle(language),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.5.sp,
-                color = NaturalTextMuted
-            )
-            Text(
-                text = AppStrings.getQuickTestSubtitle(language),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = EmeraldPrimary
-            )
-        }
-
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(com.example.data.local.InitialData.sampleProducts) { sample ->
-                QuickDemoNaturalCard(
-                    title = sample.name,
-                    subtitle = "${sample.brand} • ${sample.barcode}",
-                    status = sample.status,
-                    imageUrl = sample.imageUrl,
-                    onClick = { onSelectBarcode(sample.barcode) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun QuickDemoNaturalCard(
-    title: String,
-    subtitle: String,
-    status: HalalStatus,
-    imageUrl: String? = null,
-    onClick: () -> Unit
-) {
-    val (bgColor, borderColor) = when (status) {
-        HalalStatus.HELAL -> Pair(HalalGreenBg, HalalGreenBorder)
-        HalalStatus.HARAM -> Pair(HaramRedBg, HaramRedBorder)
-        else -> Pair(SuspiciousAmberBg, SuspiciousAmberBorder)
-    }
-
-    Surface(
-        onClick = onClick,
-        color = bgColor,
-        shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
-        modifier = Modifier.width(185.dp)
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                HalalStatusBadge(
-                    status = status,
-                    fontSize = 9.sp,
-                    iconSize = 10.dp,
-                    paddingHorizontal = 6.dp,
-                    paddingVertical = 2.dp
-                )
-
-                if (!imageUrl.isNullOrBlank()) {
-                    Surface(
-                        color = Color.White,
-                        shape = RoundedCornerShape(8.dp),
-                        border = androidx.compose.foundation.BorderStroke(0.8.dp, borderColor.copy(alpha = 0.5f)),
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(imageUrl)
-                                .setHeader("User-Agent", "HalalFoodChecker/1.0 (Android; OpenFoodFacts-Viewer)")
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = title,
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(2.dp)
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = title,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = NaturalTextDark,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = subtitle,
-                fontSize = 11.sp,
-                color = NaturalTextMuted,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -1371,12 +1232,6 @@ fun NaturalBottomNavigation(
                 label = AppStrings.getNavECodes(language),
                 isSelected = selectedIndex == 2,
                 onClick = { onSelectIndex(2) }
-            )
-            NaturalNavButton(
-                icon = Icons.Default.Keyboard,
-                label = AppStrings.getNavManual(language),
-                isSelected = selectedIndex == 3,
-                onClick = { onSelectIndex(3) }
             )
         }
     }

@@ -10,14 +10,6 @@ object AppStrings {
         AppLanguage.AR -> "دليل الحلال"
     }
 
-    fun getWelcome(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "GLOBAL FOOD SCANNER"
-        AppLanguage.DE -> "LEBENSMITTEL-SCANNER"
-        AppLanguage.FR -> "SCANNER ALIMENTAIRE"
-        AppLanguage.TR -> "KÜRESEL GIDA KONTROLÜ"
-        AppLanguage.AR -> "فاحص الأغذية العالمي"
-    }
-
     fun getScanBarcode(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Scan Barcode"
         AppLanguage.DE -> "Barcode Scannen"
@@ -27,27 +19,19 @@ object AppStrings {
     }
 
     fun getScanSubtitle(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "Verify EU & USA products in seconds"
-        AppLanguage.DE -> "EU & US Produkte in Sekunden prüfen"
-        AppLanguage.FR -> "Vérifiez les produits EU & USA en secondes"
-        AppLanguage.TR -> "AB ve ABD ürünlerini anında sorgulayın"
-        AppLanguage.AR -> "تحقق من منتجات أمريكا وأوروبا بثوانٍ"
+        AppLanguage.EN -> "Verify products from anywhere in the world"
+        AppLanguage.DE -> "Produkte weltweit in Sekunden prüfen"
+        AppLanguage.FR -> "Vérifiez des produits du monde entier"
+        AppLanguage.TR -> "Dünya genelindeki ürünleri anında sorgulayın"
+        AppLanguage.AR -> "تحقق من منتجات من جميع أنحاء العالم"
     }
 
     fun getQuickTestTitle(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "GLOBAL DEMO BARCODES"
-        AppLanguage.DE -> "GLOBALES BEISPIEL-SORTIMENT"
-        AppLanguage.FR -> "BARRES D'EXEMPLES GLOBAUX"
-        AppLanguage.TR -> "KÜRESEL ÖRNEK BARKODLAR"
-        AppLanguage.AR -> "رموز تجريبية سريعة"
-    }
-
-    fun getQuickTestSubtitle(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "Try with 1-tap"
-        AppLanguage.DE -> "1-Klick Test"
-        AppLanguage.FR -> "Essai rapide"
-        AppLanguage.TR -> "Tek tıkla dene"
-        AppLanguage.AR -> "تجربة فورية"
+        AppLanguage.EN -> "SUGGESTED PRODUCTS"
+        AppLanguage.DE -> "VORGESCHLAGENE PRODUKTE"
+        AppLanguage.FR -> "PRODUITS SUGGÉRÉS"
+        AppLanguage.TR -> "ÖNE ÇIKAN ÜRÜNLER"
+        AppLanguage.AR -> "منتجات مقترحة"
     }
 
     fun getTotalScans(lang: AppLanguage): String = when (lang) {
@@ -123,11 +107,11 @@ object AppStrings {
 
     fun getStatusCardTitle(status: HalalStatus, lang: AppLanguage): String = when (status) {
         HalalStatus.HELAL -> when (lang) {
-            AppLanguage.EN -> "HALAL CERTIFIED / SAFE"
-            AppLanguage.DE -> "HALAL / ZULÄSSIG"
-            AppLanguage.FR -> "PRODUIT HALAL"
-            AppLanguage.TR -> "HELAL ÜRÜN"
-            AppLanguage.AR -> "منتج حلال وآمن"
+            AppLanguage.EN -> "NO FLAGGED INGREDIENTS"
+            AppLanguage.DE -> "KEINE BEDENKLICHEN ZUTATEN"
+            AppLanguage.FR -> "AUCUN INGRÉDIENT PROBLÉMATIQUE"
+            AppLanguage.TR -> "SAKINCALI MADDE BULUNAMADI"
+            AppLanguage.AR -> "لا توجد مكونات مثيرة للقلق"
         }
         HalalStatus.HARAM -> when (lang) {
             AppLanguage.EN -> "HARAM - PROHIBITED"
@@ -277,14 +261,6 @@ object AppStrings {
         AppLanguage.FR -> "Codes-E"
         AppLanguage.TR -> "E-Kodları"
         AppLanguage.AR -> "أكواد E"
-    }
-
-    fun getNavManual(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "Type Code"
-        AppLanguage.DE -> "Eingabe"
-        AppLanguage.FR -> "Saisie"
-        AppLanguage.TR -> "Barkod Gir"
-        AppLanguage.AR -> "إدخال"
     }
 
     fun getClearHistory(lang: AppLanguage): String = when (lang) {

@@ -138,6 +138,10 @@ fun ProductResultBottomSheet(
             // Big Status Result Banner Card
             StatusHeaderCard(product = product, language = language)
 
+            // Short-form of LegalDisclaimerCard below, placed right under the verdict so it's
+            // seen even if the user closes the sheet without scrolling to the full disclaimer.
+            ShortDisclaimerLine(language = language)
+
             Spacer(modifier = Modifier.height(14.dp))
 
             // Product Image Showcase (from Open Food Facts / High Res)
@@ -381,6 +385,26 @@ fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
             }
         }
     }
+}
+
+@Composable
+fun ShortDisclaimerLine(language: AppLanguage) {
+    Text(
+        text = when (language) {
+            AppLanguage.EN -> "Not a religious ruling - based on Open Food Facts data."
+            AppLanguage.DE -> "Kein religiöses Urteil - basiert auf Open Food Facts Daten."
+            AppLanguage.FR -> "Pas une fatwa - basé sur les données Open Food Facts."
+            AppLanguage.TR -> "Bu bir fetva değildir; sonuçlar Open Food Facts verisine dayanır."
+            AppLanguage.AR -> "هذه ليست فتوى - تعتمد النتائج على بيانات Open Food Facts."
+        },
+        color = NaturalTextMuted,
+        fontSize = 11.sp,
+        fontWeight = FontWeight.Medium,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp, vertical = 8.dp)
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)

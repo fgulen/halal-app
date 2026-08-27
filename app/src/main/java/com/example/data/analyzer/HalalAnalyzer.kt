@@ -323,7 +323,11 @@ object HalalAnalyzer {
                     AppLanguage.TR -> "Sakıncalı veya şüpheli katkı maddesi tespit edilmedi. İçerik helal standartlarına uygundur."
                     AppLanguage.AR -> "لا توجد مواد محظورة أو مشبوهة. المنتج مطابق للمعايir الحلال."
                 }
-                certificate = if (hasHalalClaim) "Certified Halal Product" else if (hasVeganClaim) "100% Plant-Based / Vegan Verified" else "Open Food Facts Verified"
+                // Only claim a certificate when the product actually carries a halal/vegan
+                // label or explicit claim in its data - fabricating "Open Food Facts Verified"
+                // for every product that simply had no flagged ingredients overstated what
+                // this screening actually checked.
+                certificate = if (hasHalalClaim) "Certified Halal Product" else if (hasVeganClaim) "100% Plant-Based / Vegan Verified" else null
                 alternatives = emptyList()
             }
             // Rule 4: Yeterli bilgi yoksa -> BİLİNMİYOR

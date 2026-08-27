@@ -84,9 +84,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.ui.theme.EmeraldGreenPrimary
-import com.example.ui.theme.HalalGreen
-import com.example.ui.theme.HaramRed
-import com.example.ui.theme.SuspiciousAmber
 import java.util.concurrent.Executors
 
 @Composable
@@ -338,61 +335,6 @@ fun CameraScannerView(
                     Text("Manuel Barkod Gir", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                 }
             }
-
-            // Quick Demo Barcode Buttons (Allow immediate 1-tap testing of Halal, Haram, and Suspicious states)
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                QuickDemoButton(
-                    title = "🟢 Helal Test",
-                    color = HalalGreen,
-                    modifier = Modifier.weight(1f),
-                    onClick = { onBarcodeScanned("8690526055554") } // Eti Karam
-                )
-                QuickDemoButton(
-                    title = "🔴 Haram Test",
-                    color = HaramRed,
-                    modifier = Modifier.weight(1f),
-                    onClick = { onBarcodeScanned("4001686301265") } // Haribo Domuz Jelatini
-                )
-                QuickDemoButton(
-                    title = "🟡 Şüpheli Test",
-                    color = SuspiciousAmber,
-                    modifier = Modifier.weight(1f),
-                    onClick = { onBarcodeScanned("8690637012345") } // E471 Cips
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun QuickDemoButton(
-    title: String,
-    color: Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        onClick = onClick,
-        color = color.copy(alpha = 0.25f),
-        shape = RoundedCornerShape(8.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.6f)),
-        modifier = modifier.height(34.dp)
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = title,
-                color = Color.White,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
         }
     }
 }
