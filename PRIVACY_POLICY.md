@@ -86,4 +86,4 @@ https://world.openfoodfacts.org/privacy.
 **No ads or analytics** are currently used in this app. **Not directed at children.** All
 network requests use HTTPS.
 
-**Contact:** **[insert your contact email here]**
+**Contact:** **fatihgulen@gmail.com**
