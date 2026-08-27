@@ -88,7 +88,9 @@ fun HalalStatusBadge(
                 color = textColor,
                 fontSize = fontSize,
                 fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 0.5.sp
+                letterSpacing = 0.5.sp,
+                maxLines = 1,
+                softWrap = false
             )
         }
     }

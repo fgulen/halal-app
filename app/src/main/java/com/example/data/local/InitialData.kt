@@ -696,6 +696,100 @@ object InitialData {
             description = "Havuç ve bitkilerden elde edilen doğal turuncu-sarı pro-vitamin A renklendirici.",
             alternateNames = listOf("Beta-Carotene", "Provitamin A", "CI 75130"),
             commonUsage = "Margarinler, meyve suları, kekler, peynirler"
+        ),
+        // Additional source-dependent (şüpheli) emulsifiers/additives: like E471/E472, these are
+        // genuinely either plant or animal fatty-acid derivatives depending on manufacturer sourcing,
+        // so they are classified as doubtful rather than certain haram unless a halal certificate
+        // or explicit "vegetable/bitkisel" origin is stated on the packaging.
+        EAdditive(
+            code = "E422",
+            name = "Gliserin (Glycerol)",
+            status = HalalStatus.SUPHELI,
+            origin = "Bitkisel yağlar VEYA Hayvansal yağlar (Domuz/Sığır iç yağı)",
+            description = "Nem tutucu ve tatlandırıcı olarak kullanılan gliserol. Bitkisel yağ (soya, palmiye) sabunlaşmasından veya hayvansal iç yağdan elde edilebilir. Kaynak teyidi gerektirir.",
+            alternateNames = listOf("Glycerin", "Glycerol", "E422", "Glyzerin"),
+            commonUsage = "Kek ve pastalar, sakızlar, nemlendirilmiş kuruyemişler, likit içecekler, ilaç şurupları"
+        ),
+        EAdditive(
+            code = "E432-436",
+            name = "Polisorbatlar (Tween 20/60/80)",
+            status = HalalStatus.SUPHELI,
+            origin = "Bitkisel veya Hayvansal yağ asitleri + Sorbitol",
+            description = "Yağ asidi esterinden üretilen emülgatörler. Yağ asidi kaynağı bitkisel veya hayvansal olabilir; teyit edilmedikçe şüphelidir.",
+            alternateNames = listOf("Polysorbate 20", "Polysorbate 60", "Polysorbate 80", "Tween 80"),
+            commonUsage = "Dondurmalar, kremalar, salata sosları, unlu mamuller, vitamin takviyeleri"
+        ),
+        EAdditive(
+            code = "E470a/E470b",
+            name = "Yağ Asitlerinin Sodyum/Potasyum/Kalsiyum Tuzları",
+            status = HalalStatus.SUPHELI,
+            origin = "Bitkisel veya Hayvansal yağ asitleri",
+            description = "Emülgatör ve topaklanma önleyici olarak kullanılan yağ asidi tuzları. Kaynağı bitkisel veya hayvansal olabilir.",
+            alternateNames = listOf("Sodium salts of fatty acids", "Calcium stearate", "Magnesium stearate"),
+            commonUsage = "Toz içecekler, tabletler, un ve baharat karışımları, cipsler"
+        ),
+        EAdditive(
+            code = "E473",
+            name = "Sükroz Yağ Asidi Esterleri",
+            status = HalalStatus.SUPHELI,
+            origin = "Bitkisel veya Hayvansal yağ asitleri + Şeker",
+            description = "Şeker ile yağ asitlerinin esterleşmesinden elde edilen emülgatör. Yağ asidi kaynağı teyit edilmelidir.",
+            alternateNames = listOf("Sucrose esters of fatty acids", "Sucrose Stearate"),
+            commonUsage = "Çikolatalar, fırın ürünleri, dondurmalar, içecek tozları"
+        ),
+        EAdditive(
+            code = "E475",
+            name = "Poligliserol Yağ Asidi Esterleri",
+            status = HalalStatus.SUPHELI,
+            origin = "Bitkisel veya Hayvansal yağ asitleri + Gliserol",
+            description = "Hamur ve yağ bazlı ürünlerde kullanılan emülgatör. Gliserol ve yağ asidi bileşenleri hayvansal kaynaklı olabilir.",
+            alternateNames = listOf("Polyglycerol esters of fatty acids", "PGE"),
+            commonUsage = "Margarinler, kek karışımları, çikolata kaplamalar"
+        ),
+        EAdditive(
+            code = "E481/E482",
+            name = "Sodyum/Kalsiyum Stearoil Laktilat",
+            status = HalalStatus.SUPHELI,
+            origin = "Bitkisel veya Hayvansal stearik asit + Laktik asit",
+            description = "Hamur güçlendirici emülgatör. Stearik asit bileşeni bitkisel veya hayvansal yağdan üretilebilir.",
+            alternateNames = listOf("Sodium Stearoyl Lactylate", "SSL", "Calcium Stearoyl Lactylate", "CSL"),
+            commonUsage = "Ekmekler, hamburger ekmekleri, kek karışımları, krema tozları"
+        ),
+        EAdditive(
+            code = "E491-495",
+            name = "Sorbitan Esterleri (Span)",
+            status = HalalStatus.SUPHELI,
+            origin = "Bitkisel veya Hayvansal yağ asitleri + Sorbitol",
+            description = "Polisorbatların (Tween) eşleniği olan yağ bazlı emülgatörler ailesi. Kaynağı teyit edilmedikçe şüphelidir.",
+            alternateNames = listOf("Sorbitan Monostearate", "Span 60", "Span 80", "Sorbitan Tristearate"),
+            commonUsage = "Margarinler, çikolatalar, kek karışımları, dondurmalar"
+        ),
+        EAdditive(
+            code = "E570",
+            name = "Stearik Asit / Yağ Asitleri",
+            status = HalalStatus.SUPHELI,
+            origin = "Bitkisel yağlar VEYA Hayvansal iç yağ (Domuz/Sığır)",
+            description = "Topaklanma önleyici ve kaplama maddesi olarak kullanılan yağ asidi. Palmiye yağından veya hayvan iç yağından elde edilebilir.",
+            alternateNames = listOf("Stearic Acid", "Fatty Acids", "E570"),
+            commonUsage = "Sakızlar, şekerlemeler, tablet kaplamaları, unlu mamuller"
+        ),
+        EAdditive(
+            code = "E627/E635",
+            name = "Disodyum Guanilat / Ribonükleotidler",
+            status = HalalStatus.SUPHELI,
+            origin = "Et veya Balık ekstraktı VEYA bitkisel/mikrobiyal fermantasyon",
+            description = "E631 (Disodyum İnozinat) ile birlikte kullanılan umami lezzet artırıcılar. Et/balık kaynaklı üretilebildiğinden helal sertifikası yoksa şüphelidir.",
+            alternateNames = listOf("Disodium Guanylate", "Disodium 5'-ribonucleotides", "GMP"),
+            commonUsage = "Hazır çorbalar, bulyonlar, cipsler, hazır soslar, noodle baharat paketleri"
+        ),
+        EAdditive(
+            code = "E640",
+            name = "Glisin ve Sodyum Glisinat",
+            status = HalalStatus.SUPHELI,
+            origin = "Sentetik VEYA Hayvansal kolajen hidrolizi",
+            description = "Lezzet artırıcı ve tatlandırıcı amino asit. Sentetik üretilebildiği gibi hayvansal kolajenden de elde edilebilir.",
+            alternateNames = listOf("Glycine", "Sodium Glycinate"),
+            commonUsage = "Hazır çorbalar, işlenmiş etler, atıştırmalıklar, tatlandırıcı karışımlar"
         )
     )
 }

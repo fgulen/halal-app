@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -262,9 +261,11 @@ fun MainHalalScreen(
                                             AppLanguage.AR -> "ابحث عن نوتيلا، هاريبو أو باركود..."
                                             AppLanguage.EN -> "Type Nutella, Haribo or barcode..."
                                         },
-                                        fontSize = 14.sp,
+                                        fontSize = 13.sp,
                                         fontWeight = FontWeight.Normal,
-                                        color = NaturalSearchPlaceholder
+                                        color = NaturalSearchPlaceholder,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 },
                                 singleLine = true,
@@ -622,7 +623,6 @@ fun NaturalAppHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .statusBarsPadding()
             .padding(horizontal = 24.dp, vertical = 18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -705,7 +705,7 @@ fun NaturalHeroScanButton(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 14.dp, bottom = 28.dp),
+            .padding(top = 14.dp, bottom = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -751,25 +751,6 @@ fun NaturalHeroScanButton(
                     )
                 }
             }
-        }
-
-        // Floating Pill Badge
-        Surface(
-            shape = CircleShape,
-            color = Color.White,
-            border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreenBorder),
-            shadowElevation = 6.dp,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .offset(y = 12.dp)
-        ) {
-            Text(
-                text = AppStrings.getScanSubtitle(language),
-                color = EmeraldPrimaryDark,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-            )
         }
     }
 }

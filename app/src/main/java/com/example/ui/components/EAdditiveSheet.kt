@@ -286,7 +286,10 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = item.code,
                         fontSize = 15.sp,
@@ -302,9 +305,13 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                         text = item.name,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = NaturalTextDark
+                        color = NaturalTextDark,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
                 }
+                Spacer(modifier = Modifier.width(8.dp))
                 HalalStatusBadge(status = item.status, language = language, fontSize = 10.sp, paddingHorizontal = 8.dp, paddingVertical = 2.dp)
             }
 
