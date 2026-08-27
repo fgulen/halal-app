@@ -361,16 +361,22 @@ object HalalAnalyzer {
         )
     }
 
-    private val keywordPatternCache = mutableMapOf<String, Regex>()
-
     // Word-boundary match instead of plain substring: a short keyword like "rum" or "vin"
     // must not fire on "sérum" (whey) or "vinegar" just because it appears inside the word.
-    // (?U) makes \b Unicode-aware so accented letters (é, è...) count as word characters too.
+    // Checked manually via Char.isLetterOrDigit (Unicode-aware on both JVM and Android) rather
+    // than a regex "(?U)\b" flag, which Android's ICU-based regex engine doesn't support and
+    // throws PatternSyntaxException on at runtime.
     private fun containsKeyword(text: String, keyword: String): Boolean {
-        val pattern = keywordPatternCache.getOrPut(keyword) {
-            Regex("(?U)\\b" + Regex.escape(keyword) + "\\b")
+        var fromIndex = 0
+        while (true) {
+            val idx = text.indexOf(keyword, fromIndex)
+            if (idx == -1) return false
+            val beforeIsBoundary = idx == 0 || !text[idx - 1].isLetterOrDigit()
+            val afterIndex = idx + keyword.length
+            val afterIsBoundary = afterIndex >= text.length || !text[afterIndex].isLetterOrDigit()
+            if (beforeIsBoundary && afterIsBoundary) return true
+            fromIndex = idx + 1
         }
-        return pattern.containsMatchIn(text)
     }
 
     fun classifyIngredientToken(token: String): HalalStatus {
