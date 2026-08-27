@@ -72,14 +72,13 @@ class OpenFoodFactsApi(
 
         val primaryCandidate = barcodeCandidates.first()
         val urlsToTry = buildList {
-            // v2 API endpoints
             for (candidate in barcodeCandidates) {
                 add("https://world.openfoodfacts.org/api/v2/product/$candidate.json")
                 add("https://world.openfoodfacts.org/api/v0/product/$candidate.json")
-                add("https://de.openfoodfacts.org/api/v2/product/$candidate.json")
-                add("https://fr.openfoodfacts.org/api/v2/product/$candidate.json")
-                add("https://tr.openfoodfacts.org/api/v2/product/$candidate.json")
-                add("https://us.openfoodfacts.org/api/v2/product/$candidate.json")
+                add("https://tr.openfoodfacts.org/api/v0/product/$candidate.json")
+                add("https://de.openfoodfacts.org/api/v0/product/$candidate.json")
+                add("https://fr.openfoodfacts.org/api/v0/product/$candidate.json")
+                add("https://us.openfoodfacts.org/api/v0/product/$candidate.json")
                 add("https://world.openbeautyfacts.org/api/v2/product/$candidate.json")
             }
         }
@@ -99,7 +98,7 @@ class OpenFoodFactsApi(
                         if (!bodyString.isNullOrBlank()) {
                             val json = JSONObject(bodyString)
                             val parsed = parseOffResponse(json, primaryCandidate)
-                            if (parsed != null && (parsed.status == 1 || parsed.product != null)) {
+                            if (parsed != null && (parsed.status == 1 || parsed.product != null) && !parsed.product?.productName.isNullOrBlank()) {
                                 return@withContext parsed
                             }
                         }
@@ -110,15 +109,17 @@ class OpenFoodFactsApi(
             }
         }
 
-        // Fallback: search by barcode term using search v2 API
-        try {
-            val searchResults = searchProductsByName(targetBarcode)
-            if (searchResults.isNotEmpty()) {
-                val (code, product) = searchResults.first()
-                return@withContext OffResponse(status = 1, statusVerbose = "found via search", code = code, product = product)
+        // Fallback: search by barcode term using search v2 API only if it actually matches
+        if (targetBarcode.length >= 4) {
+            try {
+                val searchResults = searchProductsByName(targetBarcode)
+                val exactMatch = searchResults.firstOrNull { it.first == targetBarcode || it.first == primaryCandidate }
+                if (exactMatch != null) {
+                    return@withContext OffResponse(status = 1, statusVerbose = "found via search", code = exactMatch.first, product = exactMatch.second)
+                }
+            } catch (_: Exception) {
+                // fall through
             }
-        } catch (_: Exception) {
-            // fall through
         }
 
         OffResponse(status = 0, statusVerbose = "product not found", code = targetBarcode, product = null)
@@ -131,9 +132,9 @@ class OpenFoodFactsApi(
         val results = mutableListOf<Pair<String, OffProduct>>()
         val encodedQuery = java.net.URLEncoder.encode(cleanedQuery, "UTF-8")
         val searchUrls = listOf(
-            "https://world.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=10&fields=code,_id,product_name,product_name_en,product_name_de,product_name_fr,product_name_tr,product_name_ar,brands,categories,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_tr,ingredients_text_ar,additives_tags,ingredients_analysis_tags,image_front_url,image_url,image_front_small_url,image_small_url,selected_images",
-            "https://de.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=8",
-            "https://tr.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=8"
+            "https://world.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=15&fields=code,_id,product_name,product_name_en,product_name_de,product_name_fr,product_name_tr,product_name_ar,brands,categories,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_tr,ingredients_text_ar,additives_tags,ingredients_analysis_tags,image_front_url,image_url,image_front_small_url,image_small_url,selected_images,images",
+            "https://de.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=10",
+            "https://tr.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=10"
         )
 
         for (searchUrl in searchUrls) {
@@ -152,12 +153,27 @@ class OpenFoodFactsApi(
                             val json = JSONObject(bodyString)
                             val productsArray = json.optJSONArray("products")
                             if (productsArray != null) {
+                                val queryLower = cleanedQuery.lowercase()
+                                val isNumericQuery = cleanedQuery.all { it.isDigit() }
                                 for (i in 0 until productsArray.length()) {
                                     val prodJson = productsArray.optJSONObject(i) ?: continue
                                     val code = prodJson.optString("code", prodJson.optString("_id", ""))
                                     val offProd = parseOffProduct(prodJson)
-                                    if (code.isNotBlank() && offProd != null && results.none { it.first == code }) {
-                                        results.add(Pair(code, offProd))
+                                    if (code.isNotBlank() && offProd != null && !offProd.productName.isNullOrBlank() && results.none { it.first == code }) {
+                                        val pName = (offProd.productName ?: "").lowercase()
+                                        val pBrand = (offProd.brands ?: "").lowercase()
+                                        val pCat = (offProd.categories ?: "").lowercase()
+                                        
+                                        // Verify relevance
+                                        if (isNumericQuery) {
+                                            if (code.contains(cleanedQuery)) {
+                                                results.add(Pair(code, offProd))
+                                            }
+                                        } else {
+                                            if (pName.contains(queryLower) || pBrand.contains(queryLower) || pCat.contains(queryLower) || queryLower.contains(pName) || pName.split(" ").any { queryLower.contains(it) && it.length >= 3 }) {
+                                                results.add(Pair(code, offProd))
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -270,9 +286,26 @@ class OpenFoodFactsApi(
                 }
             }
 
-            // 3. Fallback to Open Food Facts CDN split barcode path
+            // 3. Inspect 'images' dictionary
+            val imagesObj = json.optJSONObject("images")
+            if (imagesObj != null) {
+                val frontKeys = listOf("front_tr", "front_en", "front_de", "front_fr", "front_ar", "front", "front_es", "1")
+                for (key in frontKeys) {
+                    val imgObj = imagesObj.optJSONObject(key)
+                    if (imgObj != null) {
+                        val sizes = imgObj.optJSONObject("sizes")
+                        if (sizes != null) {
+                            val size400 = sizes.optJSONObject("400") ?: sizes.optJSONObject("full") ?: sizes.optJSONObject("display") ?: sizes.optJSONObject("200")
+                            val u = cleanUrl(size400?.optString("url")?.takeIf { it.isNotBlank() })
+                            if (!u.isNullOrBlank()) return u
+                        }
+                    }
+                }
+            }
+
+            // 4. Fallback to Open Food Facts CDN split barcode path only if 'images' has at least one key
             val rawCode = json.optString("code").takeIf { it.isNotBlank() }
-            if (!rawCode.isNullOrBlank()) {
+            if (!rawCode.isNullOrBlank() && imagesObj != null && imagesObj.length() > 0) {
                 val digits = rawCode.trim().filter { it.isDigit() }
                 if (digits.isNotEmpty()) {
                     return if (digits.length <= 8) {

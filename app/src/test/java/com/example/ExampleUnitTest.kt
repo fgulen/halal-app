@@ -44,26 +44,20 @@ class ExampleUnitTest {
   }
 
   @Test
-  fun testLiveOpenFoodFactsBarcodes() {
-    val api = OpenFoodFactsApi.create()
-
-    val testBarcodes = listOf(
-      "3017620422003", // Nutella 400g FR
-      "4008400404127", // Nutella DE
-      "4001686301265", // Haribo Goldbären
-      "5449000000996", // Coca-Cola Original 330ml
-      "7622210449283", // Milka Daim
-      "5000159461122", // Skittles
-      "5410126006957", // Lotus Biscoff
-      "5000159407236", // Mars
-      "8715700421384"  // Heinz
-    )
-
-    for (code in testBarcodes) {
-      val resp = kotlinx.coroutines.runBlocking {
-        api.getProductByBarcode(code)
+  fun testRawEndpoints() {
+    val client = OkHttpClient.Builder().build()
+    val testCodes = listOf("8690504018040", "8000500003787", "8000500009659", "7622210019783", "9002490100070", "044000032029")
+    for (code in testCodes) {
+      val url = "https://world.openfoodfacts.org/api/v2/product/$code.json"
+      val req = Request.Builder().url(url).header("User-Agent", "HalalCheckerApp/1.0").build()
+      client.newCall(req).execute().use { resp ->
+        val body = resp.body?.string() ?: ""
+        val json = if (body.startsWith("{")) JSONObject(body) else JSONObject()
+        val status = json.opt("status")
+        val prod = json.optJSONObject("product")
+        val name = prod?.optString("product_name") ?: prod?.optString("product_name_en") ?: prod?.optString("product_name_fr")
+        println("RAW_CHECK: code=$code http=${resp.code} status=$status name=$name")
       }
-      println("API_TEST: code=$code status=${resp.status} name=${resp.product?.productName} img=${resp.product?.imageUrl}")
     }
   }
 }

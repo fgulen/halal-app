@@ -388,20 +388,6 @@ object HalalAnalyzer {
             }
         }
 
-        // Construct standard Open Food Facts CDN URL as fallback for standard GTIN/EAN barcodes
-        val cleanedBarcode = barcode.trim().filter { it.isDigit() }
-        return when {
-            cleanedBarcode.length > 8 -> {
-                val p1 = cleanedBarcode.take(3)
-                val p2 = cleanedBarcode.drop(3).take(3)
-                val p3 = cleanedBarcode.drop(6).take(3)
-                val p4 = cleanedBarcode.drop(9)
-                "https://images.openfoodfacts.org/images/products/$p1/$p2/$p3/$p4/1.400.jpg"
-            }
-            cleanedBarcode.length in 1..8 -> {
-                "https://images.openfoodfacts.org/images/products/$cleanedBarcode/1.400.jpg"
-            }
-            else -> null
-        }
+        return null
     }
 }
