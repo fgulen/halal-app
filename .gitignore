@@ -16,3 +16,7 @@
 local.properties
 .env
 debug.keystore
+*.jks
+*.keystore
+keystore.properties
+RELEASE_KEYSTORE_INFO.txt
