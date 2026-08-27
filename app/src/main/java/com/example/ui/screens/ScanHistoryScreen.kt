@@ -77,6 +77,7 @@ import com.example.ui.theme.HaramRedBadge
 import com.example.ui.theme.HaramRedBg
 import com.example.ui.theme.HaramRedBorder
 import com.example.ui.theme.HaramRedDark
+import com.example.ui.theme.NaturalSearchPlaceholder
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextLight
 import com.example.ui.theme.NaturalTextMuted
@@ -277,18 +278,24 @@ fun ScanHistoryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("history_search_input"),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    color = NaturalTextDark,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                ),
                 placeholder = {
                     Text(
-                        AppStrings.getSearchPlaceholder(language),
-                        fontSize = 13.sp,
-                        color = NaturalTextLight
+                        text = AppStrings.getSearchPlaceholder(language),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = NaturalSearchPlaceholder
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        tint = NaturalTextMuted,
+                        tint = EmeraldPrimary,
                         modifier = Modifier.size(20.dp)
                     )
                 },
@@ -298,7 +305,7 @@ fun ScanHistoryScreen(
                             Icon(
                                 imageVector = Icons.Default.Clear,
                                 contentDescription = "Clear",
-                                tint = NaturalTextMuted,
+                                tint = NaturalTextDark,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -307,10 +314,15 @@ fun ScanHistoryScreen(
                 singleLine = true,
                 shape = CircleShape,
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = NaturalTextDark,
+                    unfocusedTextColor = NaturalTextDark,
+                    focusedPlaceholderColor = NaturalSearchPlaceholder,
+                    unfocusedPlaceholderColor = NaturalSearchPlaceholder,
                     focusedContainerColor = NaturalWarmSurface,
                     unfocusedContainerColor = NaturalWarmSurface,
                     focusedBorderColor = EmeraldPrimary,
-                    unfocusedBorderColor = NaturalWarmBorder
+                    unfocusedBorderColor = NaturalWarmBorder,
+                    cursorColor = EmeraldPrimary
                 )
             )
 
