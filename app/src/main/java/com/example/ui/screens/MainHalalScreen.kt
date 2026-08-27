@@ -107,6 +107,7 @@ import com.example.ui.theme.HaramRedBadge
 import com.example.ui.theme.HaramRedBg
 import com.example.ui.theme.HaramRedBorder
 import com.example.ui.theme.HaramRedDark
+import com.example.ui.theme.NaturalSearchPlaceholder
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextLight
 import com.example.ui.theme.NaturalTextMuted
@@ -247,6 +248,11 @@ fun MainHalalScreen(
                                 modifier = Modifier
                                     .weight(1f)
                                     .testTag("home_search_input"),
+                                textStyle = androidx.compose.ui.text.TextStyle(
+                                    color = NaturalTextDark,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium
+                                ),
                                 placeholder = {
                                     Text(
                                         text = when (language) {
@@ -256,12 +262,19 @@ fun MainHalalScreen(
                                             AppLanguage.AR -> "ابحث عن نوتيلا، هاريبو أو باركود..."
                                             AppLanguage.EN -> "Type Nutella, Haribo or barcode..."
                                         },
-                                        fontSize = 13.sp,
-                                        color = NaturalTextMuted
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = NaturalSearchPlaceholder
                                     )
                                 },
                                 singleLine = true,
                                 colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = NaturalTextDark,
+                                    unfocusedTextColor = NaturalTextDark,
+                                    focusedPlaceholderColor = NaturalSearchPlaceholder,
+                                    unfocusedPlaceholderColor = NaturalSearchPlaceholder,
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
                                     focusedBorderColor = Color.Transparent,
                                     unfocusedBorderColor = Color.Transparent,
                                     cursorColor = EmeraldPrimary

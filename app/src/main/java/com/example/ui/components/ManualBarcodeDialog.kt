@@ -52,6 +52,7 @@ import com.example.data.local.InitialData
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.ui.theme.EmeraldPrimary
+import com.example.ui.theme.NaturalSearchPlaceholder
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextMuted
 import com.example.ui.theme.NaturalWarmBg
@@ -123,7 +124,25 @@ fun ManualBarcodeDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("manual_barcode_text_field"),
-                placeholder = { Text("e.g. 4008400404127 or Nutella", color = NaturalTextMuted) },
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    color = NaturalTextDark,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium
+                ),
+                placeholder = {
+                    Text(
+                        text = when (language) {
+                            AppLanguage.TR -> "örn. 8690504018040 veya Nutella..."
+                            AppLanguage.DE -> "z.B. 4008400404127 oder Nutella..."
+                            AppLanguage.FR -> "ex. 4008400404127 ou Nutella..."
+                            AppLanguage.AR -> "مثل 4008400404127 أو نوتيلا..."
+                            AppLanguage.EN -> "e.g. 4008400404127 or Nutella..."
+                        },
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = NaturalSearchPlaceholder
+                    )
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.QrCode,
@@ -146,11 +165,16 @@ fun ManualBarcodeDialog(
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = NaturalTextDark,
+                    unfocusedTextColor = NaturalTextDark,
+                    focusedPlaceholderColor = NaturalSearchPlaceholder,
+                    unfocusedPlaceholderColor = NaturalSearchPlaceholder,
                     focusedBorderColor = EmeraldPrimary,
                     focusedLabelColor = EmeraldPrimary,
                     unfocusedContainerColor = NaturalWarmSurface,
                     focusedContainerColor = NaturalWarmSurface,
-                    unfocusedBorderColor = NaturalWarmBorder
+                    unfocusedBorderColor = NaturalWarmBorder,
+                    cursorColor = EmeraldPrimary
                 )
             )
 

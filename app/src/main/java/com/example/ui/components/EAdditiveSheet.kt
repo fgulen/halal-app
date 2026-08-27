@@ -56,6 +56,7 @@ import com.example.ui.theme.HaramRed
 import com.example.ui.theme.HaramRedBg
 import com.example.ui.theme.HaramRedBorder
 import com.example.ui.theme.HaramRedDark
+import com.example.ui.theme.NaturalSearchPlaceholder
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextMuted
 import com.example.ui.theme.NaturalWarmBg
@@ -146,6 +147,11 @@ fun EAdditiveSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("e_additive_search_input"),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    color = NaturalTextDark,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                ),
                 placeholder = {
                     Text(
                         text = when (language) {
@@ -155,7 +161,8 @@ fun EAdditiveSheet(
                             AppLanguage.TR -> "E471, Jelatin, Karmin, E120, Şellak ara..."
                             AppLanguage.AR -> "ابحث عن E471، جيلاتين، كارمين..."
                         },
-                        color = NaturalTextMuted,
+                        color = NaturalSearchPlaceholder,
+                        fontWeight = FontWeight.Normal,
                         fontSize = 13.sp
                     )
                 },
@@ -165,11 +172,16 @@ fun EAdditiveSheet(
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = NaturalTextDark,
+                    unfocusedTextColor = NaturalTextDark,
+                    focusedPlaceholderColor = NaturalSearchPlaceholder,
+                    unfocusedPlaceholderColor = NaturalSearchPlaceholder,
                     focusedBorderColor = EmeraldPrimary,
                     focusedLabelColor = EmeraldPrimary,
                     unfocusedContainerColor = NaturalWarmSurface,
                     focusedContainerColor = NaturalWarmSurface,
-                    unfocusedBorderColor = NaturalWarmBorder
+                    unfocusedBorderColor = NaturalWarmBorder,
+                    cursorColor = EmeraldPrimary
                 )
             )
 

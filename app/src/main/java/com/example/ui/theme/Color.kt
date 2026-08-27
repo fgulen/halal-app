@@ -9,8 +9,9 @@ val NaturalWarmSurfaceVariant = Color(0xFFF5EFEA)
 val NaturalWarmBorder = Color(0xFFEFE8E1)
 
 val NaturalTextDark = Color(0xFF1D1B1E)
-val NaturalTextMuted = Color(0xFF6B7280)
-val NaturalTextLight = Color(0xFF9CA3AF)
+val NaturalTextMuted = Color(0xFF4B5563) // Crisp readable charcoal-gray
+val NaturalTextLight = Color(0xFF6B7280)
+val NaturalSearchPlaceholder = Color(0xFF4B5563)
 
 // Emerald Tones
 val EmeraldPrimary = Color(0xFF059669)
