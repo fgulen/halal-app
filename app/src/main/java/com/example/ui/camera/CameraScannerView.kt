@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -159,6 +160,7 @@ fun CameraScannerView(
                                 imageAnalysis
                             )
                         } catch (e: Exception) {
+                            Log.e("CameraScannerView", "Failed to bind camera", e)
                             hasCameraError = true
                         }
                     }, ContextCompat.getMainExecutor(ctx))
@@ -169,6 +171,31 @@ fun CameraScannerView(
                     // Update lens if changed
                 }
             )
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Kameraya erişilemedi",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Kamera izni verilmemiş veya kamera başka bir uygulama tarafından kullanılıyor olabilir. Lütfen izinleri kontrol edip tekrar deneyin.",
+                    color = Color.White.copy(alpha = 0.75f),
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onOpenManualEntry) {
+                    Text("Barkodu Elle Gir")
+                }
+            }
         }
 
         // Viewfinder Scanner Reticle Overlay

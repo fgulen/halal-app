@@ -1,5 +1,6 @@
 package com.example.data.remote
 
+import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -7,6 +8,8 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
+private const val TAG = "OpenFoodFactsApi"
 
 data class OffProduct(
     val productName: String? = null,
@@ -71,17 +74,20 @@ class OpenFoodFactsApi(
         }.distinct()
 
         val primaryCandidate = barcodeCandidates.first()
+        // world.openfoodfacts.org serves the same shared database as the country subdomains
+        // (tr/de/fr/us), so querying those separately never finds anything "world" didn't.
         val urlsToTry = buildList {
             for (candidate in barcodeCandidates) {
                 add("https://world.openfoodfacts.org/api/v2/product/$candidate.json")
                 add("https://world.openfoodfacts.org/api/v0/product/$candidate.json")
-                add("https://tr.openfoodfacts.org/api/v0/product/$candidate.json")
-                add("https://de.openfoodfacts.org/api/v0/product/$candidate.json")
-                add("https://fr.openfoodfacts.org/api/v0/product/$candidate.json")
-                add("https://us.openfoodfacts.org/api/v0/product/$candidate.json")
                 add("https://world.openbeautyfacts.org/api/v2/product/$candidate.json")
             }
         }
+
+        // Tracks whether we ever got a real HTTP response, vs. every attempt throwing
+        // (DNS failure, no connection, timeout). Used to tell "no internet" apart from
+        // "OFF genuinely has nothing for this barcode" in the final response below.
+        var reachedServerAtLeastOnce = false
 
         for (url in urlsToTry) {
             try {
@@ -93,18 +99,33 @@ class OpenFoodFactsApi(
                     .build()
 
                 client.newCall(request).execute().use { response ->
+                    reachedServerAtLeastOnce = true
+                    Log.d(TAG, "GET $url -> HTTP ${response.code}")
                     if (response.isSuccessful) {
                         val bodyString = response.body?.string()
                         if (!bodyString.isNullOrBlank()) {
                             val json = JSONObject(bodyString)
                             val parsed = parseOffResponse(json, primaryCandidate)
-                            if (parsed != null && (parsed.status == 1 || parsed.product != null) && !parsed.product?.productName.isNullOrBlank()) {
+                            val product = parsed?.product
+                            // Accept the product as soon as OFF has ANY usable data for it.
+                            // Requiring a non-blank product_name rejected real entries that only
+                            // have brand/ingredients/image data filled in, sending them into the
+                            // "not found" path with no image and no ingredients.
+                            val hasUsableData = product != null && (
+                                !product.productName.isNullOrBlank() ||
+                                !product.brands.isNullOrBlank() ||
+                                !product.ingredientsText.isNullOrBlank() ||
+                                !product.imageUrl.isNullOrBlank()
+                            )
+                            if (parsed != null && hasUsableData) {
+                                Log.d(TAG, "Matched barcode=$primaryCandidate name=${product?.productName} image=${product?.imageUrl}")
                                 return@withContext parsed
                             }
                         }
                     }
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.w(TAG, "Request failed for $url: ${e.message}")
                 // try next
             }
         }
@@ -117,12 +138,14 @@ class OpenFoodFactsApi(
                 if (exactMatch != null) {
                     return@withContext OffResponse(status = 1, statusVerbose = "found via search", code = exactMatch.first, product = exactMatch.second)
                 }
-            } catch (_: Exception) {
-                // fall through
+            } catch (e: Exception) {
+                Log.w(TAG, "Search fallback failed: ${e.message}")
             }
         }
 
-        OffResponse(status = 0, statusVerbose = "product not found", code = targetBarcode, product = null)
+        val verbose = if (reachedServerAtLeastOnce) "product not found" else "network error"
+        Log.w(TAG, "Barcode $targetBarcode not found on Open Food Facts after ${urlsToTry.size} attempts ($verbose)")
+        OffResponse(status = 0, statusVerbose = verbose, code = targetBarcode, product = null)
     }
 
     suspend fun searchProductsByName(query: String): List<Pair<String, OffProduct>> = withContext(Dispatchers.IO) {
@@ -131,10 +154,11 @@ class OpenFoodFactsApi(
 
         val results = mutableListOf<Pair<String, OffProduct>>()
         val encodedQuery = java.net.URLEncoder.encode(cleanedQuery, "UTF-8")
+        // de/tr subdomains share the same underlying database as world and were dropped here
+        // for the same reason as getProductByBarcode: they can't find anything world can't,
+        // and their search endpoint doesn't request the same `fields`, so results were inconsistent.
         val searchUrls = listOf(
-            "https://world.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=15&fields=code,_id,product_name,product_name_en,product_name_de,product_name_fr,product_name_tr,product_name_ar,brands,categories,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_tr,ingredients_text_ar,additives_tags,ingredients_analysis_tags,image_front_url,image_url,image_front_small_url,image_small_url,selected_images,images",
-            "https://de.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=10",
-            "https://tr.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=10"
+            "https://world.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=15&fields=code,_id,product_name,product_name_en,product_name_de,product_name_fr,product_name_tr,product_name_ar,brands,categories,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_tr,ingredients_text_ar,additives_tags,ingredients_analysis_tags,image_front_url,image_url,image_front_small_url,image_small_url,selected_images,images"
         )
 
         for (searchUrl in searchUrls) {
@@ -181,8 +205,8 @@ class OpenFoodFactsApi(
                     }
                 }
                 if (results.isNotEmpty()) break
-            } catch (_: Exception) {
-                // try next
+            } catch (e: Exception) {
+                Log.w(TAG, "Search request failed for $searchUrl: ${e.message}")
             }
         }
 
@@ -219,8 +243,14 @@ class OpenFoodFactsApi(
             ?: json.optString("product_name_fr").takeIf { it.isNotBlank() }
             ?: json.optString("generic_name").takeIf { it.isNotBlank() }
 
-        // If completely empty JSON object, return null
-        if (name.isNullOrBlank() && !json.has("ingredients_text") && !json.has("brands")) {
+        // Reject only truly empty entries; keep products whose name is missing but that still
+        // carry brand, ingredients, or an image (common for partially-filled OFF entries).
+        val hasAnyUsableField = !name.isNullOrBlank() ||
+            json.optString("ingredients_text").isNotBlank() ||
+            json.optString("brands").isNotBlank() ||
+            json.optString("image_front_url").isNotBlank() ||
+            json.optString("image_url").isNotBlank()
+        if (!hasAnyUsableField) {
             return null
         }
 
@@ -360,8 +390,8 @@ class OpenFoodFactsApi(
             return OkHttpClient.Builder()
                 .followRedirects(true)
                 .followSslRedirects(true)
-                .connectTimeout(12, TimeUnit.SECONDS)
-                .readTimeout(12, TimeUnit.SECONDS)
+                .connectTimeout(6, TimeUnit.SECONDS)
+                .readTimeout(6, TimeUnit.SECONDS)
                 .build()
         }
 

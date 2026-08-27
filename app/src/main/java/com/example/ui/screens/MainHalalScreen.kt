@@ -55,6 +55,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -142,12 +143,23 @@ fun MainHalalScreen(
     val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
     var selectedBottomNavIndex by remember { mutableIntStateOf(0) }
 
+    // Opening the scanner immediately after launchPermissionRequest() raced the async
+    // permission dialog and mounted the camera before permission was actually granted,
+    // which failed and showed a broken/black preview. Wait for the granted state instead.
+    var scannerOpenPending by remember { mutableStateOf(false) }
+    LaunchedEffect(cameraPermissionState.status.isGranted) {
+        if (scannerOpenPending && cameraPermissionState.status.isGranted) {
+            scannerOpenPending = false
+            viewModel.openScanner()
+        }
+    }
+
     val onTriggerScanner = {
         if (cameraPermissionState.status.isGranted) {
             viewModel.openScanner()
         } else {
+            scannerOpenPending = true
             cameraPermissionState.launchPermissionRequest()
-            viewModel.openScanner()
         }
     }
 
@@ -522,46 +534,66 @@ fun MainHalalScreen(
 
     // Loading Dialog Indicator
     if (isLoading) {
-        Dialog(onDismissRequest = {}) {
+        Dialog(onDismissRequest = { viewModel.cancelScan() }) {
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 color = NaturalWarmSurface,
                 shadowElevation = 10.dp,
                 border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
             ) {
-                Row(
-                    modifier = Modifier.padding(24.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    CircularProgressIndicator(
-                        color = EmeraldPrimary,
-                        strokeWidth = 3.dp,
-                        modifier = Modifier.size(36.dp)
-                    )
-                    Column {
-                        Text(
-                            text = when (language) {
-                                AppLanguage.TR -> "Ürün Analiz Ediliyor..."
-                                AppLanguage.DE -> "Produkt wird analysiert..."
-                                AppLanguage.FR -> "Analyse du produit..."
-                                AppLanguage.AR -> "جاري تحليل المنتج..."
-                                AppLanguage.EN -> "Analyzing Product..."
-                            },
-                            fontWeight = FontWeight.Bold,
-                            color = NaturalTextDark,
-                            fontSize = 15.sp
+                Column {
+                    Row(
+                        modifier = Modifier.padding(24.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            color = EmeraldPrimary,
+                            strokeWidth = 3.dp,
+                            modifier = Modifier.size(36.dp)
                         )
+                        Column {
+                            Text(
+                                text = when (language) {
+                                    AppLanguage.TR -> "Ürün Analiz Ediliyor..."
+                                    AppLanguage.DE -> "Produkt wird analysiert..."
+                                    AppLanguage.FR -> "Analyse du produit..."
+                                    AppLanguage.AR -> "جاري تحليل المنتج..."
+                                    AppLanguage.EN -> "Analyzing Product..."
+                                },
+                                fontWeight = FontWeight.Bold,
+                                color = NaturalTextDark,
+                                fontSize = 15.sp
+                            )
+                            Text(
+                                text = when (language) {
+                                    AppLanguage.TR -> "Helal ve içerik kontrolü yapılıyor"
+                                    AppLanguage.DE -> "Halal-Zutaten werden geprüft"
+                                    AppLanguage.FR -> "Vérification des ingrédients"
+                                    AppLanguage.AR -> "فحص المكونات الحلال"
+                                    AppLanguage.EN -> "Verifying Halal compliance"
+                                },
+                                color = NaturalTextMuted,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                    androidx.compose.material3.TextButton(
+                        onClick = { viewModel.cancelScan() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                    ) {
                         Text(
                             text = when (language) {
-                                AppLanguage.TR -> "Helal ve içerik kontrolü yapılıyor"
-                                AppLanguage.DE -> "Halal-Zutaten werden geprüft"
-                                AppLanguage.FR -> "Vérification des ingrédients"
-                                AppLanguage.AR -> "فحص المكونات الحلال"
-                                AppLanguage.EN -> "Verifying Halal compliance"
+                                AppLanguage.TR -> "İptal"
+                                AppLanguage.DE -> "Abbrechen"
+                                AppLanguage.FR -> "Annuler"
+                                AppLanguage.AR -> "إلغاء"
+                                AppLanguage.EN -> "Cancel"
                             },
-                            color = NaturalTextMuted,
-                            fontSize = 12.sp
+                            fontSize = 13.sp,
+                            color = NaturalTextMuted
                         )
                     }
                 }

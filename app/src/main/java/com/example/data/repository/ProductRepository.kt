@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import android.util.Log
 import com.example.data.analyzer.HalalAnalyzer
 import com.example.data.local.InitialData
 import com.example.data.local.ProductDao
@@ -15,6 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+
+private const val TAG = "ProductRepository"
 
 class ProductRepository(
     private val productDao: ProductDao,
@@ -33,6 +36,7 @@ class ProductRepository(
             return@withContext createNotFoundProduct(query, language)
         }
 
+        var hadNetworkError = false
         val lowerQuery = query.lowercase()
 
         // 1. Direct Nutella / Ferrero intelligent matcher
@@ -106,12 +110,20 @@ class ProductRepository(
                         response.product,
                         language
                     )
+                    Log.d(TAG, "Resolved barcode=$digitsOnly name=${analyzedProduct.name} image=${analyzedProduct.imageUrl}")
                     productDao.insertProduct(analyzedProduct.toEntity())
                     recordScan(analyzedProduct)
                     return@withContext analyzedProduct
                 }
-            } catch (_: Exception) {
-                // fall through
+                // getProductByBarcode swallows its own request exceptions and reports the
+                // outcome via statusVerbose instead of throwing, so check it here rather
+                // than relying on the catch block below (which network failures never reach).
+                if (response.statusVerbose == "network error") {
+                    hadNetworkError = true
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Open Food Facts lookup failed for barcode=$digitsOnly: ${e.message}")
+                hadNetworkError = true
             }
         }
 
@@ -142,16 +154,17 @@ class ProductRepository(
                 recordScan(analyzedProduct)
                 return@withContext analyzedProduct
             }
-        } catch (_: Exception) {
-            // fall through
+        } catch (e: Exception) {
+            Log.w(TAG, "Open Food Facts name search failed for '$query': ${e.message}")
+            hadNetworkError = true
         }
 
-        val notFound = createNotFoundProduct(if (digitsOnly.isNotEmpty()) digitsOnly else query, language)
+        val notFound = createNotFoundProduct(if (digitsOnly.isNotEmpty()) digitsOnly else query, language, hadNetworkError)
         recordScan(notFound)
         notFound
     }
 
-    private fun createNotFoundProduct(barcode: String, language: AppLanguage): FoodProduct {
+    private fun createNotFoundProduct(barcode: String, language: AppLanguage, hadNetworkError: Boolean = false): FoodProduct {
         val name = when (language) {
             AppLanguage.EN -> "Unregistered Product"
             AppLanguage.DE -> "Nicht registriertes Produkt"
@@ -166,12 +179,22 @@ class ProductRepository(
             AppLanguage.TR -> "Bilinmeyen Marka"
             AppLanguage.AR -> "علامة غير معروفة"
         }
-        val reason = when (language) {
-            AppLanguage.EN -> "Barcode ($barcode) was not found in Open Food Facts (EU/US). Please check ingredients list on the packaging for E-additives."
-            AppLanguage.DE -> "Barcode ($barcode) wurde in Open Food Facts nicht gefunden. Bitte Zutatenliste auf der Packung prüfen."
-            AppLanguage.FR -> "Code-barres ($barcode) non trouvé dans Open Food Facts. Veuillez inspecter la liste des ingrédients sur l'emballage."
-            AppLanguage.TR -> "Bu barkod ($barcode) küresel veri tabanında bulunamadı. Lütfen paket üzerindeki içindekiler kısmını inceleyin."
-            AppLanguage.AR -> "لم يتم العثور على هذا الباركود ($barcode) في قاعدة البيانات. يرجى مراجعة المكونات على الغلاف."
+        val reason = if (hadNetworkError) {
+            when (language) {
+                AppLanguage.EN -> "Could not reach Open Food Facts ($barcode). Check your internet connection and try again."
+                AppLanguage.DE -> "Open Food Facts konnte nicht erreicht werden ($barcode). Bitte Internetverbindung prüfen und erneut versuchen."
+                AppLanguage.FR -> "Impossible de contacter Open Food Facts ($barcode). Vérifiez votre connexion internet et réessayez."
+                AppLanguage.TR -> "Open Food Facts sunucusuna ulaşılamadı ($barcode). İnternet bağlantınızı kontrol edip tekrar deneyin."
+                AppLanguage.AR -> "تعذر الوصول إلى Open Food Facts ($barcode). يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى."
+            }
+        } else {
+            when (language) {
+                AppLanguage.EN -> "Barcode ($barcode) was not found in Open Food Facts (EU/US). Please check ingredients list on the packaging for E-additives."
+                AppLanguage.DE -> "Barcode ($barcode) wurde in Open Food Facts nicht gefunden. Bitte Zutatenliste auf der Packung prüfen."
+                AppLanguage.FR -> "Code-barres ($barcode) non trouvé dans Open Food Facts. Veuillez inspecter la liste des ingrédients sur l'emballage."
+                AppLanguage.TR -> "Bu barkod ($barcode) küresel veri tabanında bulunamadı. Lütfen paket üzerindeki içindekiler kısmını inceleyin."
+                AppLanguage.AR -> "لم يتم العثور على هذا الباركود ($barcode) في قاعدة البيانات. يرجى مراجعة المكونات على الغلاف."
+            }
         }
         return FoodProduct(
             barcode = barcode,

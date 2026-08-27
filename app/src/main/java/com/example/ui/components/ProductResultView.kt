@@ -1026,7 +1026,11 @@ fun ProductShowcaseImageCard(
                             )
                         }
                     },
-                    error = {
+                    error = { errorState ->
+                        android.util.Log.w(
+                            "ProductShowcaseImage",
+                            "Failed to load image for '$productName' from $imageUrl: ${errorState.result.throwable.message}"
+                        )
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
@@ -1052,6 +1056,14 @@ fun ProductShowcaseImageCard(
                                 color = NaturalTextDark,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Görsel yüklenemedi: ${errorState.result.throwable.message ?: "bilinmeyen hata"}",
+                                fontSize = 9.sp,
+                                color = NaturalTextMuted,
+                                maxLines = 2,
+                                textAlign = TextAlign.Center
                             )
                         }
                     },

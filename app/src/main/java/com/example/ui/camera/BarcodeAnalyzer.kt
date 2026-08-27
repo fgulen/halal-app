@@ -1,6 +1,7 @@
 package com.example.ui.camera
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -40,8 +41,8 @@ class BarcodeAnalyzer(
                         }
                     }
                 }
-                .addOnFailureListener {
-                    // ignore error on frame
+                .addOnFailureListener { e ->
+                    Log.w("BarcodeAnalyzer", "Frame analysis failed: ${e.message}")
                 }
                 .addOnCompleteListener {
                     imageProxy.close()
