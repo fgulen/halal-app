@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.local.AppDatabase
+import com.example.data.local.UserPreferences
 import com.example.data.model.AppLanguage
+import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.data.repository.ProductRepository
@@ -14,12 +16,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class HalalScannerViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: ProductRepository
+    private val userPreferences = UserPreferences(application)
 
     private val _selectedLanguage = MutableStateFlow(AppLanguage.EN)
     val selectedLanguage: StateFlow<AppLanguage> = _selectedLanguage.asStateFlow()
@@ -53,6 +57,9 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
         viewModelScope.launch {
             repository.ensureDatabaseSeeded()
         }
+        viewModelScope.launch {
+            _selectedLanguage.value = userPreferences.selectedLanguage.first()
+        }
     }
 
     val scanHistory: StateFlow<List<FoodProduct>> = repository.getScanHistory()
@@ -64,6 +71,9 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     fun setLanguage(language: AppLanguage) {
         _selectedLanguage.value = language
+        viewModelScope.launch {
+            userPreferences.setSelectedLanguage(language)
+        }
     }
 
     fun openLanguageDialog() {
@@ -129,7 +139,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
                     halalCertificate = null,
                     harmfulOrSuspiciousIngredients = emptyList(),
                     allIngredients = emptyList(),
-                    reasonOrDetails = "Beklenmeyen bir hata oluştu: ${e.message}. Lütfen tekrar deneyin.",
+                    reasonOrDetails = AppStrings.getUnexpectedError(_selectedLanguage.value, e.message ?: AppStrings.getUnknownError(_selectedLanguage.value)),
                     alternatives = emptyList(),
                     imageUrl = null
                 )

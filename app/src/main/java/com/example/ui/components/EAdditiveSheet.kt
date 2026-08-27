@@ -132,7 +132,7 @@ fun EAdditiveSheet(
                 IconButton(onClick = onDismiss) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
+                        contentDescription = AppStrings.getClose(language),
                         tint = NaturalTextDark
                     )
                 }
@@ -305,13 +305,13 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                         color = NaturalTextDark
                     )
                 }
-                HalalStatusBadge(status = item.status, fontSize = 10.sp, paddingHorizontal = 8.dp, paddingVertical = 2.dp)
+                HalalStatusBadge(status = item.status, language = language, fontSize = 10.sp, paddingHorizontal = 8.dp, paddingVertical = 2.dp)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Kaynak: ${item.origin}",
+                text = "${AppStrings.getOriginLabel(language)}: ${item.origin}",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = EmeraldPrimaryDeep
@@ -330,7 +330,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(verticalAlignment = Alignment.Top) {
                     Text(
-                        text = "Alternatif İsimler: ",
+                        text = AppStrings.getAlternateNamesLabel(language),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = NaturalTextMuted
@@ -348,7 +348,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Kullanım Alanı: ${item.commonUsage}",
+                text = "${AppStrings.getCommonUsageLabel(language)}: ${item.commonUsage}",
                 fontSize = 11.sp,
                 color = NaturalTextMuted
             )

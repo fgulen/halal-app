@@ -279,6 +279,334 @@ object AppStrings {
         AppLanguage.AR -> "ابحث عن منتج، علامة تجارية أو باركود..."
     }
 
+    fun getOriginLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Source"
+        AppLanguage.DE -> "Herkunft"
+        AppLanguage.FR -> "Origine"
+        AppLanguage.TR -> "Kaynak"
+        AppLanguage.AR -> "المصدر"
+    }
+
+    fun getAlternateNamesLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Alternative Names: "
+        AppLanguage.DE -> "Alternative Namen: "
+        AppLanguage.FR -> "Noms alternatifs : "
+        AppLanguage.TR -> "Alternatif İsimler: "
+        AppLanguage.AR -> "أسماء بديلة: "
+    }
+
+    fun getCommonUsageLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Common Usage"
+        AppLanguage.DE -> "Verwendung"
+        AppLanguage.FR -> "Utilisation courante"
+        AppLanguage.TR -> "Kullanım Alanı"
+        AppLanguage.AR -> "الاستخدام الشائع"
+    }
+
+    fun getCameraPermissionError(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Camera unavailable"
+        AppLanguage.DE -> "Kamera nicht verfügbar"
+        AppLanguage.FR -> "Caméra indisponible"
+        AppLanguage.TR -> "Kameraya erişilemedi"
+        AppLanguage.AR -> "لا يمكن الوصول إلى الكاميرا"
+    }
+
+    fun getCameraPermissionErrorDetail(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Camera permission was not granted, or the camera may be in use by another app. Please check permissions and try again."
+        AppLanguage.DE -> "Kamerazugriff wurde nicht gewährt oder die Kamera wird von einer anderen App verwendet. Bitte Berechtigungen prüfen und erneut versuchen."
+        AppLanguage.FR -> "L'autorisation de la caméra n'a pas été accordée, ou la caméra est peut-être utilisée par une autre application. Veuillez vérifier les autorisations et réessayer."
+        AppLanguage.TR -> "Kamera izni verilmemiş veya kamera başka bir uygulama tarafından kullanılıyor olabilir. Lütfen izinleri kontrol edip tekrar deneyin."
+        AppLanguage.AR -> "لم يتم منح إذن الكاميرا، أو قد تكون الكاميرا قيد الاستخدام من قبل تطبيق آخر. يرجى التحقق من الأذونات والمحاولة مرة أخرى."
+    }
+
+    fun getBackButton(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Back"
+        AppLanguage.DE -> "Zurück"
+        AppLanguage.FR -> "Retour"
+        AppLanguage.TR -> "Geri Dön"
+        AppLanguage.AR -> "رجوع"
+    }
+
+    fun getBarcodeScannerTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Barcode Scanner"
+        AppLanguage.DE -> "Barcode-Scanner"
+        AppLanguage.FR -> "Scanner de code-barres"
+        AppLanguage.TR -> "Barkod Tarayıcı"
+        AppLanguage.AR -> "ماسح الباركود"
+    }
+
+    fun getFlash(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Flash"
+        AppLanguage.DE -> "Blitz"
+        AppLanguage.FR -> "Flash"
+        AppLanguage.TR -> "Flaş"
+        AppLanguage.AR -> "الفلاش"
+    }
+
+    fun getAlignBarcode(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Align the barcode within the frame"
+        AppLanguage.DE -> "Barcode im Rahmen ausrichten"
+        AppLanguage.FR -> "Alignez le code-barres dans le cadre"
+        AppLanguage.TR -> "Barkodu çerçevenin ortasına hizalayın"
+        AppLanguage.AR -> "قم بمحاذاة الباركود داخل الإطار"
+    }
+
+    fun getAutoScanHint(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "It will be scanned and looked up automatically"
+        AppLanguage.DE -> "Wird automatisch gescannt und nachgeschlagen"
+        AppLanguage.FR -> "Il sera scanné et recherché automatiquement"
+        AppLanguage.TR -> "Otomatik olarak taranıp veritabanından sorgulanacaktır"
+        AppLanguage.AR -> "سيتم مسحه والبحث عنه تلقائياً"
+    }
+
+    fun getEnterManually(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Enter Barcode Manually"
+        AppLanguage.DE -> "Barcode manuell eingeben"
+        AppLanguage.FR -> "Saisir le code-barres"
+        AppLanguage.TR -> "Barkodu Elle Gir"
+        AppLanguage.AR -> "إدخال الباركود يدوياً"
+    }
+
+    fun getShareSubjectPrefix(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Halal Food Check"
+        AppLanguage.DE -> "Halal Lebensmittelprüfung"
+        AppLanguage.FR -> "Contrôle alimentaire Halal"
+        AppLanguage.TR -> "Helal Gıda Kontrolü"
+        AppLanguage.AR -> "فحص الطعام الحلال"
+    }
+
+    fun getShareResultHeader(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Halal Food Check Result"
+        AppLanguage.DE -> "Ergebnis der Halal-Prüfung"
+        AppLanguage.FR -> "Résultat du contrôle Halal"
+        AppLanguage.TR -> "Helal Gıda Kontrol Sonucu"
+        AppLanguage.AR -> "نتيجة فحص الطعام الحلال"
+    }
+
+    fun getShareProductLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Product"
+        AppLanguage.DE -> "Produkt"
+        AppLanguage.FR -> "Produit"
+        AppLanguage.TR -> "Ürün"
+        AppLanguage.AR -> "المنتج"
+    }
+
+    fun getShareBarcodeLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Barcode"
+        AppLanguage.DE -> "Barcode"
+        AppLanguage.FR -> "Code-barres"
+        AppLanguage.TR -> "Barkod"
+        AppLanguage.AR -> "الباركود"
+    }
+
+    fun getShareStatusLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Status"
+        AppLanguage.DE -> "Status"
+        AppLanguage.FR -> "Statut"
+        AppLanguage.TR -> "Durum"
+        AppLanguage.AR -> "الحالة"
+    }
+
+    fun getShareFlaggedIngredientsLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Flagged/Suspicious Ingredients"
+        AppLanguage.DE -> "Bedenkliche/Zweifelhafte Inhaltsstoffe"
+        AppLanguage.FR -> "Ingrédients problématiques/douteux"
+        AppLanguage.TR -> "Sakıncalı/Şüpheli Maddeler"
+        AppLanguage.AR -> "مكونات محظورة/مشبوهة"
+    }
+
+    fun getShareChooserTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Share Result"
+        AppLanguage.DE -> "Ergebnis teilen"
+        AppLanguage.FR -> "Partager le résultat"
+        AppLanguage.TR -> "Sonucu Paylaş"
+        AppLanguage.AR -> "مشاركة النتيجة"
+    }
+
+    fun getImageLoadError(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Failed to load image"
+        AppLanguage.DE -> "Bild konnte nicht geladen werden"
+        AppLanguage.FR -> "Échec du chargement de l'image"
+        AppLanguage.TR -> "Görsel yüklenemedi"
+        AppLanguage.AR -> "فشل تحميل الصورة"
+    }
+
+    fun getUnknownError(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "unknown error"
+        AppLanguage.DE -> "unbekannter Fehler"
+        AppLanguage.FR -> "erreur inconnue"
+        AppLanguage.TR -> "bilinmeyen hata"
+        AppLanguage.AR -> "خطأ غير معروف"
+    }
+
+    fun getUnexpectedError(lang: AppLanguage, details: String): String = when (lang) {
+        AppLanguage.EN -> "An unexpected error occurred: $details. Please try again."
+        AppLanguage.DE -> "Ein unerwarteter Fehler ist aufgetreten: $details. Bitte versuchen Sie es erneut."
+        AppLanguage.FR -> "Une erreur inattendue s'est produite : $details. Veuillez réessayer."
+        AppLanguage.TR -> "Beklenmeyen bir hata oluştu: $details. Lütfen tekrar deneyin."
+        AppLanguage.AR -> "حدث خطأ غير متوقع: $details. يرجى المحاولة مرة أخرى."
+    }
+
+    fun getReasonLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Reason"
+        AppLanguage.DE -> "Grund"
+        AppLanguage.FR -> "Raison"
+        AppLanguage.TR -> "Sebep"
+        AppLanguage.AR -> "السبب"
+    }
+
+    fun getOnDeviceStorage(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "ON-DEVICE STORAGE"
+        AppLanguage.DE -> "LOKALER SPEICHER"
+        AppLanguage.FR -> "STOCKAGE LOCAL"
+        AppLanguage.TR -> "CİHAZ ÜZERİNDE SAKLAMA"
+        AppLanguage.AR -> "التخزين على الجهاز"
+    }
+
+    fun getItemsSuffix(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Items"
+        AppLanguage.DE -> "Einträge"
+        AppLanguage.FR -> "Éléments"
+        AppLanguage.TR -> "Öğe"
+        AppLanguage.AR -> "عناصر"
+    }
+
+    fun getChronologicalHistory(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "CHRONOLOGICAL HISTORY (NEWEST FIRST)"
+        AppLanguage.DE -> "CHRONOLOGISCHER VERLAUF (NEUESTE ZUERST)"
+        AppLanguage.FR -> "HISTORIQUE CHRONOLOGIQUE (PLUS RÉCENT D'ABORD)"
+        AppLanguage.TR -> "KRONOLOJİK GEÇMİŞ (EN YENİ ÖNCE)"
+        AppLanguage.AR -> "السجل الزمني (الأحدث أولاً)"
+    }
+
+    fun getFlaggedLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Flagged"
+        AppLanguage.DE -> "Markiert"
+        AppLanguage.FR -> "Signalé"
+        AppLanguage.TR -> "İşaretlenen"
+        AppLanguage.AR -> "تم الإبلاغ عنه"
+    }
+
+    fun getCertLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Cert"
+        AppLanguage.DE -> "Zertifikat"
+        AppLanguage.FR -> "Certif."
+        AppLanguage.TR -> "Sertifika"
+        AppLanguage.AR -> "شهادة"
+    }
+
+    fun getBarcodeNotFoundInOff(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Barcode not found in Open Food Facts."
+        AppLanguage.DE -> "Barcode nicht in Open Food Facts gefunden."
+        AppLanguage.FR -> "Code-barres introuvable dans Open Food Facts."
+        AppLanguage.TR -> "Barkod Open Food Facts'ta bulunamadı."
+        AppLanguage.AR -> "لم يتم العثور على الباركود في Open Food Facts."
+    }
+
+    fun getProhibitedLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Prohibited"
+        AppLanguage.DE -> "Verboten"
+        AppLanguage.FR -> "Interdit"
+        AppLanguage.TR -> "Yasaklı"
+        AppLanguage.AR -> "محظور"
+    }
+
+    fun getDoubtfulLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Doubtful"
+        AppLanguage.DE -> "Zweifelhaft"
+        AppLanguage.FR -> "Douteux"
+        AppLanguage.TR -> "Şüpheli"
+        AppLanguage.AR -> "مشبوه"
+    }
+
+    fun getCertificationLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Certification"
+        AppLanguage.DE -> "Zertifizierung"
+        AppLanguage.FR -> "Certification"
+        AppLanguage.TR -> "Sertifikasyon"
+        AppLanguage.AR -> "الشهادة"
+    }
+
+    fun getNoProhibitedAdditives(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "No prohibited additives. Safe and verified."
+        AppLanguage.DE -> "Keine verbotenen Zusatzstoffe. Sicher und geprüft."
+        AppLanguage.FR -> "Aucun additif interdit. Sûr et vérifié."
+        AppLanguage.TR -> "Yasaklı katkı maddesi yok. Güvenli ve doğrulanmış."
+        AppLanguage.AR -> "لا توجد إضافات محظورة. آمن وموثق."
+    }
+
+    fun getContainsNonHalalDerivatives(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Contains non-halal animal or alcohol derivatives."
+        AppLanguage.DE -> "Enthält nicht-halal tierische oder alkoholische Bestandteile."
+        AppLanguage.FR -> "Contient des dérivés animaux ou d'alcool non halal."
+        AppLanguage.TR -> "Helal olmayan hayvansal veya alkol türevleri içerir."
+        AppLanguage.AR -> "يحتوي على مشتقات حيوانية أو كحولية غير حلال."
+    }
+
+    fun getContainsUnverifiedAdditives(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Contains additives of unverified origin."
+        AppLanguage.DE -> "Enthält Zusatzstoffe mit unklarer Herkunft."
+        AppLanguage.FR -> "Contient des additifs d'origine non vérifiée."
+        AppLanguage.TR -> "Kaynağı doğrulanmamış katkı maddeleri içerir."
+        AppLanguage.AR -> "يحتوي على إضافات غير مؤكدة المصدر."
+    }
+
+    fun getClose(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Close"
+        AppLanguage.DE -> "Schließen"
+        AppLanguage.FR -> "Fermer"
+        AppLanguage.TR -> "Kapat"
+        AppLanguage.AR -> "إغلاق"
+    }
+
+    fun getSearch(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Search"
+        AppLanguage.DE -> "Suchen"
+        AppLanguage.FR -> "Rechercher"
+        AppLanguage.TR -> "Ara"
+        AppLanguage.AR -> "بحث"
+    }
+
+    fun getClear(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Clear"
+        AppLanguage.DE -> "Löschen"
+        AppLanguage.FR -> "Effacer"
+        AppLanguage.TR -> "Temizle"
+        AppLanguage.AR -> "مسح"
+    }
+
+    fun getClearAll(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Clear All"
+        AppLanguage.DE -> "Alle löschen"
+        AppLanguage.FR -> "Tout effacer"
+        AppLanguage.TR -> "Tümünü Temizle"
+        AppLanguage.AR -> "مسح الكل"
+    }
+
+    fun getSelected(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Selected"
+        AppLanguage.DE -> "Ausgewählt"
+        AppLanguage.FR -> "Sélectionné"
+        AppLanguage.TR -> "Seçili"
+        AppLanguage.AR -> "محدد"
+    }
+
+    fun getDetails(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Details"
+        AppLanguage.DE -> "Details"
+        AppLanguage.FR -> "Détails"
+        AppLanguage.TR -> "Detaylar"
+        AppLanguage.AR -> "التفاصيل"
+    }
+
+    fun getShare(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Share"
+        AppLanguage.DE -> "Teilen"
+        AppLanguage.FR -> "Partager"
+        AppLanguage.TR -> "Paylaş"
+        AppLanguage.AR -> "مشاركة"
+    }
+
     fun getLanguageSelection(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Select Language"
         AppLanguage.DE -> "Sprache wählen"

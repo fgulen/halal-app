@@ -129,7 +129,7 @@ fun ProductResultBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
+                        contentDescription = AppStrings.getClose(language),
                         tint = NaturalTextDark
                     )
                 }
@@ -185,7 +185,7 @@ fun ProductResultBottomSheet(
                         shape = CircleShape
                     ) {
                         Text(
-                            text = "Barkod: ${product.barcode}",
+                            text = "${AppStrings.getShareBarcodeLabel(language)}: ${product.barcode}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = NaturalTextMuted,
@@ -268,23 +268,23 @@ fun ProductResultBottomSheet(
                                 type = "text/plain"
                                 putExtra(
                                     Intent.EXTRA_SUBJECT,
-                                    "Helal Gıda Kontrolü: ${product.name}"
+                                    "${AppStrings.getShareSubjectPrefix(language)}: ${product.name}"
                                 )
                                 putExtra(
                                     Intent.EXTRA_TEXT,
-                                    "Helal Gıda Kontrol Sonucu:\n" +
-                                            "Ürün: ${product.name} (${product.brand})\n" +
-                                            "Barkod: ${product.barcode}\n" +
-                                            "Durum: ${AppStrings.getStatusLabel(product.status, language)}\n" +
-                                            "${if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) "Sakıncalı/Şüpheli Maddeler: " + product.harmfulOrSuspiciousIngredients.joinToString(", ") else ""}"
+                                    "${AppStrings.getShareResultHeader(language)}:\n" +
+                                            "${AppStrings.getShareProductLabel(language)}: ${product.name} (${product.brand})\n" +
+                                            "${AppStrings.getShareBarcodeLabel(language)}: ${product.barcode}\n" +
+                                            "${AppStrings.getShareStatusLabel(language)}: ${AppStrings.getStatusLabel(product.status, language)}\n" +
+                                            "${if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) AppStrings.getShareFlaggedIngredientsLabel(language) + ": " + product.harmfulOrSuspiciousIngredients.joinToString(", ") else ""}"
                                 )
                             }
-                            context.startActivity(Intent.createChooser(shareIntent, "Sonucu Paylaş"))
+                            context.startActivity(Intent.createChooser(shareIntent, AppStrings.getShareChooserTitle(language)))
                         },
                         modifier = Modifier.height(52.dp),
                         shape = CircleShape
                     ) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
+                        Icon(imageVector = Icons.Default.Share, contentDescription = AppStrings.getShare(language))
                     }
                 }
             }
@@ -566,7 +566,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                 // If flaggedDetails is available, display name + short reason
                 if (product.flaggedDetails.isNotEmpty()) {
                     product.flaggedDetails.forEach { flagged ->
-                        FlaggedProblematicItemCard(flagged = flagged, isHaram = true)
+                        FlaggedProblematicItemCard(flagged = flagged, isHaram = true, language = language)
                     }
                 } else if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
                     product.harmfulOrSuspiciousIngredients.forEach { itemText ->
@@ -707,7 +707,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
 
                 if (product.flaggedDetails.isNotEmpty()) {
                     product.flaggedDetails.forEach { flagged ->
-                        FlaggedProblematicItemCard(flagged = flagged, isHaram = false)
+                        FlaggedProblematicItemCard(flagged = flagged, isHaram = false, language = language)
                     }
                 } else {
                     product.harmfulOrSuspiciousIngredients.forEach { itemText ->
@@ -804,7 +804,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
 }
 
 @Composable
-fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean) {
+fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean, language: AppLanguage) {
     val borderColor = if (isHaram) HaramRedBorder else SuspiciousAmberBorder
     val titleColor = if (isHaram) HaramRedDark else SuspiciousAmberDark
     val dotColor = if (isHaram) HaramRed else SuspiciousAmber
@@ -846,7 +846,7 @@ fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean) {
 
             // Short reason shown beside / underneath the item
             Text(
-                text = "Sebep: " + flagged.reason,
+                text = "${AppStrings.getReasonLabel(language)}: " + flagged.reason,
                 color = NaturalTextDark.copy(alpha = 0.85f),
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
@@ -1083,7 +1083,7 @@ fun ProductShowcaseImageCard(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Görsel yüklenemedi: ${errorState.result.throwable.message ?: "bilinmeyen hata"}",
+                                text = "${AppStrings.getImageLoadError(language)}: ${errorState.result.throwable.message ?: AppStrings.getUnknownError(language)}",
                                 fontSize = 9.sp,
                                 color = NaturalTextMuted,
                                 maxLines = 2,

@@ -201,7 +201,7 @@ fun ScanHistoryScreen(
             ) {
                 Column {
                     Text(
-                        text = "ON-DEVICE STORAGE",
+                        text = AppStrings.getOnDeviceStorage(language),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldPrimaryDeep,
@@ -223,7 +223,7 @@ fun ScanHistoryScreen(
                             border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder)
                         ) {
                             Text(
-                                text = "${scanHistory.size} Items",
+                                text = "${scanHistory.size} ${AppStrings.getItemsSuffix(language)}",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldPrimaryDeep,
@@ -247,7 +247,7 @@ fun ScanHistoryScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.DeleteSweep,
-                                contentDescription = "Clear All",
+                                contentDescription = AppStrings.getClearAll(language),
                                 tint = HaramRed,
                                 modifier = Modifier.size(16.dp)
                             )
@@ -294,7 +294,7 @@ fun ScanHistoryScreen(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
+                        contentDescription = AppStrings.getSearch(language),
                         tint = EmeraldPrimary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -304,7 +304,7 @@ fun ScanHistoryScreen(
                         IconButton(onClick = { searchQuery = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear",
+                                contentDescription = AppStrings.getClear(language),
                                 tint = NaturalTextDark,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -461,7 +461,7 @@ fun ScanHistoryScreen(
             ) {
                 item {
                     Text(
-                        text = "CHRONOLOGICAL HISTORY (NEWEST FIRST)",
+                        text = AppStrings.getChronologicalHistory(language),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.2.sp,
@@ -603,6 +603,7 @@ fun HistoryProductCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     HalalStatusBadge(
                         status = product.status,
+                        language = language,
                         fontSize = 10.sp,
                         paddingHorizontal = 8.dp,
                         paddingVertical = 2.dp
@@ -635,7 +636,7 @@ fun HistoryProductCard(
                 if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Flagged: " + product.harmfulOrSuspiciousIngredients.first(),
+                        text = "${AppStrings.getFlaggedLabel(language)}: " + product.harmfulOrSuspiciousIngredients.first(),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = if (product.status == HalalStatus.HARAM) HaramRedDark else SuspiciousAmberDark,
@@ -645,7 +646,7 @@ fun HistoryProductCard(
                 } else if (!product.halalCertificate.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Cert: " + product.halalCertificate,
+                        text = "${AppStrings.getCertLabel(language)}: " + product.halalCertificate,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = HalalGreenDark,
@@ -659,7 +660,7 @@ fun HistoryProductCard(
 
             Icon(
                 imageVector = Icons.Default.ArrowForwardIos,
-                contentDescription = "Details",
+                contentDescription = AppStrings.getDetails(language),
                 tint = NaturalTextLight,
                 modifier = Modifier.size(14.dp)
             )

@@ -418,6 +418,7 @@ fun MainHalalScreen(
                                                 }
                                                 HalalStatusBadge(
                                                     status = match.status,
+                                                    language = language,
                                                     fontSize = 9.sp,
                                                     paddingHorizontal = 6.dp,
                                                     paddingVertical = 2.dp
@@ -496,6 +497,7 @@ fun MainHalalScreen(
     // Camera Scanner Overlay
     if (isScannerOpen) {
         CameraScannerView(
+            language = language,
             onBarcodeScanned = { barcode ->
                 viewModel.onBarcodeScanned(barcode)
             },
@@ -674,7 +676,7 @@ fun NaturalAppHeader(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.AutoStories,
-                        contentDescription = "E-Codes",
+                        contentDescription = AppStrings.getNavECodes(language),
                         tint = EmeraldPrimaryDeep,
                         modifier = Modifier.size(20.dp)
                     )
@@ -1074,6 +1076,7 @@ fun NaturalHistoryItemCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     HalalStatusBadge(
                         status = product.status,
+                        language = language,
                         fontSize = 10.sp,
                         paddingHorizontal = 8.dp,
                         paddingVertical = 2.dp
@@ -1086,9 +1089,9 @@ fun NaturalHistoryItemCard(
                     HalalStatus.HARAM -> {
                         Text(
                             text = if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
-                                "Prohibited: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
+                                "${AppStrings.getProhibitedLabel(language)}: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
                             } else {
-                                product.reasonOrDetails.ifBlank { "Contains non-halal animal or alcohol derivatives." }
+                                product.reasonOrDetails.ifBlank { AppStrings.getContainsNonHalalDerivatives(language) }
                             },
                             fontSize = 12.sp,
                             color = bodyTextColor,
@@ -1100,9 +1103,9 @@ fun NaturalHistoryItemCard(
                     HalalStatus.SUPHELI -> {
                         Text(
                             text = if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
-                                "Doubtful: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
+                                "${AppStrings.getDoubtfulLabel(language)}: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
                             } else {
-                                product.reasonOrDetails.ifBlank { "Contains additives of unverified origin." }
+                                product.reasonOrDetails.ifBlank { AppStrings.getContainsUnverifiedAdditives(language) }
                             },
                             fontSize = 12.sp,
                             color = bodyTextColor,
@@ -1113,8 +1116,8 @@ fun NaturalHistoryItemCard(
                     }
                     HalalStatus.HELAL -> {
                         Text(
-                            text = product.halalCertificate?.let { "Certification: $it" }
-                                ?: product.reasonOrDetails.ifBlank { "No prohibited additives. Safe and verified." },
+                            text = product.halalCertificate?.let { "${AppStrings.getCertificationLabel(language)}: $it" }
+                                ?: product.reasonOrDetails.ifBlank { AppStrings.getNoProhibitedAdditives(language) },
                             fontSize = 12.sp,
                             color = bodyTextColor,
                             lineHeight = 16.sp,
@@ -1124,7 +1127,7 @@ fun NaturalHistoryItemCard(
                     }
                     HalalStatus.BULUNAMADI -> {
                         Text(
-                            text = "Barcode not found in Open Food Facts.",
+                            text = AppStrings.getBarcodeNotFoundInOff(language),
                             fontSize = 12.sp,
                             color = bodyTextColor,
                             lineHeight = 16.sp

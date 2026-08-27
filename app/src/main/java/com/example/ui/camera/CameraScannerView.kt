@@ -83,11 +83,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.data.model.AppLanguage
+import com.example.data.model.AppStrings
 import com.example.ui.theme.EmeraldGreenPrimary
 import java.util.concurrent.Executors
 
 @Composable
 fun CameraScannerView(
+    language: AppLanguage,
     onBarcodeScanned: (String) -> Unit,
     onCloseScanner: () -> Unit,
     onOpenManualEntry: () -> Unit,
@@ -175,14 +178,14 @@ fun CameraScannerView(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Kameraya erişilemedi",
+                    text = AppStrings.getCameraPermissionError(language),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Kamera izni verilmemiş veya kamera başka bir uygulama tarafından kullanılıyor olabilir. Lütfen izinleri kontrol edip tekrar deneyin.",
+                    text = AppStrings.getCameraPermissionErrorDetail(language),
                     color = Color.White.copy(alpha = 0.75f),
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center,
@@ -190,7 +193,7 @@ fun CameraScannerView(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = onOpenManualEntry) {
-                    Text("Barkodu Elle Gir")
+                    Text(AppStrings.getEnterManually(language))
                 }
             }
         }
@@ -217,7 +220,7 @@ fun CameraScannerView(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Geri Dön"
+                    contentDescription = AppStrings.getBackButton(language)
                 )
             }
 
@@ -238,7 +241,7 @@ fun CameraScannerView(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Barkod Tarayıcı",
+                        text = AppStrings.getBarcodeScannerTitle(language),
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold
@@ -265,7 +268,7 @@ fun CameraScannerView(
                 ) {
                     Icon(
                         imageVector = if (isTorchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
-                        contentDescription = "Flaş"
+                        contentDescription = AppStrings.getFlash(language)
                     )
                 }
             }
@@ -293,7 +296,7 @@ fun CameraScannerView(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Barkodu çerçevenin ortasına hizalayın",
+                        text = AppStrings.getAlignBarcode(language),
                         color = Color.White,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
@@ -301,7 +304,7 @@ fun CameraScannerView(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Otomatik olarak taranıp veritabanından sorgulanacaktır",
+                        text = AppStrings.getAutoScanHint(language),
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 11.sp,
                         textAlign = TextAlign.Center
@@ -332,7 +335,7 @@ fun CameraScannerView(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Manuel Barkod Gir", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                    Text(AppStrings.getEnterManually(language), fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                 }
             }
         }

@@ -96,7 +96,7 @@ fun ManualBarcodeDialog(
                 IconButton(onClick = onDismiss) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
+                        contentDescription = AppStrings.getClose(language),
                         tint = NaturalTextDark
                     )
                 }
@@ -347,7 +347,7 @@ fun ManualBarcodeDialog(
                                 )
                             }
                             Spacer(modifier = Modifier.width(6.dp))
-                            HalalStatusBadge(status = sample.status)
+                            HalalStatusBadge(status = sample.status, language = language)
                         }
                     }
                 }

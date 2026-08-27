@@ -85,7 +85,7 @@ fun LanguageSelectionDialog(
                     )
                 }
                 IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
-                    Icon(imageVector = Icons.Default.Close, contentDescription = "Kapat", tint = NaturalTextMuted)
+                    Icon(imageVector = Icons.Default.Close, contentDescription = AppStrings.getClose(currentLanguage), tint = NaturalTextMuted)
                 }
             }
         },
@@ -149,7 +149,7 @@ fun LanguageSelectionDialog(
                             if (isSelected) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = AppStrings.getSelected(currentLanguage),
                                     tint = EmeraldPrimary,
                                     modifier = Modifier.size(20.dp)
                                 )

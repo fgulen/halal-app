@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.data.model.AppLanguage
+import com.example.data.model.AppStrings
 import com.example.data.model.HalalStatus
 import com.example.ui.theme.HalalGreenBadge
 import com.example.ui.theme.HalalGreenDark
@@ -37,6 +39,7 @@ import com.example.ui.theme.SuspiciousAmberDark
 @Composable
 fun HalalStatusBadge(
     status: HalalStatus,
+    language: AppLanguage,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 11.sp,
     iconSize: Dp = 13.dp,
@@ -71,16 +74,17 @@ fun HalalStatusBadge(
             .background(bgColor, CircleShape)
             .padding(horizontal = paddingHorizontal, vertical = paddingVertical)
     ) {
+        val label = AppStrings.getStatusLabel(status, language)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = icon,
-                contentDescription = status.label,
+                contentDescription = label,
                 tint = textColor,
                 modifier = Modifier.size(iconSize)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = status.label.uppercase(),
+                text = label,
                 color = textColor,
                 fontSize = fontSize,
                 fontWeight = FontWeight.ExtraBold,

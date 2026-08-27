@@ -20,3 +20,4 @@ debug.keystore
 *.keystore
 keystore.properties
 RELEASE_KEYSTORE_INFO.txt
+.mcp.json
