@@ -622,13 +622,17 @@ fun HistoryProductCard(
                         fontSize = 11.sp,
                         color = NaturalTextMuted,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = formattedDate,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = NaturalTextLight
+                        color = NaturalTextLight,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
