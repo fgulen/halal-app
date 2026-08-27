@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.example.data.analyzer.HalalAnalyzer
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FlaggedIngredient
@@ -481,54 +482,7 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
 
         // All Ingredients list
         if (product.allIngredients.isNotEmpty()) {
-            Surface(
-                color = NaturalWarmSurface,
-                shape = RoundedCornerShape(18.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.MenuBook,
-                            contentDescription = null,
-                            tint = EmeraldPrimary,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = AppStrings.getIngredientsTitle(language),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = NaturalTextDark
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        product.allIngredients.forEach { ingredient ->
-                            Surface(
-                                color = HalalGreenBg,
-                                shape = RoundedCornerShape(8.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder.copy(alpha = 0.7f))
-                            ) {
-                                Text(
-                                    text = ingredient,
-                                    color = HalalGreenDark,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            IngredientsListCard(allIngredients = product.allIngredients, language = language)
         }
     }
 }
@@ -890,14 +844,19 @@ fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 allIngredients.forEach { ingredient ->
+                    val (chipBg, chipBorder, chipText) = when (HalalAnalyzer.classifyIngredientToken(ingredient)) {
+                        HalalStatus.HARAM -> Triple(HaramRedBg, HaramRedBorder, HaramRedDark)
+                        HalalStatus.SUPHELI -> Triple(SuspiciousAmberBg, SuspiciousAmberBorder, SuspiciousAmberDark)
+                        else -> Triple(HalalGreenBg, HalalGreenBorder, HalalGreenDark)
+                    }
                     Surface(
-                        color = Color.White,
+                        color = chipBg,
                         shape = RoundedCornerShape(8.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
+                        border = androidx.compose.foundation.BorderStroke(1.dp, chipBorder.copy(alpha = 0.7f))
                     ) {
                         Text(
                             text = ingredient,
-                            color = NaturalTextDark,
+                            color = chipText,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)

@@ -58,7 +58,7 @@ object HalalAnalyzer {
             origin = "Insect (Dactylopius coccus)"
         ),
         HaramRule(
-            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "bourbon", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake", "wine vinegar", "red wine vinegar", "white wine vinegar"),
+            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "beer", "bier", "bière", "brandy", "cognac", "bourbon", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake", "wine vinegar", "red wine vinegar", "white wine vinegar"),
             nameEn = "Alcohol / Liqueur / Wine Additive",
             nameTr = "Alkol / Likör / Şarap Bileşeni",
             reasonEn = "Intoxicating alcoholic beverages or flavourings. Non-permissible in foods.",
@@ -359,6 +359,17 @@ object HalalAnalyzer {
             alternatives = alternatives,
             imageUrl = imageUrl
         )
+    }
+
+    fun classifyIngredientToken(token: String): HalalStatus {
+        val lower = token.lowercase(Locale.ROOT)
+        if (HARAM_RULES.any { rule -> rule.keywords.any { kw -> lower.contains(kw) } }) {
+            return HalalStatus.HARAM
+        }
+        if (SUSPICIOUS_RULES.any { rule -> rule.keywords.any { kw -> lower.contains(kw) } }) {
+            return HalalStatus.SUPHELI
+        }
+        return HalalStatus.HELAL
     }
 
     fun analyzeIngredientsText(
