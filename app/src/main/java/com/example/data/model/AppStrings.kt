@@ -460,6 +460,14 @@ object AppStrings {
         AppLanguage.AR -> "يرجى وصف الخطأ وما ينبغي أن يكون التصنيف الصحيح:"
     }
 
+    fun getNoEmailAppFound(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "No email app found. Please write to"
+        AppLanguage.DE -> "Keine E-Mail-App gefunden. Bitte schreiben Sie an"
+        AppLanguage.FR -> "Aucune application e-mail trouvée. Merci d'écrire à"
+        AppLanguage.TR -> "E-posta uygulaması bulunamadı. Lütfen şu adrese yazın"
+        AppLanguage.AR -> "لم يتم العثور على تطبيق بريد إلكتروني. يرجى الكتابة إلى"
+    }
+
     fun getImageLoadError(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Failed to load image"
         AppLanguage.DE -> "Bild konnte nicht geladen werden"

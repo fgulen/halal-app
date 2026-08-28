@@ -297,17 +297,17 @@ fun ProductResultBottomSheet(
                     FilledTonalButton(
                         onClick = {
                             val reportIntent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = Uri.parse("mailto:")
+                                data = Uri.parse("mailto:${ReportEmail.SUPPORT_EMAIL}")
                                 putExtra(Intent.EXTRA_EMAIL, arrayOf(ReportEmail.SUPPORT_EMAIL))
                                 putExtra(Intent.EXTRA_SUBJECT, ReportEmail.buildSubject(product, language))
                                 putExtra(Intent.EXTRA_TEXT, ReportEmail.buildBody(product, language))
                             }
                             try {
                                 context.startActivity(reportIntent)
-                            } catch (e: ActivityNotFoundException) {
+                            } catch (_: ActivityNotFoundException) {
                                 Toast.makeText(
                                     context,
-                                    "${ReportEmail.SUPPORT_EMAIL}",
+                                    "${AppStrings.getNoEmailAppFound(language)}: ${ReportEmail.SUPPORT_EMAIL}",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }

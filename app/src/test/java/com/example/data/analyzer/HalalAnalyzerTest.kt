@@ -198,4 +198,46 @@ class HalalAnalyzerTest {
         )
         assertEquals(HalalStatus.HELAL, result.status)
     }
+
+    @Test
+    fun `beef gelatin with e441 additive tag does not also show a contradicting Suspicious flag`() {
+        // Regression: E441 is modeled as pork-only in HARAM_RULES, so a product whose additive
+        // tags include e441 goes HARAM even when the ingredient text says "beef" - but the
+        // beef/fish Suspicious rule must not ALSO fire and render a "not pork" card under the
+        // same Haram "Prohibited Ingredients" section.
+        val result = analyze(
+            ingredientsText = "water, beef gelatin (E441), sugar",
+            additivesTags = listOf("en:e441")
+        )
+        assertEquals(HalalStatus.HARAM, result.status)
+        assertFalse(
+            "must not also carry a Suspicious beef/fish gelatin flag alongside the Haram pork flag",
+            result.flaggedDetails.any { it.name.contains("Beef", ignoreCase = true) || it.name.contains("Fish", ignoreCase = true) }
+        )
+    }
+
+    @Test
+    fun `classifyIngredientToken does not flag an explicit vegetable gelatin claim`() {
+        // Regression: the ingredient-chip classifier (separate code path from the main verdict
+        // analysis) didn't strip negation phrases, so a chip could show amber/Suspicious even
+        // when the overall verdict was HELAL for the same reason.
+        assertEquals(HalalStatus.HELAL, HalalAnalyzer.classifyIngredientToken("vegetable gelatin"))
+    }
+
+    @Test
+    fun `plain Turkish jelatin with no stated source is flagged Suspicious`() {
+        val result = analyze("su, jelatin, seker", language = AppLanguage.TR)
+        assertEquals(HalalStatus.SUPHELI, result.status)
+    }
+
+    @Test
+    fun `Turkish sigir jelatini is not confused with the bare jelatin keyword`() {
+        // Regression guard: adding bare "jelatin" must not double-match inside "jelatini".
+        val result = analyze("su, sığır jelatini, şeker", language = AppLanguage.TR)
+        assertEquals(HalalStatus.SUPHELI, result.status)
+        assertFalse(
+            "should flag the specific beef/fish rule, not also the generic unspecified one",
+            result.flaggedDetails.any { it.name.contains("Unspecified", ignoreCase = true) || it.name.contains("Belirtilmemiş", ignoreCase = true) }
+        )
+    }
 }
