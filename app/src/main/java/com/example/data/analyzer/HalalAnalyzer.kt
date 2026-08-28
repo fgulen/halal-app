@@ -40,6 +40,9 @@ object HalalAnalyzer {
     // Stable identifier for the meat rule (its nameEn), used to detect "only meat was flagged"
     // independent of the language-localized display name.
     private const val MEAT_RULE_ID = "Meat / Poultry (Slaughter Method Unconfirmed)"
+    // Stable identifier for the beef/fish-gelatin rule, used below to skip the generic
+    // "unspecified source" gelatin rule once the more specific source-stated rule has fired.
+    private const val BEEF_FISH_GELATIN_RULE_ID = "Beef/Fish Gelatin (Source Stated)"
 
     private val MEAT_KEYWORDS = listOf(
         "beef", "veal", "lamb", "mutton", "goat meat", "chicken", "poultry", "turkey meat",
@@ -149,6 +152,21 @@ object HalalAnalyzer {
             reasonTr = "Et yan ürünlerinden üretilebilen lezzet artırıcı. Bitkisel/tapiyoka teyidi gerektirir.",
             eCode = "E631",
             origin = "Meat or Microbial"
+        ),
+        SuspiciousRule(
+            keywords = listOf(
+                "beef gelatin", "bovine gelatin", "fish gelatin",
+                "rindergelatine", "fischgelatine",
+                "gélatine de bœuf", "gélatine de poisson",
+                "sığır jelatini", "balık jelatini",
+                "gelatina de res", "gelatina de pescado"
+            ),
+            nameEn = BEEF_FISH_GELATIN_RULE_ID,
+            nameTr = "Sığır/Balık Jelatini (Kaynak Belirtilmiş)",
+            reasonEn = "Source is stated as beef or fish, not pork - but halal status still depends on whether the animal was slaughtered according to zabiha (Islamic) method, which cannot be confirmed from packaging alone.",
+            reasonTr = "Kaynağın sığır veya balık olduğu belirtilmiş - domuz değil. Ancak helal olması için hayvanın zebiha usulüne uygun kesilmiş olması gerekir; bu bilgi ambalajdan doğrulanamaz.",
+            eCode = "E441",
+            origin = "Beef / Fish"
         ),
         SuspiciousRule(
             keywords = listOf("gelatin", "gélatine", "gelatine", "gelatina"),
@@ -293,8 +311,15 @@ object HalalAnalyzer {
             val matchedInText = rule.keywords.any { kw -> containsKeyword(ingredientsLower, kw) }
             val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> containsKeyword(tag, kw) } }
             if (matchedInText || matchedInAdditives) {
-                // If gelatin is already identified as pork gelatin, skip general gelatin
-                if (rule.keywords.contains("gelatin") && harmfulLabels.any { it.contains("Gelatin") || it.contains("Pork") }) {
+                // If gelatin is already identified as pork gelatin (Haram) or as beef/fish
+                // gelatin (the more specific Suspicious rule above), skip the generic
+                // "unspecified source" gelatin rule - it would otherwise also fire on the
+                // same ingredient and either duplicate the flag or contradict the more
+                // specific reason text already shown.
+                if (rule.keywords.contains("gelatin") &&
+                    (harmfulLabels.any { it.contains("Gelatin") || it.contains("Pork") } ||
+                        suspiciousRuleIds.contains(BEEF_FISH_GELATIN_RULE_ID))
+                ) {
                     continue
                 }
                 val displayName = if (language == AppLanguage.TR) rule.nameTr else rule.nameEn

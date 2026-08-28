@@ -150,4 +150,39 @@ class HalalAnalyzerTest {
         )
         assertEquals(HalalStatus.HELAL, result.status)
     }
+
+    @Test
+    fun `beef gelatin is Suspicious with a source-aware reason, not the generic unspecified one`() {
+        val result = analyze("water, beef gelatin, sugar")
+        assertEquals(HalalStatus.SUPHELI, result.status)
+        assertTrue(
+            "should flag the source-stated beef/fish gelatin rule, not the generic unspecified one",
+            result.flaggedDetails.any { it.name.contains("Beef", ignoreCase = true) || it.name.contains("Fish", ignoreCase = true) }
+        )
+        assertFalse(
+            "must not also show the generic 'unspecified source' gelatin flag once source is known",
+            result.flaggedDetails.any { it.name.contains("Unspecified", ignoreCase = true) }
+        )
+        assertFalse(
+            "reason text must not claim the source is unspecified when the text says 'beef'",
+            result.reasonOrDetails.contains("does not specify", ignoreCase = true)
+        )
+    }
+
+    @Test
+    fun `fish gelatin is Suspicious with a source-aware reason`() {
+        val result = analyze("water, fish gelatin, sugar")
+        assertEquals(HalalStatus.SUPHELI, result.status)
+        assertTrue(
+            result.flaggedDetails.any { it.name.contains("Beef", ignoreCase = true) || it.name.contains("Fish", ignoreCase = true) }
+        )
+    }
+
+    @Test
+    fun `plain unspecified gelatin still falls back to the generic suspicious rule`() {
+        // Regression guard: the new source-specific rule must not swallow the plain case.
+        val result = analyze("water, gelatin, sugar")
+        assertEquals(HalalStatus.SUPHELI, result.status)
+        assertTrue(result.flaggedDetails.any { it.name.contains("Unspecified", ignoreCase = true) })
+    }
 }
