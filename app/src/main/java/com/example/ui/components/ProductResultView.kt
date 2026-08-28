@@ -31,7 +31,7 @@ import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Share
@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,6 +61,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.unit.sp
@@ -265,11 +267,15 @@ fun ProductResultBottomSheet(
                         Text(
                             text = AppStrings.getScanAgain(language),
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
-                    FilledTonalButton(
+                    FilledIconButton(
+                        modifier = Modifier.size(52.dp),
+                        shape = CircleShape,
                         onClick = {
                             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                 type = "text/plain"
@@ -287,14 +293,16 @@ fun ProductResultBottomSheet(
                                 )
                             }
                             context.startActivity(Intent.createChooser(shareIntent, AppStrings.getShareChooserTitle(language)))
-                        },
-                        modifier = Modifier.height(52.dp),
-                        shape = CircleShape
+                        }
                     ) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = AppStrings.getShare(language))
                     }
 
-                    FilledTonalButton(
+                    FilledIconButton(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .testTag("report_error_button"),
+                        shape = CircleShape,
                         onClick = {
                             val reportIntent = Intent(Intent.ACTION_SENDTO).apply {
                                 data = Uri.parse("mailto:${ReportEmail.SUPPORT_EMAIL}")
@@ -311,13 +319,9 @@ fun ProductResultBottomSheet(
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
-                        },
-                        modifier = Modifier
-                            .height(52.dp)
-                            .testTag("report_error_button"),
-                        shape = CircleShape
+                        }
                     ) {
-                        Icon(imageVector = Icons.Default.Flag, contentDescription = AppStrings.getReportError(language))
+                        Icon(imageVector = Icons.Default.Report, contentDescription = AppStrings.getReportError(language))
                     }
                 }
             }

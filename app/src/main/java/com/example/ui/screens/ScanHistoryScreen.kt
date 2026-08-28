@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,10 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -188,11 +189,15 @@ fun ScanHistoryScreen(
             .background(NaturalWarmBg)
     ) {
         // Header
+        // No .statusBarsPadding() here: this screen is rendered inside MainHalalScreen's
+        // Scaffold, whose innerPadding (applied to `modifier` above, at the call site) already
+        // accounts for the status bar - adding it again doubled the top inset here, so this
+        // screen started noticeably lower than the home screen's header despite both sitting
+        // in the same Scaffold.
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .padding(horizontal = 24.dp, vertical = 18.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -329,14 +334,19 @@ fun ScanHistoryScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             // Status Filter Chips
+            // Horizontally scrollable, not fillMaxWidth-squeezed: 4 chips in a fixed-width row
+            // used to force the longest label ("ŞÜPHELİ"/"HARAM") to wrap onto a second line,
+            // making the last letter look like it "fell off" the chip.
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterChip(
                     selected = selectedFilter == null,
                     onClick = { onSelectFilter(null) },
-                    label = { Text("${AppStrings.getAll(language)} (${scanHistory.size})", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text("${AppStrings.getAll(language)} (${scanHistory.size})", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = EmeraldPrimary,
@@ -354,7 +364,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HELAL,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HELAL) null else HalalStatus.HELAL) },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HalalGreenDark,
@@ -366,7 +376,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.SUPHELI,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.SUPHELI) null else HalalStatus.SUPHELI) },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = SuspiciousAmber,
@@ -378,7 +388,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HARAM,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HARAM) null else HalalStatus.HARAM) },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HaramRed,

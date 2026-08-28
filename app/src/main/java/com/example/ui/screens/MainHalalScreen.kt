@@ -10,6 +10,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -880,14 +882,19 @@ fun NaturalHistoryHeader(
         Spacer(modifier = Modifier.height(10.dp))
 
         // Filter chips
+        // Horizontally scrollable, not fillMaxWidth-squeezed: 4 chips in a fixed-width row
+        // used to force the longest label ("ŞÜPHELİ"/"HARAM") to wrap onto a second line,
+        // making the last letter look like it "fell off" the chip.
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FilterChip(
                 selected = selectedFilter == null,
                 onClick = { onSelectFilter(null) },
-                label = { Text("${AppStrings.getAll(language)} ($historyCount)", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                label = { Text("${AppStrings.getAll(language)} ($historyCount)", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = EmeraldPrimary,
@@ -905,7 +912,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.HARAM,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HARAM) null else HalalStatus.HARAM) },
-                label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = HaramRed,
@@ -917,7 +924,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.SUPHELI,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.SUPHELI) null else HalalStatus.SUPHELI) },
-                label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = SuspiciousAmber,
@@ -929,7 +936,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.HELAL,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HELAL) null else HalalStatus.HELAL) },
-                label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = HalalGreenDark,
