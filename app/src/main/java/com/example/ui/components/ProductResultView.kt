@@ -1,6 +1,9 @@
 package com.example.ui.components
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +31,7 @@ import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Share
@@ -68,6 +72,7 @@ import com.example.data.model.AppStrings
 import com.example.data.model.FlaggedIngredient
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.ReportEmail
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.EmeraldPrimaryDeep
 import com.example.ui.theme.HalalGreen
@@ -287,6 +292,32 @@ fun ProductResultBottomSheet(
                         shape = CircleShape
                     ) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = AppStrings.getShare(language))
+                    }
+
+                    FilledTonalButton(
+                        onClick = {
+                            val reportIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("mailto:")
+                                putExtra(Intent.EXTRA_EMAIL, arrayOf(ReportEmail.SUPPORT_EMAIL))
+                                putExtra(Intent.EXTRA_SUBJECT, ReportEmail.buildSubject(product, language))
+                                putExtra(Intent.EXTRA_TEXT, ReportEmail.buildBody(product, language))
+                            }
+                            try {
+                                context.startActivity(reportIntent)
+                            } catch (e: ActivityNotFoundException) {
+                                Toast.makeText(
+                                    context,
+                                    "${ReportEmail.SUPPORT_EMAIL}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        },
+                        modifier = Modifier
+                            .height(52.dp)
+                            .testTag("report_error_button"),
+                        shape = CircleShape
+                    ) {
+                        Icon(imageVector = Icons.Default.Flag, contentDescription = AppStrings.getReportError(language))
                     }
                 }
             }
