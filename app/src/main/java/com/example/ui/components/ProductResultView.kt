@@ -297,7 +297,19 @@ fun ProductResultBottomSheet(
 @Composable
 fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
     val title = AppStrings.getStatusCardTitle(product.status, language)
-    val subtitle = AppStrings.getStatusCardSubtitle(product.status, language)
+    // For HARAM/SUPHELI, prefer the ingredient(s) actually flagged on this product over the
+    // generic per-status boilerplate (which used to name a fixed example compound like "E471"
+    // even on products, e.g. plain cola, where nothing of the sort was found - the real reason
+    // was simply "no halal/vegan claim on file"). Falls back to the generic text only when there
+    // is no specific ingredient to name (HELAL, BULUNAMADI, or a defensive empty-list case).
+    val subtitle = if (
+        (product.status == HalalStatus.HARAM || product.status == HalalStatus.SUPHELI) &&
+        product.harmfulOrSuspiciousIngredients.isNotEmpty()
+    ) {
+        "${AppStrings.getSubtitleContainsPrefix(language)}: ${product.harmfulOrSuspiciousIngredients.joinToString(", ")}"
+    } else {
+        AppStrings.getStatusCardSubtitle(product.status, language)
+    }
 
     val (cardBg, iconVector) = when (product.status) {
         HalalStatus.HELAL -> Pair(

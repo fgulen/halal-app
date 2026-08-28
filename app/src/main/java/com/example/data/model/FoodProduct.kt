@@ -21,5 +21,9 @@ data class FoodProduct(
     val reasonOrDetails: String = "",
     val alternatives: List<String> = emptyList(),
     val imageUrl: String? = null,
-    val scannedAt: Long = System.currentTimeMillis()
+    val scannedAt: Long = System.currentTimeMillis(),
+    // Which language this analysis (reasonOrDetails, flaggedDetails reasons, certificate text)
+    // was rendered in. Lets the repository detect a stale-language cache entry and re-analyze
+    // instead of silently returning text in a different language than the current UI.
+    val language: AppLanguage = AppLanguage.EN
 )

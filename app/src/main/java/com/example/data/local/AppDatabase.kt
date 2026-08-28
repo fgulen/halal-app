@@ -12,10 +12,12 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [ProductEntity::class, ScanHistoryEntity::class],
-    // Bumped so cached rows written before the "Open Food Facts Verified" fabricated
-    // certificate was removed (see HalalAnalyzer.kt) get cleared instead of lingering
-    // with a claim the app no longer makes.
-    version = 2,
+    // v2: cleared cached rows written before the "Open Food Facts Verified" fabricated
+    // certificate was removed (see HalalAnalyzer.kt).
+    // v3: added ProductEntity.language and reworked the no-claim/no-flag default from Şüpheli
+    // to Helal (see HalalAnalyzer.kt Rule 4) - old rows carry stale verdicts/text either way,
+    // so they're cleared rather than silently kept.
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

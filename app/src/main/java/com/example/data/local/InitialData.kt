@@ -156,7 +156,8 @@ object InitialData {
             brand = "Lotus Bakeries",
             category = "Spreads & Biscuits",
             status = HalalStatus.HELAL,
-            halalCertificate = "Halal Certified & Vegan Approved",
+            // No fabricated "Certified/Approved" claim - see the Coca-Cola entry above.
+            halalCertificate = null,
             harmfulOrSuspiciousIngredients = emptyList(),
             allIngredients = listOf(
                 "Original Caramelised Biscuits (Wheat flour, Sugar, Vegetable oils, Candy sugar syrup, Sodium hydrogen carbonate, Soya flour, Salt, Cinnamon)",
@@ -177,7 +178,10 @@ object InitialData {
             brand = "The Coca-Cola Company",
             category = "Beverages & Soft Drinks",
             status = HalalStatus.HELAL,
-            halalCertificate = "Halal Authority Verified Formulation",
+            // No fabricated "Certified by X" claim: standard Coca-Cola is not independently
+            // halal-certified in most markets, it's simply free of flagged ingredients. Same
+            // honesty standard the live analyzer applies (see HalalAnalyzer.kt Rule 4).
+            halalCertificate = null,
             harmfulOrSuspiciousIngredients = emptyList(),
             allIngredients = listOf(
                 "Carbonated water",
@@ -186,7 +190,7 @@ object InitialData {
                 "Phosphoric acid (E338)",
                 "Natural flavorings (including caffeine)"
             ),
-            reasonOrDetails = "Standard Coca-Cola contains no alcohol or animal-derived ingredients. Certified Halal by major international standards.",
+            reasonOrDetails = "No prohibited or doubtful ingredients found in the standard formulation - no alcohol or animal-derived additives. This is an ingredient screening, not a third-party halal certification.",
             alternatives = emptyList(),
             imageUrl = "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.1129.400.jpg"
         ),
@@ -198,7 +202,8 @@ object InitialData {
             brand = "Kraft Heinz",
             category = "Condiments & Sauces",
             status = HalalStatus.HELAL,
-            halalCertificate = "Halal Certified & Kosher Certified",
+            // No fabricated "Certified" claim - see the Coca-Cola entry above for why.
+            halalCertificate = null,
             harmfulOrSuspiciousIngredients = emptyList(),
             allIngredients = listOf(
                 "Tomatoes",
@@ -208,7 +213,7 @@ object InitialData {
                 "Spice and herb extracts (contains celery)",
                 "Spice"
             ),
-            reasonOrDetails = "100% plant-based ingredients using distilled grain/spirit vinegar (non-intoxicating). Certified Halal.",
+            reasonOrDetails = "100% plant-based ingredients using distilled grain/spirit vinegar (non-intoxicating). This is an ingredient screening, not a third-party certification claim.",
             alternatives = emptyList(),
             imageUrl = "https://images.openfoodfacts.org/images/products/871/570/042/1384/front_fr.4.400.jpg"
         ),
@@ -220,7 +225,10 @@ object InitialData {
             brand = "Mars Wrigley",
             category = "Candy & Sweets",
             status = HalalStatus.HELAL,
-            halalCertificate = "Gelatin-Free & Vegan Certified (V-Label)",
+            // Softened from "Vegan Certified (V-Label)": the app has no sourced evidence of an
+            // actual V-Label badge for this specific listing, so it should not assert one - see
+            // the Coca-Cola entry above for the same reasoning.
+            halalCertificate = "Gelatin-Free Formulation (Vegan-Friendly)",
             harmfulOrSuspiciousIngredients = emptyList(),
             allIngredients = listOf(
                 "Sugar",
@@ -535,7 +543,9 @@ object InitialData {
             brand = "Ritter Sport",
             category = "Dark Chocolate",
             status = HalalStatus.HELAL,
-            halalCertificate = "European Vegetarian Union (V-Label Vegan)",
+            // Softened from "European Vegetarian Union (V-Label Vegan)" for the same reason as
+            // the Skittles entry above - no sourced evidence of that specific badge in-app.
+            halalCertificate = "Vegan Formulation (No Animal Fats)",
             harmfulOrSuspiciousIngredients = emptyList(),
             allIngredients = listOf(
                 "Sugar",

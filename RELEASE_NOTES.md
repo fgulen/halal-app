@@ -7,6 +7,63 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 4 / versionName 1.2 (2026-08-28)
+
+Play Console "What's new" alanına yapıştırırken dil etiketlerinin İÇİNE
+(açılış/kapanış arasına) sadece o dilin metnini kopyalayın - `<tr-TR>` ve
+`</tr-TR>` etiketlerinin kendisini yapıştırmayın. Her blok 500 karakter
+sınırının altında tutuldu.
+
+<tr-TR>
+Sınıflandırma mantığını iyileştirdik: sakıncalı veya şüpheli madde
+içermeyen ürünler artık sırf "helal işareti yok" diye şüpheli
+gösterilmiyor, doğrudan helal çıkıyor (et/kümes hayvanı ve kaynağı
+belirsiz katkılar yine şüpheli kalıyor). Vejetaryen ürünlerin yanlışlıkla
+"vegan" etiketiyle gösterilmesi düzeltildi. Sonuçtaki sebep artık ürüne
+özel, genel bir metin değil. Dil değiştirip aynı ürünü tekrar
+taradığınızda sonuç artık doğru dilde gösteriliyor.
+</tr-TR>
+
+<en-US>
+Improved the screening logic: products with no prohibited or doubtful
+ingredients no longer default to "doubtful" for lacking a halal label -
+they now show Halal directly (meat/poultry and source-unverified
+additives still stay doubtful). Fixed vegetarian products being wrongly
+shown a "vegan" label. The reason on the result screen is now always
+specific to that product, not a generic example. Re-scanning after a
+language switch now shows the result in the new language.
+</en-US>
+
+<de-DE>
+Die Prüflogik wurde verbessert: Produkte ohne verbotene oder
+zweifelhafte Zutaten gelten nicht mehr allein wegen fehlendem
+Halal-Siegel als zweifelhaft, sondern direkt als Halal (Fleisch/Geflügel
+und Zusätze unklarer Herkunft bleiben zweifelhaft). Ein Fehler, bei dem
+vegetarische Produkte fälschlich als "vegan" markiert wurden, ist
+behoben. Die Begründung bezieht sich jetzt immer auf das Produkt. Ein
+erneuter Scan nach Sprachwechsel zeigt das Ergebnis richtig übersetzt.
+</de-DE>
+
+<fr-FR>
+Logique de contrôle améliorée : les produits sans ingrédient interdit
+ou douteux ne sont plus classés "douteux" par simple absence de label
+halal - ils apparaissent désormais Halal directement (viande/volaille et
+additifs d'origine incertaine restent douteux). Correction d'un bug
+étiquetant à tort des produits végétariens comme "végane". La raison
+affichée est désormais toujours spécifique au produit. Rescanner après
+un changement de langue affiche le résultat dans la bonne langue.
+</fr-FR>
+
+<ar>
+تحسين منطق الفحص: المنتجات الخالية من مكونات محظورة أو مشبوهة لم تعد
+تُصنّف "مشبوهة" لمجرد غياب علامة حلال - تظهر الآن حلال مباشرة (اللحوم
+والدواجن والإضافات مجهولة المصدر تبقى مشبوهة). تم إصلاح خطأ كان يعرض
+المنتجات النباتية بعلامة "فيغن" خطأً. أصبح السبب المعروض خاصًا بالمنتج
+دائمًا. إعادة مسح منتج بعد تغيير اللغة يعرض النتيجة باللغة الصحيحة.
+</ar>
+
+---
+
 ## versionCode 3 / versionName 1.1 (2026-08-28)
 
 (Play Console rejected versionCode 2 as already used - see note below. Same

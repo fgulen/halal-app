@@ -92,9 +92,15 @@ class ProductRepository(
                     return@withContext domain
                 }
 
-                // Check local Room cached DB
+                // Check local Room cached DB. A cache hit in a *different* language than
+                // requested is stale text, not a valid result - fall through to the live OFF
+                // fetch below instead of returning it, so re-scanning after a language switch
+                // shows the reason/certificate translated correctly instead of frozen in
+                // whatever language the product was first analyzed in.
                 val localProduct = productDao.getProductByBarcode(barcodeCandidate)
-                if (localProduct != null && localProduct.status != HalalStatus.BULUNAMADI) {
+                if (localProduct != null && localProduct.status != HalalStatus.BULUNAMADI &&
+                    localProduct.language == language
+                ) {
                     val domain = localProduct.toDomainModel()
                     recordScan(domain)
                     return@withContext domain
@@ -207,7 +213,8 @@ class ProductRepository(
             allIngredients = emptyList(),
             reasonOrDetails = reason,
             alternatives = emptyList(),
-            imageUrl = null
+            imageUrl = null,
+            language = language
         )
     }
 

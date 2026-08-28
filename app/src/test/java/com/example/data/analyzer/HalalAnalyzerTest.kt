@@ -45,7 +45,9 @@ class HalalAnalyzerTest {
             "alcohol-free product must not be flagged as containing alcohol",
             result.flaggedDetails.any { it.eCode == null && it.name.contains("Alcohol", ignoreCase = true) }
         )
-        assertEquals(HalalStatus.SUPHELI, result.status) // no claim -> doubt by default, not Haram
+        // Nothing prohibited or doubtful was found, so this is a Halal screening result even
+        // without an explicit halal/vegan claim/label (see Rule 4 in HalalAnalyzer).
+        assertEquals(HalalStatus.HELAL, result.status)
     }
 
     @Test
@@ -98,15 +100,36 @@ class HalalAnalyzerTest {
     }
 
     @Test
-    fun `OFF non-vegan analysis tag does not grant a false Halal verdict`() {
+    fun `OFF non-vegan analysis tag does not grant a false vegan certificate`() {
         // Regression: OFF's ingredients_analysis_tags value "en:non-vegan" contains the
         // substring "vegan", so a .contains check treated it as a positive vegan claim.
+        // Status is HELAL on this ingredient list regardless (nothing was flagged - Rule 4),
+        // but the bug this test guards against is the certificate: "en:non-vegan" must never be
+        // read as a vegan/plant-based claim and must not produce a "Vegan Label" certificate.
         val result = analyze(
             ingredientsText = "sugar, water, salt",
             ingredientsAnalysisTags = listOf("en:non-vegan")
         )
-        assertFalse(result.status == HalalStatus.HELAL)
-        assertEquals(HalalStatus.SUPHELI, result.status)
+        assertEquals(HalalStatus.HELAL, result.status)
+        assertEquals(null, result.halalCertificate)
+    }
+
+    @Test
+    fun `vegetarian-only dairy product does not get a false Plant-Based-Vegan certificate`() {
+        // Regression: hasVeganClaim used to treat "en:vegetarian" as equivalent to a vegan/
+        // plant-based claim. Vegetarian permits dairy and animal rennet, so a vegetarian-tagged
+        // product like butter (OFF-tagged en:non-vegan) must not be shown a "100% Plant-Based /
+        // Vegan Label" certificate it has no basis for.
+        val result = analyze(
+            ingredientsText = "cream, salt",
+            ingredientsAnalysisTags = listOf("en:vegetarian", "en:non-vegan")
+        )
+        assertEquals(HalalStatus.HELAL, result.status) // nothing prohibited/doubtful found
+        assertEquals(null, result.halalCertificate)
+        assertFalse(
+            "vegetarian must not be presented as a plant-based/vegan claim",
+            (result.halalCertificate ?: "").contains("Vegan", ignoreCase = true)
+        )
     }
 
     @Test

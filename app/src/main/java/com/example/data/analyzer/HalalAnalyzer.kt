@@ -324,8 +324,14 @@ object HalalAnalyzer {
         // of its actual vegan status, which silently neutralized the Rule 3 tightening below.
         // Free-text ingredientsLower.contains("vegan") is dropped for the same reason
         // hasHalalClaim dropped free text: "not vegan" also contains "vegan".
-        val hasVeganClaim = analysisTags.any { it == "en:vegan" || it == "en:vegetarian" } ||
-                labelsTags.any { it == "vegan" || it == "v-label" || it == "vegetarian" } ||
+        //
+        // "en:vegetarian" / labelsTags "vegetarian" deliberately excluded: vegetarian permits
+        // dairy, eggs, and animal rennet (the very enzyme SUSPICIOUS_RULES flags above), so a
+        // vegetarian tag is not a plant-based claim. Counting it as one previously let a dairy
+        // product like butter (vegetarian, but OFF-tagged en:non-vegan) reach the isSafeHalalOrVegan
+        // branch and get shown a "100% Plant-Based / Vegan Label" certificate it has no basis for.
+        val hasVeganClaim = analysisTags.any { it == "en:vegan" } ||
+                labelsTags.any { it == "vegan" || it == "v-label" } ||
                 ingredientsLower.contains("100% plant")
 
         val isSafeHalalOrVegan = (hasHalalClaim || (hasVeganClaim && !ingredientsLower.contains("alcohol"))) &&
@@ -410,23 +416,23 @@ object HalalAnalyzer {
                 certificate = if (hasHalalClaim) "Carries a Halal Label (per product data)" else "100% Plant-Based / Vegan Label (per product data)"
                 alternatives = emptyList()
             }
-            // Rule 4: No rule matched and no positive claim exists either. This used to fall
-            // through to a green Helal verdict - but "we found nothing to flag" is not the same
-            // claim as "this is halal", so it now defaults to Şüpheli (doubt is the safe default
-            // for a screening tool, not the exception).
+            // Rule 4: No rule matched and no positive claim exists either. Absence of a halal/
+            // vegan label is not itself a red flag - the ingredient list was actually screened
+            // and nothing prohibited or doubtful turned up, so this is a Helal screening result.
+            // It is presented as automated screening, not certification (see reason text and the
+            // null certificate below), the same way the explicit-claim path already labels itself
+            // "(per product data)" rather than "Certified".
             allIngredientsList.isNotEmpty() -> {
-                status = HalalStatus.SUPHELI
+                status = HalalStatus.HELAL
                 reason = when (language) {
-                    AppLanguage.EN -> "No prohibited ingredients found in our automated screening, but this product carries no halal certification or claim. This is not a halal verification - check the packaging or look for a halal certification mark."
-                    AppLanguage.DE -> "In unserer automatischen Prüfung wurden keine verbotenen Zutaten gefunden, das Produkt trägt jedoch keine Halal-Kennzeichnung. Dies ist keine Halal-Zertifizierung - bitte Verpackung prüfen oder auf ein Halal-Siegel achten."
-                    AppLanguage.FR -> "Aucun ingrédient prohibé détecté lors de notre contrôle automatique, mais ce produit ne porte aucune certification ou mention halal. Ceci n'est pas une certification halal - vérifiez l'emballage ou recherchez un label halal."
-                    AppLanguage.TR -> "Otomatik taramamızda yasaklı bir içerik tespit edilmedi, ancak üründe helal sertifikası veya işareti bulunmuyor. Bu bir helal onayı değildir - ambalajı kontrol edin veya helal sertifika işareti arayın."
-                    AppLanguage.AR -> "لم يتم العثور على مكونات محظورة في فحصنا الآلي، لكن هذا المنتج لا يحمل شهادة أو إشارة حلال. هذا ليس تصديقًا حلالًا - يرجى مراجعة الملصق أو البحث عن علامة اعتماد حلال."
+                    AppLanguage.EN -> "No prohibited or doubtful ingredients were found in this product's ingredient list. Note: this is an automated screening, not a halal certification - the product carries no explicit halal/vegan label."
+                    AppLanguage.DE -> "In der Zutatenliste dieses Produkts wurden keine verbotenen oder zweifelhaften Inhaltsstoffe gefunden. Hinweis: Dies ist eine automatische Prüfung, keine Halal-Zertifizierung - das Produkt trägt kein ausdrückliches Halal-/Vegan-Siegel."
+                    AppLanguage.FR -> "Aucun ingrédient interdit ou douteux n'a été détecté dans la liste des ingrédients de ce produit. Remarque : ceci est un contrôle automatique, pas une certification halal - le produit ne porte aucun label halal/végane explicite."
+                    AppLanguage.TR -> "Bu ürünün içindekiler listesinde yasaklı veya şüpheli bir madde tespit edilmedi. Not: Bu otomatik bir tarama sonucudur, helal sertifikası değildir - üründe açık bir helal/vegan işareti bulunmuyor."
+                    AppLanguage.AR -> "لم يتم العثور على أي مكون محظور أو مشبوه في قائمة مكونات هذا المنتج. ملاحظة: هذا فحص آلي وليس شهادة حلال - لا يحمل المنتج علامة حلال/نباتية صريحة."
                 }
                 certificate = null
-                alternatives = listOf(
-                    "Look for a halal certification mark (IFANCA, GIMDES, HMC, JAKIM, MUI)"
-                )
+                alternatives = emptyList()
             }
             // Rule 5: Yeterli bilgi yoksa -> BİLİNMİYOR
             else -> {
@@ -455,7 +461,8 @@ object HalalAnalyzer {
             allIngredients = allIngredientsList,
             reasonOrDetails = reason,
             alternatives = alternatives,
-            imageUrl = imageUrl
+            imageUrl = imageUrl,
+            language = language
         )
     }
 

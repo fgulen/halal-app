@@ -167,6 +167,19 @@ object AppStrings {
         }
     }
 
+    // Lead-in phrase for the status banner subtitle when we have the actual flagged ingredient
+    // name(s) to append (e.g. "Contains: E471 Mono- and Diglycerides"). Used instead of
+    // getStatusCardSubtitle's generic per-status text so the banner names what was really found
+    // in *this* product rather than a fixed example compound (previously always "E471"/"E120"
+    // regardless of what actually triggered the flag).
+    fun getSubtitleContainsPrefix(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Contains"
+        AppLanguage.DE -> "Enthält"
+        AppLanguage.FR -> "Contient"
+        AppLanguage.TR -> "İçeriyor"
+        AppLanguage.AR -> "يحتوي على"
+    }
+
     fun getProhibitedIngredientsHeader(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Prohibited / Flagged Ingredients"
         AppLanguage.DE -> "Verbotene / Riskante Inhaltsstoffe"
