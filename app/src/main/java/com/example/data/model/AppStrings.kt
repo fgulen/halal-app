@@ -436,6 +436,30 @@ object AppStrings {
         AppLanguage.AR -> "مشاركة النتيجة"
     }
 
+    fun getReportError(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Report Error"
+        AppLanguage.DE -> "Fehler melden"
+        AppLanguage.FR -> "Signaler une erreur"
+        AppLanguage.TR -> "Hata Bildir"
+        AppLanguage.AR -> "الإبلاغ عن خطأ"
+    }
+
+    fun getReportErrorEmailSubject(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Incorrect Result Report"
+        AppLanguage.DE -> "Meldung eines falschen Ergebnisses"
+        AppLanguage.FR -> "Signalement d'un résultat incorrect"
+        AppLanguage.TR -> "Hatalı Sonuç Bildirimi"
+        AppLanguage.AR -> "الإبلاغ عن نتيجة غير صحيحة"
+    }
+
+    fun getReportErrorPromptLine(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Please describe what's incorrect and what the correct classification should be:"
+        AppLanguage.DE -> "Bitte beschreiben Sie, was falsch ist und wie die richtige Einstufung lauten sollte:"
+        AppLanguage.FR -> "Merci de décrire ce qui est incorrect et quelle devrait être la bonne classification :"
+        AppLanguage.TR -> "Lütfen neyin yanlış olduğunu ve doğru sınıflandırmanın ne olması gerektiğini açıklayın:"
+        AppLanguage.AR -> "يرجى وصف الخطأ وما ينبغي أن يكون التصنيف الصحيح:"
+    }
+
     fun getImageLoadError(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Failed to load image"
         AppLanguage.DE -> "Bild konnte nicht geladen werden"
