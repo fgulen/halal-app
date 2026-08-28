@@ -26,7 +26,30 @@ object HalalAnalyzer {
         val reasonEn: String,
         val reasonTr: String,
         val eCode: String? = null,
-        val origin: String = "Animal or Plant"
+        val origin: String = "Animal or Plant",
+        // The meat rule below is the only one set to true: a product that already carries an
+        // explicit halal claim/label is presumed to source its meat from zabiha slaughter, so
+        // flagging the meat again would contradict the certification we're about to display.
+        val suppressIfHalalClaim: Boolean = false
+    )
+
+    // Multi-language meat/poultry terms. Presence of meat does not make a product haram, but
+    // halal validity depends on zabiha (Islamic) slaughter, which packaging/ingredient data
+    // essentially never states - so absent a halal claim, meat must default to "unconfirmed"
+    // rather than being silently passed through as Helal.
+    // Stable identifier for the meat rule (its nameEn), used to detect "only meat was flagged"
+    // independent of the language-localized display name.
+    private const val MEAT_RULE_ID = "Meat / Poultry (Slaughter Method Unconfirmed)"
+
+    private val MEAT_KEYWORDS = listOf(
+        "beef", "veal", "lamb", "mutton", "goat meat", "chicken", "poultry", "turkey meat",
+        "duck meat", "goose meat", "chicken broth", "beef broth", "chicken stock", "beef stock",
+        "chicken fat", "beef fat", "meat extract", "bouillon de boeuf", "bouillon de poulet",
+        "rindfleisch", "kalbfleisch", "lammfleisch", "hühnerfleisch", "haehnchenfleisch",
+        "putenfleisch", "entenfleisch", "fleischextrakt", "hühnerbrühe", "rinderbrühe",
+        "boeuf", "veau", "agneau", "poulet", "volaille", "dinde", "canard", "extrait de viande",
+        "carne de res", "carne de vaca", "ternera", "cordero", "pollo", "pavo",
+        "sığır eti", "dana eti", "kuzu eti", "tavuk eti", "hindi eti", "ördek eti", "et suyu", "et özütü"
     )
 
     private val HARAM_RULES = listOf(
@@ -137,7 +160,11 @@ object HalalAnalyzer {
             origin = "Animal"
         ),
         SuspiciousRule(
-            keywords = listOf("rennet", "pepsin", "animal rennet", "lab", "présure", "animal enzymes", "cheese cultures"),
+            // Bare "lab" (German for rennet) dropped: as a standalone word-boundary match it
+            // also fires on "lab-grown", "lab-tested", etc. in English ingredient text. Products
+            // without a halal claim already default to Şüpheli via the generic no-claim branch,
+            // so this rule missing an unqualified German "Lab" mention isn't a coverage gap.
+            keywords = listOf("rennet", "pepsin", "animal rennet", "kälberlab", "kalbslab", "présure", "animal enzymes", "cheese cultures"),
             nameEn = "Animal Rennet / Cheese Enzymes",
             nameTr = "Hayvansal Peynir Mayası / Enzim",
             reasonEn = "Curdling enzyme from calf stomach. Permissible only if from Halal slaughtered animals or microbial.",
@@ -153,6 +180,16 @@ object HalalAnalyzer {
             reasonTr = "Peynir üretiminde kullanılan hayvansal mayanın durumuna göre şüpheli olabilir.",
             eCode = null,
             origin = "Dairy Byproduct"
+        ),
+        SuspiciousRule(
+            keywords = MEAT_KEYWORDS,
+            nameEn = MEAT_RULE_ID,
+            nameTr = "Et / Kümes Hayvanı (Kesim Yöntemi Teyit Edilmedi)",
+            reasonEn = "Contains meat or poultry. Halal status depends on zabiha (Islamic) slaughter, which cannot be confirmed from this product listing alone.",
+            reasonTr = "Et veya kümes hayvanı içeriyor. Helal olması dinen usulüne uygun (zebiha) kesime bağlıdır; bu bilgi ürün verisinden doğrulanamaz.",
+            eCode = null,
+            origin = "Animal Meat",
+            suppressIfHalalClaim = true
         )
     )
 
@@ -197,19 +234,42 @@ object HalalAnalyzer {
             offProduct.ingredientsText
         ).joinToString(" ")
 
-        val ingredientsLower = ingredientsRaw.lowercase(Locale.ROOT)
+        // Strip negated compounds ("alcohol-free", "non-alcoholic") before matching, so a
+        // hyphen boundary doesn't let e.g. "alcohol-free" trip the "alcohol" keyword - the
+        // word-boundary check in containsKeyword treats '-' as a boundary, not as glue.
+        val ingredientsLower = stripNegatedPhrases(ingredientsRaw.lowercase(Locale.ROOT))
         val additiveTags = offProduct.additivesTags?.map { it.lowercase(Locale.ROOT).replace("en:", "") } ?: emptyList()
         val labelsTags = offProduct.labelsTags?.map { it.lowercase(Locale.ROOT).replace("en:", "") } ?: emptyList()
         val analysisTags = offProduct.ingredientsAnalysisTags?.map { it.lowercase(Locale.ROOT) } ?: emptyList()
 
+        // Computed early (moved ahead of rule matching) so the meat rule below can suppress
+        // itself on products that already carry an explicit halal claim/label.
+        //
+        // Deliberately trusts labelsTags ONLY, not free ingredient text: a plain .contains
+        // on ingredientsLower also matched "not halal", "non-halal", "helal değildir" - i.e.
+        // the exact opposite claim - which both disabled the meat gate and routed straight to
+        // a green Helal verdict. labelsTags is OFF's structured field where "halal" actually
+        // means the halal label is present; it can't be negated the same way. The asymmetric
+        // risk (false positive here -> green verdict on a haram product) outweighs catching the
+        // rarer product whose only halal mention is in free text.
+        val hasHalalClaim = labelsTags.any { it == "halal" || it == "helal" || it.contains("halal") || it.contains("helal") }
+
         val flaggedItems = mutableListOf<FlaggedIngredient>()
         val harmfulLabels = mutableListOf<String>()
         val suspiciousLabels = mutableListOf<String>()
+        // Tracks which SUSPICIOUS_RULES fired, by their language-stable nameEn, independent of
+        // suspiciousLabels (which holds the localized display name). Used below to tell "only
+        // the meat rule fired" apart from an actual unverified-origin additive, since those two
+        // cases need different reason text - "this additive might be animal-derived" makes no
+        // sense for a product whose only flag is containing meat outright.
+        val suspiciousRuleIds = mutableListOf<String>()
 
         // 1. Check for Haram rules (Strict)
         for (rule in HARAM_RULES) {
             val matchedInText = rule.keywords.any { kw -> containsKeyword(ingredientsLower, kw) }
-            val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> tag.contains(kw) } }
+            // containsKeyword (not tag.contains) so additive tag "e1200" doesn't false-match
+            // keyword "e120" - a plain substring check treated E1200 (polydextrose) as E120 (carmine).
+            val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> containsKeyword(tag, kw) } }
             if (matchedInText || matchedInAdditives) {
                 val displayName = if (language == AppLanguage.TR) rule.nameTr else rule.nameEn
                 val displayReason = if (language == AppLanguage.TR) rule.reasonTr else rule.reasonEn
@@ -229,8 +289,9 @@ object HalalAnalyzer {
 
         // 2. Check for Suspicious rules (Doubtful / Mushbooh)
         for (rule in SUSPICIOUS_RULES) {
+            if (rule.suppressIfHalalClaim && hasHalalClaim) continue
             val matchedInText = rule.keywords.any { kw -> containsKeyword(ingredientsLower, kw) }
-            val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> tag == kw || tag.contains(kw) } }
+            val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> containsKeyword(tag, kw) } }
             if (matchedInText || matchedInAdditives) {
                 // If gelatin is already identified as pork gelatin, skip general gelatin
                 if (rule.keywords.contains("gelatin") && harmfulLabels.any { it.contains("Gelatin") || it.contains("Pork") }) {
@@ -248,23 +309,24 @@ object HalalAnalyzer {
                 if (flaggedItems.none { it.name == displayName }) {
                     flaggedItems.add(flagged)
                     suspiciousLabels.add(displayName)
+                    suspiciousRuleIds.add(rule.nameEn)
                 }
             }
         }
 
-        // 3. Positive claims (Halal, Kosher, Vegan)
-        val hasHalalClaim = ingredientsLower.contains("halal") ||
-                ingredientsLower.contains("helal") ||
-                labelsTags.any { it.contains("halal") || it.contains("helal") }
-
-        val hasVeganClaim = analysisTags.any { it.contains("vegan") || it.contains("vegetarian") } ||
-                labelsTags.any { it.contains("vegan") || it.contains("v-label") || it.contains("vegetarian") } ||
-                ingredientsLower.contains("100% plant") ||
-                ingredientsLower.contains("vegan")
-
-        val hasKosherClaim = labelsTags.any { it.contains("kosher") || it.contains("ou") } ||
-                ingredientsLower.contains("kosher") ||
-                ingredientsLower.contains("pareve")
+        // 3. Positive claims (Halal, Vegan). hasHalalClaim was already computed above, ahead
+        // of rule matching, so the meat rule can consult it.
+        //
+        // Exact match on analysisTags, not .contains: OFF's ingredients_analysis_tags puts one
+        // of en:vegan / en:non-vegan / en:maybe-vegan / en:vegan-status-unknown (and the
+        // -vegetarian equivalents) on nearly every product it has parsed - all four contain the
+        // substring "vegan", so a .contains check was true for almost every product regardless
+        // of its actual vegan status, which silently neutralized the Rule 3 tightening below.
+        // Free-text ingredientsLower.contains("vegan") is dropped for the same reason
+        // hasHalalClaim dropped free text: "not vegan" also contains "vegan".
+        val hasVeganClaim = analysisTags.any { it == "en:vegan" || it == "en:vegetarian" } ||
+                labelsTags.any { it == "vegan" || it == "v-label" || it == "vegetarian" } ||
+                ingredientsLower.contains("100% plant")
 
         val isSafeHalalOrVegan = (hasHalalClaim || (hasVeganClaim && !ingredientsLower.contains("alcohol"))) &&
                 harmfulLabels.isEmpty() && suspiciousLabels.isEmpty()
@@ -304,37 +366,69 @@ object HalalAnalyzer {
             // Rule 2: Haram yok ama şüpheli içerik varsa -> ŞÜPHELİ
             suspiciousLabels.isNotEmpty() -> {
                 status = HalalStatus.SUPHELI
-                reason = when (language) {
-                    AppLanguage.EN -> "Contains additives of unverified origin (${suspiciousLabels.joinToString(", ")}). Must verify whether animal or plant-derived."
-                    AppLanguage.DE -> "Enthält Zusätze mit unklarer Herkunft (${suspiciousLabels.joinToString(", ")}). Bitte prüfen, ob pflanzlich oder tierisch."
-                    AppLanguage.FR -> "Contient des additifs d'origine non spécifiée (${suspiciousLabels.joinToString(", ")}). Vérifiez si végétal."
-                    AppLanguage.TR -> "İçeriğindeki bazı katkı maddeleri (${suspiciousLabels.joinToString(", ")}) bitkisel veya hayvansal kökenli olabilir. Teyit gerektirir."
-                    AppLanguage.AR -> "يحتوي على إضافات غير مؤكدة المصدر (${suspiciousLabels.joinToString(", ")}). يرجى التأكد من المصدر النباتي."
+                // Meat present with no other flag needs its own sentence: "this additive might
+                // be animal-derived" makes no sense when the product is, say, a can of beef stew.
+                val onlyMeatFlag = suspiciousRuleIds.isNotEmpty() && suspiciousRuleIds.all { it == MEAT_RULE_ID }
+                if (onlyMeatFlag) {
+                    reason = when (language) {
+                        AppLanguage.EN -> "Contains meat or poultry. Its halal status depends on zabiha (Islamic) slaughter, which cannot be confirmed from this product's data."
+                        AppLanguage.DE -> "Enthält Fleisch oder Geflügel. Der Halal-Status hängt von der Zabiha-Schlachtung ab, die anhand der Produktdaten nicht bestätigt werden kann."
+                        AppLanguage.FR -> "Contient de la viande ou de la volaille. Son statut halal dépend de l'abattage zabiha, qui ne peut être confirmé à partir des données du produit."
+                        AppLanguage.TR -> "Et veya kümes hayvanı içeriyor. Helal olması dinen usulüne uygun (zebiha) kesime bağlıdır; bu bilgi ürün verisinden doğrulanamaz."
+                        AppLanguage.AR -> "يحتوي على لحم أو دواجن. تعتمد حالته الحلال على الذبح الشرعي (الذبيحة)، والتي لا يمكن تأكيدها من بيانات المنتج."
+                    }
+                    alternatives = listOf("Look for a halal certification mark (IFANCA, GIMDES, HMC, JAKIM, MUI)")
+                } else {
+                    reason = when (language) {
+                        AppLanguage.EN -> "Contains additives of unverified origin (${suspiciousLabels.joinToString(", ")}). Must verify whether animal or plant-derived."
+                        AppLanguage.DE -> "Enthält Zusätze mit unklarer Herkunft (${suspiciousLabels.joinToString(", ")}). Bitte prüfen, ob pflanzlich oder tierisch."
+                        AppLanguage.FR -> "Contient des additifs d'origine non spécifiée (${suspiciousLabels.joinToString(", ")}). Vérifiez si végétal."
+                        AppLanguage.TR -> "İçeriğindeki bazı katkı maddeleri (${suspiciousLabels.joinToString(", ")}) bitkisel veya hayvansal kökenli olabilir. Teyit gerektirir."
+                        AppLanguage.AR -> "يحتوي على إضافات غير مؤكدة المصدر (${suspiciousLabels.joinToString(", ")}). يرجى التأكد من المصدر النباتي."
+                    }
+                    alternatives = listOf(
+                        "Look for '100% Vegetable Emulsifiers' indication",
+                        "Choose certified Halal alternatives"
+                    )
                 }
-                alternatives = listOf(
-                    "Look for '100% Vegetable Emulsifiers' indication",
-                    "Choose certified Halal alternatives"
-                )
                 certificate = null
             }
-            // Rule 3: Bilinen tüm içerikler helalse -> HELAL
-            isSafeHalalOrVegan || (allIngredientsList.isNotEmpty() && harmfulLabels.isEmpty() && suspiciousLabels.isEmpty()) -> {
+            // Rule 3: Only give a positive Helal verdict when the product carries an actual
+            // halal or vegan claim/label AND nothing was flagged. Absence of a rule match is
+            // not evidence of permissibility - it must not be presented as one.
+            isSafeHalalOrVegan -> {
                 status = HalalStatus.HELAL
                 reason = when (language) {
-                    AppLanguage.EN -> "No prohibited or doubtful additives found. Ingredients comply with Halal & plant-based standards."
-                    AppLanguage.DE -> "Keine verbotenen oder zweifelhaften Zusätze gefunden. Entspricht den Halal-Kriterien."
-                    AppLanguage.FR -> "Aucun additif prohibé ou douteux détecté. Conforme aux critères Halal."
-                    AppLanguage.TR -> "Sakıncalı veya şüpheli katkı maddesi tespit edilmedi. İçerik helal standartlarına uygundur."
-                    AppLanguage.AR -> "لا توجد مواد محظورة أو مشبوهة. المنتج مطابق للمعايir الحلال."
+                    AppLanguage.EN -> "No prohibited or doubtful additives found, and the product carries an explicit halal/plant-based claim."
+                    AppLanguage.DE -> "Keine verbotenen oder zweifelhaften Zusätze gefunden, und das Produkt trägt eine Halal-/pflanzliche Kennzeichnung."
+                    AppLanguage.FR -> "Aucun additif prohibé ou douteux détecté, et le produit porte une mention halal/végétale explicite."
+                    AppLanguage.TR -> "Sakıncalı veya şüpheli katkı maddesi tespit edilmedi ve üründe açık bir helal/bitkisel işaret bulunuyor."
+                    AppLanguage.AR -> "لا توجد مواد محظورة أو مشبوهة، والمنتج يحمل إشارة حلال/نباتية صريحة."
                 }
-                // Only claim a certificate when the product actually carries a halal/vegan
-                // label or explicit claim in its data - fabricating "Open Food Facts Verified"
-                // for every product that simply had no flagged ingredients overstated what
-                // this screening actually checked.
-                certificate = if (hasHalalClaim) "Certified Halal Product" else if (hasVeganClaim) "100% Plant-Based / Vegan Verified" else null
+                // "Certified" is dropped deliberately: this is a claim/label read from Open Food
+                // Facts' crowd-sourced data, not a certification this app has verified itself.
+                certificate = if (hasHalalClaim) "Carries a Halal Label (per product data)" else "100% Plant-Based / Vegan Label (per product data)"
                 alternatives = emptyList()
             }
-            // Rule 4: Yeterli bilgi yoksa -> BİLİNMİYOR
+            // Rule 4: No rule matched and no positive claim exists either. This used to fall
+            // through to a green Helal verdict - but "we found nothing to flag" is not the same
+            // claim as "this is halal", so it now defaults to Şüpheli (doubt is the safe default
+            // for a screening tool, not the exception).
+            allIngredientsList.isNotEmpty() -> {
+                status = HalalStatus.SUPHELI
+                reason = when (language) {
+                    AppLanguage.EN -> "No prohibited ingredients found in our automated screening, but this product carries no halal certification or claim. This is not a halal verification - check the packaging or look for a halal certification mark."
+                    AppLanguage.DE -> "In unserer automatischen Prüfung wurden keine verbotenen Zutaten gefunden, das Produkt trägt jedoch keine Halal-Kennzeichnung. Dies ist keine Halal-Zertifizierung - bitte Verpackung prüfen oder auf ein Halal-Siegel achten."
+                    AppLanguage.FR -> "Aucun ingrédient prohibé détecté lors de notre contrôle automatique, mais ce produit ne porte aucune certification ou mention halal. Ceci n'est pas une certification halal - vérifiez l'emballage ou recherchez un label halal."
+                    AppLanguage.TR -> "Otomatik taramamızda yasaklı bir içerik tespit edilmedi, ancak üründe helal sertifikası veya işareti bulunmuyor. Bu bir helal onayı değildir - ambalajı kontrol edin veya helal sertifika işareti arayın."
+                    AppLanguage.AR -> "لم يتم العثور على مكونات محظورة في فحصنا الآلي، لكن هذا المنتج لا يحمل شهادة أو إشارة حلال. هذا ليس تصديقًا حلالًا - يرجى مراجعة الملصق أو البحث عن علامة اعتماد حلال."
+                }
+                certificate = null
+                alternatives = listOf(
+                    "Look for a halal certification mark (IFANCA, GIMDES, HMC, JAKIM, MUI)"
+                )
+            }
+            // Rule 5: Yeterli bilgi yoksa -> BİLİNMİYOR
             else -> {
                 status = HalalStatus.BULUNAMADI
                 reason = when (language) {
@@ -363,6 +457,25 @@ object HalalAnalyzer {
             alternatives = alternatives,
             imageUrl = imageUrl
         )
+    }
+
+    // Negated compounds that must not trip a keyword match. "alcohol-free" is safe to match
+    // literally because '-' breaks the word boundary the same way a space does, but that is
+    // exactly the bug: "alcohol-free" and "alcohol" share a boundary at the hyphen, so the plain
+    // keyword rule fires on a product explicitly declaring the opposite. Scrubbed out before
+    // matching rather than special-cased in containsKeyword, since new negated phrases are far
+    // easier to add to this list than to a boundary algorithm.
+    private val NEGATION_PHRASES = listOf(
+        "alcohol-free", "alcohol free", "non-alcoholic", "alkoholfrei", "alkoholfreie", "alkoholfreies",
+        "ohne alkohol", "sans alcool", "sin alcohol"
+    )
+
+    private fun stripNegatedPhrases(text: String): String {
+        var result = text
+        for (phrase in NEGATION_PHRASES) {
+            result = result.replace(phrase, " ")
+        }
+        return result
     }
 
     // Word-boundary match instead of plain substring: a short keyword like "rum" or "vin"

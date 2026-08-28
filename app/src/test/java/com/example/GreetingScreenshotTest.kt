@@ -2,6 +2,7 @@ package com.example
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
+import com.example.data.model.AppLanguage
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.ui.components.HalalStatusBadge
@@ -26,7 +27,7 @@ class GreetingScreenshotTest {
   fun greeting_screenshot() {
     composeTestRule.setContent {
       HalalKontrolTheme {
-        HalalStatusBadge(status = HalalStatus.HELAL)
+        HalalStatusBadge(status = HalalStatus.HELAL, language = AppLanguage.EN)
       }
     }
 
