@@ -12,54 +12,57 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 Play Console "What's new" alanına yapıştırırken dil etiketlerinin İÇİNE
 (açılış/kapanış arasına) sadece o dilin metnini kopyalayın - `<tr-TR>` ve
 `</tr-TR>` etiketlerinin kendisini yapıştırmayın. Her blok 500 karakter
-sınırının altında tutuldu.
+sınırının altında tutuldu. (Bu bölüm, versionCode 4 hiç yayınlanmadığı
+için üzerine yazılarak güncellendi - Faz 0 ve arayüz düzeltmeleri de
+aynı sürüme eklendi.)
 
 <tr-TR>
-Sınıflandırma mantığını iyileştirdik: sakıncalı veya şüpheli madde
-içermeyen ürünler artık sırf "helal işareti yok" diye şüpheli
-gösterilmiyor, doğrudan helal çıkıyor (et/kümes hayvanı ve kaynağı
-belirsiz katkılar yine şüpheli kalıyor). Vejetaryen ürünlerin yanlışlıkla
-"vegan" etiketiyle gösterilmesi düzeltildi. Sonuçtaki sebep artık ürüne
-özel, genel bir metin değil. Dil değiştirip aynı ürünü tekrar
-taradığınızda sonuç artık doğru dilde gösteriliyor.
+Sınıflandırma mantığı iyileştirildi: sakıncalı/şüpheli madde içermeyen
+ürünler artık sadece "helal işareti yok" diye şüpheli gösterilmiyor,
+doğrudan helal çıkıyor. Jelatin gibi maddelerin kaynağı (sığır/balık/
+domuz) artık ayrı değerlendiriliyor, daha doğru sonuç veriyor. Sonuç
+ekranına "Hata Bildir" butonu eklendi. Ayrıca buton metni kırpılması,
+durum çubuğu görünürlüğü ve filtre etiketi taşması gibi arayüz
+sorunları düzeltildi.
 </tr-TR>
 
 <en-US>
 Improved the screening logic: products with no prohibited or doubtful
 ingredients no longer default to "doubtful" for lacking a halal label -
-they now show Halal directly (meat/poultry and source-unverified
-additives still stay doubtful). Fixed vegetarian products being wrongly
-shown a "vegan" label. The reason on the result screen is now always
-specific to that product, not a generic example. Re-scanning after a
-language switch now shows the result in the new language.
+they now show Halal directly. Gelatin's stated source (beef/fish/pork)
+is now evaluated separately for more accurate results. Added a "Report
+Error" button on the result screen - one tap to flag an incorrect
+result. Also fixed several interface issues: clipped button text,
+status bar visibility, and filter labels wrapping awkwardly.
 </en-US>
 
 <de-DE>
 Die Prüflogik wurde verbessert: Produkte ohne verbotene oder
 zweifelhafte Zutaten gelten nicht mehr allein wegen fehlendem
-Halal-Siegel als zweifelhaft, sondern direkt als Halal (Fleisch/Geflügel
-und Zusätze unklarer Herkunft bleiben zweifelhaft). Ein Fehler, bei dem
-vegetarische Produkte fälschlich als "vegan" markiert wurden, ist
-behoben. Die Begründung bezieht sich jetzt immer auf das Produkt. Ein
-erneuter Scan nach Sprachwechsel zeigt das Ergebnis richtig übersetzt.
+Halal-Siegel als zweifelhaft, sondern direkt als Halal. Die angegebene
+Gelatinequelle (Rind/Fisch/Schwein) wird jetzt separat bewertet für
+genauere Ergebnisse. Ein "Fehler melden"-Button wurde hinzugefügt. Zudem
+wurden mehrere Anzeigefehler behoben: abgeschnittener Button-Text,
+Sichtbarkeit der Statusleiste und umbrechende Filter-Beschriftungen.
 </de-DE>
 
 <fr-FR>
 Logique de contrôle améliorée : les produits sans ingrédient interdit
 ou douteux ne sont plus classés "douteux" par simple absence de label
-halal - ils apparaissent désormais Halal directement (viande/volaille et
-additifs d'origine incertaine restent douteux). Correction d'un bug
-étiquetant à tort des produits végétariens comme "végane". La raison
-affichée est désormais toujours spécifique au produit. Rescanner après
-un changement de langue affiche le résultat dans la bonne langue.
+halal - ils apparaissent désormais Halal directement. La source
+indiquée de la gélatine (bœuf/poisson/porc) est désormais évaluée
+séparément pour plus de précision. Ajout d'un bouton "Signaler une
+erreur". Plusieurs problèmes d'interface ont aussi été corrigés : texte
+de bouton tronqué, visibilité de la barre d'état, étiquettes de filtre
+mal ajustées.
 </fr-FR>
 
 <ar>
 تحسين منطق الفحص: المنتجات الخالية من مكونات محظورة أو مشبوهة لم تعد
-تُصنّف "مشبوهة" لمجرد غياب علامة حلال - تظهر الآن حلال مباشرة (اللحوم
-والدواجن والإضافات مجهولة المصدر تبقى مشبوهة). تم إصلاح خطأ كان يعرض
-المنتجات النباتية بعلامة "فيغن" خطأً. أصبح السبب المعروض خاصًا بالمنتج
-دائمًا. إعادة مسح منتج بعد تغيير اللغة يعرض النتيجة باللغة الصحيحة.
+تُصنّف "مشبوهة" لمجرد غياب علامة حلال - تظهر الآن حلال مباشرة. أصبح
+مصدر الجيلاتين المذكور (بقري/سمك/خنزير) يُقيَّم بشكل منفصل لنتائج أدق.
+تمت إضافة زر "الإبلاغ عن خطأ" في شاشة النتيجة. كما تم إصلاح عدة مشاكل
+في الواجهة: اقتصاص نص الأزرار، ظهور شريط الحالة، والتفاف تسميات الفلتر.
 </ar>
 
 ---
