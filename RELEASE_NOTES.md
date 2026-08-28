@@ -7,7 +7,16 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
-## versionCode 4 / versionName 1.2 (2026-08-28)
+## versionCode 5 / versionName 1.3 (2026-08-28)
+
+Play Console versionCode 4'ü de "daha önce kullanıldı" diyerek reddetti
+(muhtemelen geçmişte manuel olarak yüklenmiş). İçerik versionCode 4 ile
+birebir aynı, sadece numara değişti. Metinler aşağıdaki versionCode 4
+bölümüyle aynı - o bloklardaki dil etiketli metni kullanın.
+
+---
+
+## versionCode 4 / versionName 1.2 (2026-08-28) — SUPERSEDED, Play Console rejected as already used, never shipped
 
 Play Console "What's new" alanına yapıştırırken dil etiketlerinin İÇİNE
 (açılış/kapanış arasına) sadece o dilin metnini kopyalayın - `<tr-TR>` ve
