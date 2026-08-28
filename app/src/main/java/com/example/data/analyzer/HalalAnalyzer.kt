@@ -499,7 +499,12 @@ object HalalAnalyzer {
     // easier to add to this list than to a boundary algorithm.
     private val NEGATION_PHRASES = listOf(
         "alcohol-free", "alcohol free", "non-alcoholic", "alkoholfrei", "alkoholfreie", "alkoholfreies",
-        "ohne alkohol", "sans alcool", "sin alcohol"
+        "ohne alkohol", "sans alcool", "sin alcohol",
+        // Explicit plant-based gelatin claims - stripping the whole phrase (not just "gelatin")
+        // means the bare "gelatin" keyword below no longer matches this specific mention, while
+        // a separate, unrelated "gelatin" elsewhere in the same ingredient list still does.
+        "vegetable gelatin", "gélatine végétale", "pflanzliche gelatine", "bitkisel jelatin",
+        "gelatina vegetal"
     )
 
     private fun stripNegatedPhrases(text: String): String {

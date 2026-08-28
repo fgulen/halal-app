@@ -185,4 +185,17 @@ class HalalAnalyzerTest {
         assertEquals(HalalStatus.SUPHELI, result.status)
         assertTrue(result.flaggedDetails.any { it.name.contains("Unspecified", ignoreCase = true) })
     }
+
+    @Test
+    fun `vegetable gelatin claim is not flagged Suspicious`() {
+        // Regression: the bare "gelatin" keyword matched inside "vegetable gelatin" and its
+        // DE/FR/TR/ES equivalents, flagging an explicit plant-based claim as if the source
+        // were unspecified.
+        val result = analyze("water, vegetable gelatin, sugar")
+        assertFalse(
+            "an explicit vegetable/plant gelatin claim must not be flagged",
+            result.flaggedDetails.any { it.name.contains("Gelatin", ignoreCase = true) }
+        )
+        assertEquals(HalalStatus.HELAL, result.status)
+    }
 }
