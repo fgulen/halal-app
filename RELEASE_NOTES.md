@@ -7,6 +7,53 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 7 / versionName 1.5 (2026-08-29)
+
+Ana sayfa, geçmiş ve E-Kodları ekranlarındaki arama kutuları tek bir
+görsel standarda kavuşturuldu.
+
+<tr-TR>
+Bu sürümde: Ana sayfa, Geçmiş ve E-Kodları ekranlarındaki arama
+kutuları artık aynı görünüme sahip. Ana sayfadaki arama kutusuna
+dokunduğunuzda artık odaklandığını gösteren bir çerçeve görünüyor
+(önceden görünmüyordu). E-Kodları aramasına, yazdığınızı tek
+dokunuşla temizleyebileceğiniz bir "temizle" düğmesi eklendi.
+</tr-TR>
+
+<en-US>
+This update: the search boxes on the Home, History, and E-Codes
+screens now share a consistent look. The Home search box now shows a
+visible focus outline when tapped (it didn't before). Added a clear
+button to the E-Codes search so you can clear your query with one
+tap.
+</en-US>
+
+<de-DE>
+Update: Die Suchfelder auf den Bildschirmen "Start", "Verlauf" und
+"E-Nummern" sehen jetzt einheitlich aus. Das Suchfeld auf der
+Startseite zeigt beim Antippen nun einen sichtbaren Fokusrahmen
+(vorher nicht). Der E-Nummern-Suche wurde eine Löschen-Schaltfläche
+hinzugefügt, um die Eingabe mit einem Tipp zu leeren.
+</de-DE>
+
+<fr-FR>
+Mise à jour : les champs de recherche des écrans Accueil, Historique
+et Codes E ont désormais le même aspect. Le champ de recherche de
+l'accueil affiche maintenant un contour visible lorsqu'il est
+sélectionné (ce n'était pas le cas avant). Un bouton d'effacement a
+été ajouté à la recherche des codes E pour effacer votre saisie en un
+tap.
+</fr-FR>
+
+<ar>
+في هذا الإصدار: أصبحت مربعات البحث في شاشات الرئيسية والسجل ودليل
+أكواد E متشابهة الشكل الآن. يعرض مربع البحث في الشاشة الرئيسية الآن
+إطاراً واضحاً عند النقر عليه (لم يكن يظهر سابقاً). تمت إضافة زر مسح
+إلى بحث أكواد E لمسح ما كتبته بنقرة واحدة.
+</ar>
+
+---
+
 ## versionCode 6 / versionName 1.4 (2026-08-29)
 
 Tablet odaklı düzeltmeler + E-Kodları rehberinin tam yerelleştirmesi.
