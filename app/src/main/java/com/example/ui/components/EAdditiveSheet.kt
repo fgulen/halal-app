@@ -81,14 +81,14 @@ fun EAdditiveSheet(
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf<HalalStatus?>(null) }
 
-    val filteredList = remember(searchQuery, selectedFilter) {
+    val filteredList = remember(searchQuery, selectedFilter, language) {
         val q = searchQuery.trim().lowercase()
         InitialData.eAdditivesDirectory.filter { item ->
             val matchesQuery = q.isEmpty() ||
                     item.code.lowercase().contains(q) ||
-                    item.name.lowercase().contains(q) ||
-                    item.description.lowercase().contains(q) ||
-                    item.origin.lowercase().contains(q) ||
+                    item.name.get(language).lowercase().contains(q) ||
+                    item.description.get(language).lowercase().contains(q) ||
+                    item.origin.get(language).lowercase().contains(q) ||
                     item.alternateNames.any { it.lowercase().contains(q) }
             val matchesFilter = selectedFilter == null || item.status == selectedFilter
             matchesQuery && matchesFilter
@@ -310,7 +310,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = item.name,
+                        text = item.name.get(language),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = NaturalTextDark,
@@ -326,7 +326,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "${AppStrings.getOriginLabel(language)}: ${item.origin}",
+                text = "${AppStrings.getOriginLabel(language)}: ${item.origin.get(language)}",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = EmeraldPrimaryDeep
@@ -335,7 +335,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = item.description,
+                text = item.description.get(language),
                 fontSize = 12.sp,
                 color = NaturalTextDark.copy(alpha = 0.85f),
                 lineHeight = 16.sp
@@ -363,7 +363,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "${AppStrings.getCommonUsageLabel(language)}: ${item.commonUsage}",
+                text = "${AppStrings.getCommonUsageLabel(language)}: ${item.commonUsage.get(language)}",
                 fontSize = 11.sp,
                 color = NaturalTextMuted
             )

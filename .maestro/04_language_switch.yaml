@@ -1,0 +1,21 @@
+appId: com.fatihgulen.helalrehberi
+---
+- launchApp:
+    clearState: false
+- waitForAnimationToEnd:
+    timeout: 4000
+- tapOn: "EN"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 10_lang_dialog
+- tapOn: "Türkçe"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 11_home_after_tr
+- tapOn: "Geçmiş"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 12_history_tr
+- back
+- waitForAnimationToEnd:
+    timeout: 2000

@@ -1,0 +1,73 @@
+appId: com.fatihgulen.helalrehberi
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 4000
+
+# English (default)
+- tapOn: "E-Codes"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: ecodes_en
+- tapOn: "Close"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# Switch to German
+- tapOn: "EN"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn: "Deutsch"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn: "E-Nummern"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: ecodes_de
+- tapOn: "Schließen"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# Switch to French
+- tapOn: "DE"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn: "Français"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn: "Codes-E"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: ecodes_fr
+- tapOn: "Fermer"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# Switch to Turkish
+- tapOn: "FR"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn: "Türkçe"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn: "E-Kodları"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: ecodes_tr
+- tapOn: "Kapat"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# Switch to Arabic
+- tapOn: "TR"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn: "العربية"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    text: "أكواد E"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: ecodes_ar

@@ -277,6 +277,21 @@ söyleyin, güncelleyip tekrar üretirim.
 
 ---
 
+## Ekran Görüntüleri (Screenshots)
+
+**Telefon — hazır:** `store_assets/screenshots/phone_01_home.png` … `phone_05_detail.png` (5 görsel).
+
+**Tablet — TODO, henüz eklenmedi:**
+- Play Console'da telefon görselleri tablette otomatik gerilmiş/kötü görünür; 7" ve 10"
+  tablet ekran görüntüsü eklemek hem Google'ın **large-screen app quality** (büyük ekran
+  kalite) programına girip tablet/Chromebook koleksiyonlarında öne çıkma ihtimalini artırıyor
+  hem de tabletten gelen kullanıcı için mağaza sayfasının dönüşüm oranını iyileştiriyor.
+- Uygulamanın tablet için ayrı/optimize bir layout'u olup olmadığı netleşince (yoksa mevcut
+  telefon layout'unun tablet emülatöründe nasıl göründüğüne bakılarak) çekilip
+  `store_assets/screenshots/tablet_7in_XX.png` ve `tablet_10in_XX.png` adlarıyla eklenecek.
+
+---
+
 ## Ek Pazarlar — uygulamanın henüz desteklemediği diller
 
 "Helal ürün kontrolü" temasının doğal olarak en çok arandığı yerler, Müslüman

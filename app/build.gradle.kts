@@ -17,8 +17,8 @@ android {
     applicationId = "com.fatihgulen.helalrehberi"
     minSdk = 24
     targetSdk = 36
-    versionCode = 5
-    versionName = "1.3"
+    versionCode = 6
+    versionName = "1.4"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -122,6 +122,7 @@ dependencies {
   implementation(libs.moshi.kotlin)
   implementation(libs.okhttp)
   // implementation(libs.play.services.location)
+  implementation(libs.play.app.update.ktx)
   implementation(libs.retrofit)
   testImplementation(libs.androidx.compose.ui.test.junit4)
   testImplementation(libs.androidx.core)

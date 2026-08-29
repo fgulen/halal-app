@@ -4,6 +4,7 @@ import com.example.data.model.EAdditive
 import com.example.data.model.FlaggedIngredient
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.LocalizedText
 
 object InitialData {
     val sampleProducts = listOf(
@@ -565,147 +566,531 @@ object InitialData {
     val eAdditivesDirectory = listOf(
         EAdditive(
             code = "E441",
-            name = "Gelatin / Schweinegelatine",
+            name = LocalizedText(
+                en = "Gelatin (Pork Gelatin)",
+                de = "Gelatine (Schweinegelatine)",
+                fr = "Gélatine (Gélatine de porc)",
+                tr = "Gelatin / Schweinegelatine",
+                ar = "الجيلاتين (جيلاتين الخنزير)"
+            ),
             status = HalalStatus.HARAM,
-            origin = "Hayvansal (Domuz derisi ve kemik kolajeni / Swine & Pork)",
-            description = "Jelleştirici ve kıvam artırıcı madde. Avrupa ve ABD'de standart jelatinler aksi açıkça belirtilmedikçe domuz kesimhanelerinden elde edilmektedir.",
+            origin = LocalizedText(
+                en = "Animal-derived (Pork skin & bone collagen)",
+                de = "Tierisch (Schweinehaut- und Knochenkollagen)",
+                fr = "Origine animale (Collagène de peau et d'os de porc)",
+                tr = "Hayvansal (Domuz derisi ve kemik kolajeni / Swine & Pork)",
+                ar = "حيواني المصدر (كولاجين جلد وعظام الخنزير)"
+            ),
+            description = LocalizedText(
+                en = "A gelling and thickening agent. Standard gelatin in Europe and the US is sourced from pork slaughterhouses unless explicitly stated otherwise.",
+                de = "Ein Gelier- und Verdickungsmittel. Standardgelatine in Europa und den USA stammt aus Schweineschlachtungen, sofern nicht ausdrücklich anders angegeben.",
+                fr = "Agent gélifiant et épaississant. En Europe et aux États-Unis, la gélatine standard provient d'abattoirs porcins, sauf mention contraire explicite.",
+                tr = "Jelleştirici ve kıvam artırıcı madde. Avrupa ve ABD'de standart jelatinler aksi açıkça belirtilmedikçe domuz kesimhanelerinden elde edilmektedir.",
+                ar = "مادة تجليد وتكثيف. الجيلاتين القياسي في أوروبا والولايات المتحدة يُستخرج من مسالخ الخنازير ما لم يُذكر خلاف ذلك صراحة."
+            ),
             alternateNames = listOf("Pork Gelatin", "Porcine Gelatin", "Schweinegelatine", "Gelatine de porc", "Varkensgelatine"),
-            commonUsage = "Yumuşak şekerler (Gummy bears), marshmallow, tatlılar, yoğurtlar, kapsül ilaçlar"
+            commonUsage = LocalizedText(
+                en = "Gummy bears, marshmallows, desserts, yogurts, capsule medications",
+                de = "Gummibärchen, Marshmallows, Süßspeisen, Joghurts, Kapselmedikamente",
+                fr = "Oursons en gélatine, chamallows, desserts, yaourts, médicaments en capsules",
+                tr = "Yumuşak şekerler (Gummy bears), marshmallow, tatlılar, yoğurtlar, kapsül ilaçlar",
+                ar = "حلوى الدببة الهلامية، المارشميلو، الحلويات، الزبادي، الأدوية على شكل كبسولات"
+            )
         ),
         EAdditive(
             code = "E120",
-            name = "Karmin / Cochineal / Karmin Kırmızısı",
+            name = LocalizedText(
+                en = "Carmine / Cochineal Red",
+                de = "Karmin / Cochenillerot",
+                fr = "Carmin / Rouge cochenille",
+                tr = "Karmin / Cochineal / Karmin Kırmızısı",
+                ar = "القرمز / الكوشينيل"
+            ),
             status = HalalStatus.HARAM,
-            origin = "Böcek (Dactylopius coccus kabuklu böceğinden)",
-            description = "Kurutulmuş kalkan biti (cochineal) dişilerinin ezilmesiyle üretilen parlak kırmızı doğal renklendirici. Fıkıh kurullarının çoğunluğu böcek tüketimini haram kabul eder.",
+            origin = LocalizedText(
+                en = "Insect-derived (from the Dactylopius coccus scale insect)",
+                de = "Insektenbasiert (von der Schildlaus Dactylopius coccus)",
+                fr = "Origine insecte (de la cochenille Dactylopius coccus)",
+                tr = "Böcek (Dactylopius coccus kabuklu böceğinden)",
+                ar = "حشري المصدر (من حشرة القرمز Dactylopius coccus)"
+            ),
+            description = LocalizedText(
+                en = "A bright red natural colorant produced by crushing dried female cochineal insects. Most fiqh councils rule insect consumption as haram.",
+                de = "Ein leuchtend roter Naturfarbstoff, der durch Zerstoßen getrockneter weiblicher Cochenille-Schildläuse gewonnen wird. Die meisten Fiqh-Räte stufen den Verzehr von Insekten als haram ein.",
+                fr = "Colorant naturel rouge vif obtenu en broyant des cochenilles femelles séchées. La plupart des conseils de fiqh considèrent la consommation d'insectes comme haram.",
+                tr = "Kurutulmuş kalkan biti (cochineal) dişilerinin ezilmesiyle üretilen parlak kırmızı doğal renklendirici. Fıkıh kurullarının çoğunluğu böcek tüketimini haram kabul eder.",
+                ar = "صبغة طبيعية حمراء زاهية تُنتج بسحق إناث حشرة القرمز المجففة. تعتبر معظم المجالس الفقهية استهلاك الحشرات حراماً."
+            ),
             alternateNames = listOf("Carmine", "Cochineal", "Carmines", "Karminsäure", "Natural Red 4", "Crimson Lake", "CI 75470"),
-            commonUsage = "Kırmızı jelibonlar, çilekli yoğurtlar, sucuk/sosis, meyve suları, kırmızı pastalar, kozmetik"
+            commonUsage = LocalizedText(
+                en = "Red gummy candies, strawberry yogurts, sausages, fruit juices, red cakes, cosmetics",
+                de = "Rote Fruchtgummis, Erdbeerjoghurts, Wurstwaren, Fruchtsäfte, rote Kuchen, Kosmetika",
+                fr = "Bonbons gélifiés rouges, yaourts à la fraise, saucisses, jus de fruits, gâteaux rouges, cosmétiques",
+                tr = "Kırmızı jelibonlar, çilekli yoğurtlar, sucuk/sosis, meyve suları, kırmızı pastalar, kozmetik",
+                ar = "الحلوى الهلامية الحمراء، زبادي الفراولة، النقانق والسجق، عصائر الفواكه، الكعك الأحمر، مستحضرات التجميل"
+            )
         ),
         EAdditive(
             code = "E471",
-            name = "Yağ Asitlerinin Mono- ve Digliseritleri",
+            name = LocalizedText(
+                en = "Mono- and Diglycerides of Fatty Acids",
+                de = "Mono- und Diglyceride von Speisefettsäuren",
+                fr = "Mono- et diglycérides d'acides gras",
+                tr = "Yağ Asitlerinin Mono- ve Digliseritleri",
+                ar = "أحادي وثنائي غليسريد الأحماض الدهنية"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel yağlar (Palmiye/Soya) VEYA Hayvansal yağlar (Domuz/Sığır iç yağı)",
-            description = "En yaygın yağ emülgatörü. Bitkisel kökenli olanlar helaldir; ancak ambalajda 'bitkisel' veya 'vegetable' yazmıyorsa hayvansal kökenli olma riski taşır.",
+            origin = LocalizedText(
+                en = "Vegetable oils (palm/soy) OR animal fats (pork/beef tallow)",
+                de = "Pflanzliche Öle (Palme/Soja) ODER tierische Fette (Schweine-/Rindertalg)",
+                fr = "Huiles végétales (palme/soja) OU graisses animales (suif de porc/bœuf)",
+                tr = "Bitkisel yağlar (Palmiye/Soya) VEYA Hayvansal yağlar (Domuz/Sığır iç yağı)",
+                ar = "زيوت نباتية (نخيل/صويا) أو دهون حيوانية (شحم خنزير/بقر)"
+            ),
+            description = LocalizedText(
+                en = "The most common fat emulsifier. Plant-derived versions are halal, but without 'vegetable' stated on the packaging there is a risk it is animal-derived.",
+                de = "Der häufigste Fettemulgator. Pflanzliche Varianten sind halal; steht jedoch kein Hinweis auf 'pflanzlich' auf der Verpackung, besteht das Risiko einer tierischen Herkunft.",
+                fr = "L'émulsifiant gras le plus courant. Les versions d'origine végétale sont halal, mais sans mention 'végétal' sur l'emballage, il existe un risque d'origine animale.",
+                tr = "En yaygın yağ emülgatörü. Bitkisel kökenli olanlar helaldir; ancak ambalajda 'bitkisel' veya 'vegetable' yazmıyorsa hayvansal kökenli olma riski taşır.",
+                ar = "المستحلب الدهني الأكثر شيوعاً. الأنواع النباتية المصدر حلال؛ لكن في حال عدم ذكر كلمة 'نباتي' على العبوة يكون هناك خطر أن يكون المصدر حيوانياً."
+            ),
             alternateNames = listOf("Mono- and diglycerides of fatty acids", "Glyceryl monostearate", "Mono- und Diglyceride von Speisefettsäuren"),
-            commonUsage = "Ekmekler, kekler, çikolatalar, dondurmalar, margarinler, cipsler, paketli atıştırmalıklar"
+            commonUsage = LocalizedText(
+                en = "Bread, cakes, chocolates, ice cream, margarine, chips, packaged snacks",
+                de = "Brot, Kuchen, Schokolade, Eiscreme, Margarine, Chips, verpackte Snacks",
+                fr = "Pain, gâteaux, chocolats, crèmes glacées, margarine, chips, en-cas emballés",
+                tr = "Ekmekler, kekler, çikolatalar, dondurmalar, margarinler, cipsler, paketli atıştırmalıklar",
+                ar = "الخبز، الكعك، الشوكولاتة، الآيس كريم، السمن النباتي، رقائق البطاطس، الوجبات الخفيفة المعبأة"
+            )
         ),
         EAdditive(
             code = "E472a-f",
-            name = "Mono- ve Digliseritlerin Esterleri (DATEM)",
+            name = LocalizedText(
+                en = "Esters of Mono- and Diglycerides (DATEM)",
+                de = "Ester von Mono- und Diglyceriden (DATEM)",
+                fr = "Esters de mono- et diglycérides (DATEM)",
+                tr = "Mono- ve Digliseritlerin Esterleri (DATEM)",
+                ar = "إسترات أحادي وثنائي الغليسريد (DATEM)"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel veya Hayvansal yağ asitleri",
-            description = "E471 türevi hamur geliştirici emülgatörler. Kaynağı bitkisel olarak teyit edilmedikçe şüpheli kabul edilir.",
+            origin = LocalizedText(
+                en = "Plant or animal fatty acids",
+                de = "Pflanzliche oder tierische Fettsäuren",
+                fr = "Acides gras végétaux ou animaux",
+                tr = "Bitkisel veya Hayvansal yağ asitleri",
+                ar = "أحماض دهنية نباتية أو حيوانية"
+            ),
+            description = LocalizedText(
+                en = "Dough-conditioning emulsifiers derived from E471. Considered doubtful unless the source is confirmed as plant-based.",
+                de = "Von E471 abgeleitete teigverbessernde Emulgatoren. Gilt als zweifelhaft, sofern die pflanzliche Herkunft nicht bestätigt ist.",
+                fr = "Émulsifiants améliorants de pâte dérivés de l'E471. Considérés comme douteux sauf confirmation d'une origine végétale.",
+                tr = "E471 türevi hamur geliştirici emülgatörler. Kaynağı bitkisel olarak teyit edilmedikçe şüpheli kabul edilir.",
+                ar = "مستحلبات محسّنة للعجين مشتقة من E471. تُعتبر مشبوهة ما لم يُؤكد أن مصدرها نباتي."
+            ),
             alternateNames = listOf("DATEM", "E472a", "E472b", "E472c", "E472e", "Diacetyl tartaric acid esters"),
-            commonUsage = "Tost ekmekleri, kruvasanlar, dondurulmuş hamurlar, mayonezler"
+            commonUsage = LocalizedText(
+                en = "Toast bread, croissants, frozen dough, mayonnaise",
+                de = "Toastbrot, Croissants, Tiefkühlteig, Mayonnaise",
+                fr = "Pain de mie, croissants, pâtes surgelées, mayonnaise",
+                tr = "Tost ekmekleri, kruvasanlar, dondurulmuş hamurlar, mayonezler",
+                ar = "خبز التوست، الكرواسون، العجين المجمد، المايونيز"
+            )
         ),
         EAdditive(
             code = "E904",
-            name = "Şellak / Confectioner's Glaze",
+            name = LocalizedText(
+                en = "Shellac / Confectioner's Glaze",
+                de = "Schellack / Konditorlack",
+                fr = "Gomme laque / Glaçage de confiseur",
+                tr = "Şellak / Confectioner's Glaze",
+                ar = "الشيلاك / طلاء الحلويات"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Böcek Salgısı (Kerria lacca böceğinin reçineli salgısı)",
-            description = "Şekerleme ve meyvelere parlaklık veren sır maddesi. Bazı helal otoritelerince böcek salgısı olduğu için şüpheli/sakıncalı görülür.",
+            origin = LocalizedText(
+                en = "Insect secretion (resinous secretion of the Kerria lacca insect)",
+                de = "Insektensekret (Harzsekret der Lackschildlaus Kerria lacca)",
+                fr = "Sécrétion d'insecte (sécrétion résineuse de l'insecte Kerria lacca)",
+                tr = "Böcek Salgısı (Kerria lacca böceğinin reçineli salgısı)",
+                ar = "إفراز حشري (إفراز راتنجي من حشرة Kerria lacca)"
+            ),
+            description = LocalizedText(
+                en = "A glazing agent that gives confectionery and fruit their shine. Some halal authorities view it as doubtful/objectionable since it is an insect secretion.",
+                de = "Ein Glasurmittel, das Süßwaren und Obst ihren Glanz verleiht. Manche Halal-Autoritäten stufen es aufgrund seiner Herkunft als Insektensekret als zweifelhaft/bedenklich ein.",
+                fr = "Agent lustrant qui donne leur brillance aux confiseries et aux fruits. Certaines autorités halal le considèrent douteux/problématique car il s'agit d'une sécrétion d'insecte.",
+                tr = "Şekerleme ve meyvelere parlaklık veren sır maddesi. Bazı helal otoritelerince böcek salgısı olduğu için şüpheli/sakıncalı görülür.",
+                ar = "مادة تلميع تمنح الحلويات والفواكه لمعانها. تعتبره بعض الجهات الفقهية مشبوهاً/مكروهاً لأنه إفراز حشري."
+            ),
             alternateNames = listOf("Shellac", "Confectioner's Glaze", "Resinous glaze", "Gummilack"),
-            commonUsage = "Draje şekerler, parlatılmış draje çikolatalar, parlatılmış elmalar, tablet kaplamaları"
+            commonUsage = LocalizedText(
+                en = "Sugar-coated candies, glazed chocolate dragées, waxed apples, tablet coatings",
+                de = "Dragees, glasierte Schokoladendragees, gewachste Äpfel, Tablettenüberzüge",
+                fr = "Bonbons dragéifiés, dragées de chocolat lustrées, pommes cirées, enrobages de comprimés",
+                tr = "Draje şekerler, parlatılmış draje çikolatalar, parlatılmış elmalar, tablet kaplamaları",
+                ar = "الحلوى المطلية بالسكر، حبيبات الشوكولاتة المصقولة، التفاح المصقول، أغلفة الأقراص الدوائية"
+            )
         ),
         EAdditive(
             code = "E920",
-            name = "L-Sistein (L-Cysteine)",
+            name = LocalizedText(
+                en = "L-Cysteine",
+                de = "L-Cystein",
+                fr = "L-Cystéine",
+                tr = "L-Sistein (L-Cysteine)",
+                ar = "إل-سيستين (L-Cysteine)"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Ördek tüyü, insan saçı, domuz kılı VEYA sentetik/fermantasyon",
-            description = "Endüstriyel unlarda hamurun hızlı yoğrulmasını sağlayan aminoasit. Hayvansal kıldan elde edilenler sakıncalıdır.",
+            origin = LocalizedText(
+                en = "Duck feathers, human hair, pig bristles OR synthetic/fermentation-derived",
+                de = "Entenfedern, Menschenhaar, Schweineborsten ODER synthetisch/fermentativ hergestellt",
+                fr = "Plumes de canard, cheveux humains, soies de porc OU d'origine synthétique/fermentation",
+                tr = "Ördek tüyü, insan saçı, domuz kılı VEYA sentetik/fermantasyon",
+                ar = "ريش البط، شعر الإنسان، شعر الخنزير أو مُصنّع/ناتج عن التخمير"
+            ),
+            description = LocalizedText(
+                en = "An amino acid that speeds up dough mixing in industrial flour. Versions derived from animal hair/bristles are objectionable.",
+                de = "Eine Aminosäure, die in industriellem Mehl die Teigknetzeit verkürzt. Aus tierischen Haaren/Borsten gewonnene Varianten sind bedenklich.",
+                fr = "Un acide aminé qui accélère le pétrissage de la pâte dans la farine industrielle. Les versions issues de poils/soies animales sont problématiques.",
+                tr = "Endüstriyel unlarda hamurun hızlı yoğrulmasını sağlayan aminoasit. Hayvansal kıldan elde edilenler sakıncalıdır.",
+                ar = "حمض أميني يسرّع عجن العجين في الدقيق الصناعي. الأنواع المستخرجة من شعر أو وبر الحيوانات مكروهة."
+            ),
             alternateNames = listOf("L-Cysteine", "Cysteine hydrochloride", "L-Cystein"),
-            commonUsage = "Paketli sandviç ekmekleri, hamburger ekmekleri, pizza tabanları, lavaş/tortilla"
+            commonUsage = LocalizedText(
+                en = "Packaged sandwich bread, burger buns, pizza bases, flatbread/tortillas",
+                de = "Verpacktes Sandwichbrot, Burgerbrötchen, Pizzaböden, Fladenbrot/Tortillas",
+                fr = "Pain de mie emballé, pains à burger, bases de pizza, galettes/tortillas",
+                tr = "Paketli sandviç ekmekleri, hamburger ekmekleri, pizza tabanları, lavaş/tortilla",
+                ar = "خبز الساندويتش المعبأ، خبز البرغر، عجينة البيتزا، الخبز المسطح/التورتيلا"
+            )
         ),
         EAdditive(
             code = "E631",
-            name = "Disodyum İnozinat",
+            name = LocalizedText(
+                en = "Disodium Inosinate",
+                de = "Dinatriuminosinat",
+                fr = "Inosinate disodique",
+                tr = "Disodyum İnozinat",
+                ar = "إينوزينات ثنائي الصوديوم"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Et ekstraktı (Domuz/Sığır) VEYA bitkisel tapiyoka fermantasyonu",
-            description = "Umami lezzet artırıcı. Çoğunlukla et yan ürünlerinden üretildiğinden helal sertifikası yoksa şüphelidir.",
+            origin = LocalizedText(
+                en = "Meat extract (pork/beef) OR plant-based tapioca fermentation",
+                de = "Fleischextrakt (Schwein/Rind) ODER pflanzliche Tapioka-Fermentation",
+                fr = "Extrait de viande (porc/bœuf) OU fermentation végétale du tapioca",
+                tr = "Et ekstraktı (Domuz/Sığır) VEYA bitkisel tapiyoka fermantasyonu",
+                ar = "مستخلص اللحم (خنزير/بقر) أو تخمير نباتي من التابيوكا"
+            ),
+            description = LocalizedText(
+                en = "An umami flavor enhancer. Mostly produced from meat by-products, so it is doubtful without a halal certificate.",
+                de = "Ein Umami-Geschmacksverstärker. Wird meist aus Fleischnebenprodukten hergestellt, daher ohne Halal-Zertifikat zweifelhaft.",
+                fr = "Exhausteur de goût umami. Le plus souvent produit à partir de sous-produits carnés, donc douteux sans certification halal.",
+                tr = "Umami lezzet artırıcı. Çoğunlukla et yan ürünlerinden üretildiğinden helal sertifikası yoksa şüphelidir.",
+                ar = "معزز نكهة أومامي. يُنتج غالباً من مشتقات اللحوم، لذا يُعتبر مشبوهاً دون شهادة حلال."
+            ),
             alternateNames = listOf("Disodium inosinate", "Sodium inosinate", "IMP"),
-            commonUsage = "Aromalı patates cipsleri, hazır noodle'lar, hazır çorbalar, bulyonlar"
+            commonUsage = LocalizedText(
+                en = "Flavored potato chips, instant noodles, instant soups, bouillon cubes",
+                de = "Aromatisierte Kartoffelchips, Instantnudeln, Instantsuppen, Brühwürfel",
+                fr = "Chips aromatisées, nouilles instantanées, soupes instantanées, bouillons",
+                tr = "Aromalı patates cipsleri, hazır noodle'lar, hazır çorbalar, bulyonlar",
+                ar = "رقائق البطاطس المنكهة، النودلز سريعة التحضير، الشوربات الجاهزة، مكعبات المرق"
+            )
         ),
         EAdditive(
             code = "E542",
-            name = "Kemik Fosfatı (Bone Phosphate)",
+            name = LocalizedText(
+                en = "Bone Phosphate",
+                de = "Knochenphosphat",
+                fr = "Phosphate d'os",
+                tr = "Kemik Fosfatı (Bone Phosphate)",
+                ar = "فوسفات العظام"
+            ),
             status = HalalStatus.HARAM,
-            origin = "Hayvan kemikleri (Sığır / Domuz)",
-            description = "Yağsız hayvan kemiklerinden elde edilen topaklanmayı önleyici mineral. Helal kesim olmadan üretilenler haramdır.",
+            origin = LocalizedText(
+                en = "Animal bones (beef/pork)",
+                de = "Tierknochen (Rind/Schwein)",
+                fr = "Os d'animaux (bœuf/porc)",
+                tr = "Hayvan kemikleri (Sığır / Domuz)",
+                ar = "عظام حيوانية (بقر/خنزير)"
+            ),
+            description = LocalizedText(
+                en = "An anti-caking mineral derived from defatted animal bones. Those produced without halal slaughter are haram.",
+                de = "Ein Antiklumpmittel aus entfetteten Tierknochen. Ohne halal-konforme Schlachtung hergestellte Varianten sind haram.",
+                fr = "Un agent antiagglomérant issu d'os d'animaux dégraissés. Ceux produits sans abattage halal sont haram.",
+                tr = "Yağsız hayvan kemiklerinden elde edilen topaklanmayı önleyici mineral. Helal kesim olmadan üretilenler haramdır.",
+                ar = "مادة مانعة للتكتل مستخرجة من عظام حيوانية منزوعة الدهن. المنتجة دون ذبح حلال تُعتبر حراماً."
+            ),
             alternateNames = listOf("Bone Phosphate", "Edible Bone Phosphate"),
-            commonUsage = "Gıda takviyeleri, toz içecekler"
+            commonUsage = LocalizedText(
+                en = "Food supplements, powdered drink mixes",
+                de = "Nahrungsergänzungsmittel, Getränkepulver",
+                fr = "Compléments alimentaires, boissons en poudre",
+                tr = "Gıda takviyeleri, toz içecekler",
+                ar = "المكملات الغذائية، مساحيق المشروبات"
+            )
         ),
         EAdditive(
             code = "E100",
-            name = "Kurkumin / Zerdeçal Sarısı",
+            name = LocalizedText(
+                en = "Curcumin / Turmeric Yellow",
+                de = "Curcumin / Kurkumagelb",
+                fr = "Curcumine / Jaune de curcuma",
+                tr = "Kurkumin / Zerdeçal Sarısı",
+                ar = "الكركمين / أصفر الكركم"
+            ),
             status = HalalStatus.HELAL,
-            origin = "Bitkisel (Doğal Zerdeçal Kökü / Curcuma longa)",
-            description = "Zerdeçal bitkisinden elde edilen %100 doğal, güvenli ve helal sarı renklendirici.",
+            origin = LocalizedText(
+                en = "Plant-based (natural turmeric root / Curcuma longa)",
+                de = "Pflanzlich (natürliche Kurkumawurzel / Curcuma longa)",
+                fr = "Origine végétale (racine de curcuma naturelle / Curcuma longa)",
+                tr = "Bitkisel (Doğal Zerdeçal Kökü / Curcuma longa)",
+                ar = "نباتي المصدر (جذر الكركم الطبيعي / Curcuma longa)"
+            ),
+            description = LocalizedText(
+                en = "A 100% natural, safe, and halal yellow colorant derived from the turmeric plant.",
+                de = "Ein 100 % natürlicher, sicherer und halal-konformer gelber Farbstoff aus der Kurkumapflanze.",
+                fr = "Un colorant jaune 100 % naturel, sûr et halal, extrait de la plante de curcuma.",
+                tr = "Zerdeçal bitkisinden elde edilen %100 doğal, güvenli ve helal sarı renklendirici.",
+                ar = "صبغة صفراء طبيعية 100% وآمنة وحلال مستخرجة من نبات الكركم."
+            ),
             alternateNames = listOf("Curcumin", "Turmeric Yellow", "Diferuloylmethane", "CI 75300"),
-            commonUsage = "Hardal, köri sosları, peynirler, unlu mamuller, içecekler, çorbalar"
+            commonUsage = LocalizedText(
+                en = "Mustard, curry sauces, cheeses, baked goods, beverages, soups",
+                de = "Senf, Currysoßen, Käse, Backwaren, Getränke, Suppen",
+                fr = "Moutarde, sauces au curry, fromages, produits de boulangerie, boissons, soupes",
+                tr = "Hardal, köri sosları, peynirler, unlu mamuller, içecekler, çorbalar",
+                ar = "الخردل، صلصات الكاري، الأجبان، المخبوزات، المشروبات، الشوربات"
+            )
         ),
         EAdditive(
             code = "E322",
-            name = "Lesitin (Soya / Ayçiçeği)",
+            name = LocalizedText(
+                en = "Lecithin (Soy / Sunflower)",
+                de = "Lecithin (Soja / Sonnenblume)",
+                fr = "Lécithine (Soja / Tournesol)",
+                tr = "Lesitin (Soya / Ayçiçeği)",
+                ar = "الليسيثين (الصويا / عباد الشمس)"
+            ),
             status = HalalStatus.HELAL,
-            origin = "Bitkisel (Soya fasulyesi veya Ayçiçeği tohumu)",
-            description = "Çikolata ve ezmelerde kullanılan doğal bitkisel emülgatör. Güvenli ve helaldir.",
+            origin = LocalizedText(
+                en = "Plant-based (soybean or sunflower seed)",
+                de = "Pflanzlich (Sojabohne oder Sonnenblumenkern)",
+                fr = "Origine végétale (graine de soja ou de tournesol)",
+                tr = "Bitkisel (Soya fasulyesi veya Ayçiçeği tohumu)",
+                ar = "نباتي المصدر (فول الصويا أو بذور عباد الشمس)"
+            ),
+            description = LocalizedText(
+                en = "A natural plant-based emulsifier used in chocolate and spreads. Safe and halal.",
+                de = "Ein natürlicher pflanzlicher Emulgator, der in Schokolade und Aufstrichen verwendet wird. Sicher und halal.",
+                fr = "Un émulsifiant naturel d'origine végétale utilisé dans le chocolat et les pâtes à tartiner. Sûr et halal.",
+                tr = "Çikolata ve ezmelerde kullanılan doğal bitkisel emülgatör. Güvenli ve helaldir.",
+                ar = "مستحلب نباتي طبيعي يُستخدم في الشوكولاتة والمعجونات القابلة للدهن. آمن وحلال."
+            ),
             alternateNames = listOf("Lecithin", "Soy Lecithin", "Sunflower Lecithin", "Phosphatidylcholine"),
-            commonUsage = "Çikolatalar, Nutella, bisküviler, bebek mamaları"
+            commonUsage = LocalizedText(
+                en = "Chocolates, Nutella, biscuits, baby formula",
+                de = "Schokolade, Nutella, Kekse, Babynahrung",
+                fr = "Chocolats, Nutella, biscuits, préparations pour nourrissons",
+                tr = "Çikolatalar, Nutella, bisküviler, bebek mamaları",
+                ar = "الشوكولاتة، النوتيلا، البسكويت، حليب الأطفال"
+            )
         ),
         EAdditive(
             code = "E330",
-            name = "Sitrik Asit (Limon Tuzu)",
+            name = LocalizedText(
+                en = "Citric Acid",
+                de = "Zitronensäure",
+                fr = "Acide citrique",
+                tr = "Sitrik Asit (Limon Tuzu)",
+                ar = "حمض الستريك (ملح الليمون)"
+            ),
             status = HalalStatus.HELAL,
-            origin = "Bitkisel / Şeker fermantasyonu (Narenciye)",
-            description = "En yaygın asitlik düzenleyici ve koruyucu. %100 helal ve doğaldır.",
+            origin = LocalizedText(
+                en = "Plant-based / sugar fermentation (citrus)",
+                de = "Pflanzlich / Zuckerfermentation (Zitrusfrüchte)",
+                fr = "Origine végétale / fermentation du sucre (agrumes)",
+                tr = "Bitkisel / Şeker fermantasyonu (Narenciye)",
+                ar = "نباتي / تخمير سكري (الحمضيات)"
+            ),
+            description = LocalizedText(
+                en = "The most common acidity regulator and preservative. 100% halal and natural.",
+                de = "Der häufigste Säureregulator und Konservierungsstoff. 100 % halal und natürlich.",
+                fr = "Le régulateur d'acidité et conservateur le plus courant. 100 % halal et naturel.",
+                tr = "En yaygın asitlik düzenleyici ve koruyucu. %100 helal ve doğaldır.",
+                ar = "منظم الحموضة والمادة الحافظة الأكثر شيوعاً. حلال وطبيعي 100%."
+            ),
             alternateNames = listOf("Citric Acid", "Limon Tuzu", "Zitronensäure", "Acide citrique"),
-            commonUsage = "Gazlı içecekler, reçeller, konserve gıdalar, meyveli şekerlemeler"
+            commonUsage = LocalizedText(
+                en = "Carbonated drinks, jams, canned foods, fruit candies",
+                de = "Kohlensäurehaltige Getränke, Marmeladen, Konserven, Fruchtbonbons",
+                fr = "Boissons gazeuses, confitures, conserves, bonbons aux fruits",
+                tr = "Gazlı içecekler, reçeller, konserve gıdalar, meyveli şekerlemeler",
+                ar = "المشروبات الغازية، المربى، الأطعمة المعلبة، حلوى الفواكه"
+            )
         ),
         EAdditive(
             code = "E407",
-            name = "Karragenan (Carrageenan)",
+            name = LocalizedText(
+                en = "Carrageenan",
+                de = "Carrageen",
+                fr = "Carraghénane",
+                tr = "Karragenan (Carrageenan)",
+                ar = "الكاراجينان"
+            ),
             status = HalalStatus.HELAL,
-            origin = "Bitkisel (Kırmızı Deniz Yosunu / Red Algae)",
-            description = "Deniz yosunlarından elde edilen bitkisel kıvam artırıcı. Hayvansal jelatin yerine popüler helal alternatiftir.",
+            origin = LocalizedText(
+                en = "Plant-based (red seaweed / red algae)",
+                de = "Pflanzlich (Rotalgen)",
+                fr = "Origine végétale (algue rouge)",
+                tr = "Bitkisel (Kırmızı Deniz Yosunu / Red Algae)",
+                ar = "نباتي المصدر (الطحالب البحرية الحمراء)"
+            ),
+            description = LocalizedText(
+                en = "A plant-based thickener derived from seaweed. A popular halal alternative to animal gelatin.",
+                de = "Ein pflanzliches Verdickungsmittel aus Meeresalgen. Eine beliebte halal-konforme Alternative zu tierischer Gelatine.",
+                fr = "Un épaississant d'origine végétale extrait d'algues marines. Une alternative halal populaire à la gélatine animale.",
+                tr = "Deniz yosunlarından elde edilen bitkisel kıvam artırıcı. Hayvansal jelatin yerine popüler helal alternatiftir.",
+                ar = "مادة تكثيف نباتية مستخرجة من الطحالب البحرية. بديل حلال شائع عن الجيلاتين الحيواني."
+            ),
             alternateNames = listOf("Carrageenan", "Irish Moss Extract", "Karrageen"),
-            commonUsage = "Bitkisel sütler, pudingler, dondurmalar, vegan jelibonlar"
+            commonUsage = LocalizedText(
+                en = "Plant-based milks, puddings, ice cream, vegan gummies",
+                de = "Pflanzliche Milchalternativen, Pudding, Eiscreme, vegane Fruchtgummis",
+                fr = "Laits végétaux, puddings, crèmes glacées, bonbons gélifiés vegan",
+                tr = "Bitkisel sütler, pudingler, dondurmalar, vegan jelibonlar",
+                ar = "الحليب النباتي، البودينغ، الآيس كريم، الحلوى الهلامية النباتية"
+            )
         ),
         EAdditive(
             code = "E412",
-            name = "Guar Gam (Guar Gum)",
+            name = LocalizedText(
+                en = "Guar Gum",
+                de = "Guarkernmehl",
+                fr = "Gomme de guar",
+                tr = "Guar Gam (Guar Gum)",
+                ar = "صمغ الغوار"
+            ),
             status = HalalStatus.HELAL,
-            origin = "Bitkisel (Guar fasulyesi tohumu)",
-            description = "Guar bitkisinden elde edilen doğal kıvam artırıcı lif. Tamamen helaldir.",
+            origin = LocalizedText(
+                en = "Plant-based (guar bean seed)",
+                de = "Pflanzlich (Guarbohnensamen)",
+                fr = "Origine végétale (graine de haricot guar)",
+                tr = "Bitkisel (Guar fasulyesi tohumu)",
+                ar = "نباتي المصدر (بذور فول الغوار)"
+            ),
+            description = LocalizedText(
+                en = "A natural thickening fiber derived from the guar plant. Fully halal.",
+                de = "Ein natürlicher verdickender Ballaststoff aus der Guarpflanze. Vollständig halal.",
+                fr = "Une fibre épaississante naturelle extraite de la plante de guar. Entièrement halal.",
+                tr = "Guar bitkisinden elde edilen doğal kıvam artırıcı lif. Tamamen helaldir.",
+                ar = "ألياف طبيعية مكثفة مستخرجة من نبات الغوار. حلال تماماً."
+            ),
             alternateNames = listOf("Guar Gum", "Guaran", "Guarkernmehl"),
-            commonUsage = "Salata sosları, dondurma, soslar, glütensiz fırın ürünleri"
+            commonUsage = LocalizedText(
+                en = "Salad dressings, ice cream, sauces, gluten-free baked goods",
+                de = "Salatdressings, Eiscreme, Soßen, glutenfreie Backwaren",
+                fr = "Vinaigrettes, crèmes glacées, sauces, produits de boulangerie sans gluten",
+                tr = "Salata sosları, dondurma, soslar, glütensiz fırın ürünleri",
+                ar = "صلصات السلطة، الآيس كريم، الصلصات، المخبوزات الخالية من الغلوتين"
+            )
         ),
         EAdditive(
             code = "E415",
-            name = "Ksantan Gam (Xanthan Gum)",
+            name = LocalizedText(
+                en = "Xanthan Gum",
+                de = "Xanthan",
+                fr = "Gomme xanthane",
+                tr = "Ksantan Gam (Xanthan Gum)",
+                ar = "صمغ الزانثان"
+            ),
             status = HalalStatus.HELAL,
-            origin = "Bakteriyel glukoz fermantasyonu (Xanthomonas campestris)",
-            description = "Doğal fermantasyonla üretilen güvenli kıvam artırıcı ve stabilizatör. %100 helaldir.",
+            origin = LocalizedText(
+                en = "Bacterial glucose fermentation (Xanthomonas campestris)",
+                de = "Bakterielle Glukosefermentation (Xanthomonas campestris)",
+                fr = "Fermentation bactérienne du glucose (Xanthomonas campestris)",
+                tr = "Bakteriyel glukoz fermantasyonu (Xanthomonas campestris)",
+                ar = "تخمير بكتيري للغلوكوز (Xanthomonas campestris)"
+            ),
+            description = LocalizedText(
+                en = "A safe thickener and stabilizer produced by natural fermentation. 100% halal.",
+                de = "Ein sicheres Verdickungs- und Stabilisierungsmittel, hergestellt durch natürliche Fermentation. 100 % halal.",
+                fr = "Un épaississant et stabilisant sûr produit par fermentation naturelle. 100 % halal.",
+                tr = "Doğal fermantasyonla üretilen güvenli kıvam artırıcı ve stabilizatör. %100 helaldir.",
+                ar = "مادة تكثيف وتثبيت آمنة تُنتج بالتخمير الطبيعي. حلال 100%."
+            ),
             alternateNames = listOf("Xanthan Gum", "Xanthangummi"),
-            commonUsage = "Glütensiz unlar, soslar, şuruplar, diş macunları"
+            commonUsage = LocalizedText(
+                en = "Gluten-free flours, sauces, syrups, toothpaste",
+                de = "Glutenfreie Mehle, Soßen, Sirupe, Zahnpasta",
+                fr = "Farines sans gluten, sauces, sirops, dentifrices",
+                tr = "Glütensiz unlar, soslar, şuruplar, diş macunları",
+                ar = "الدقيق الخالي من الغلوتين، الصلصات، الشراب، معجون الأسنان"
+            )
         ),
         EAdditive(
             code = "E162",
-            name = "Pancar Kırmızısı (Betanin)",
+            name = LocalizedText(
+                en = "Beetroot Red (Betanin)",
+                de = "Rote-Bete-Rot (Betanin)",
+                fr = "Rouge de betterave (Bétanine)",
+                tr = "Pancar Kırmızısı (Betanin)",
+                ar = "أحمر الشمندر (البيتانين)"
+            ),
             status = HalalStatus.HELAL,
-            origin = "Bitkisel (Kırmızı Pancar / Beta vulgaris)",
-            description = "Böcek karmini (E120) yerine kullanılan %100 bitkisel, sağlıklı ve helal kırmızı renklendirici.",
+            origin = LocalizedText(
+                en = "Plant-based (red beet / Beta vulgaris)",
+                de = "Pflanzlich (Rote Bete / Beta vulgaris)",
+                fr = "Origine végétale (betterave rouge / Beta vulgaris)",
+                tr = "Bitkisel (Kırmızı Pancar / Beta vulgaris)",
+                ar = "نباتي المصدر (الشمندر الأحمر / Beta vulgaris)"
+            ),
+            description = LocalizedText(
+                en = "A 100% plant-based, healthy, and halal red colorant used in place of insect-derived carmine (E120).",
+                de = "Ein 100 % pflanzlicher, gesunder und halal-konformer roter Farbstoff, der anstelle des insektenbasierten Karmins (E120) verwendet wird.",
+                fr = "Un colorant rouge 100 % végétal, sain et halal, utilisé à la place du carmin d'origine insecte (E120).",
+                tr = "Böcek karmini (E120) yerine kullanılan %100 bitkisel, sağlıklı ve helal kırmızı renklendirici.",
+                ar = "صبغة حمراء نباتية 100% وصحية وحلال تُستخدم بدلاً من القرمز الحشري (E120)."
+            ),
             alternateNames = listOf("Beetroot Red", "Betanin", "Rote-Bete-Rot"),
-            commonUsage = "Çilekli dondurmalar, meyveli yoğurtlar, kırmızı şekerler, içecekler"
+            commonUsage = LocalizedText(
+                en = "Strawberry ice cream, fruit yogurts, red candies, beverages",
+                de = "Erdbeereis, Fruchtjoghurts, rote Bonbons, Getränke",
+                fr = "Glaces à la fraise, yaourts aux fruits, bonbons rouges, boissons",
+                tr = "Çilekli dondurmalar, meyveli yoğurtlar, kırmızı şekerler, içecekler",
+                ar = "آيس كريم الفراولة، زبادي الفواكه، الحلوى الحمراء، المشروبات"
+            )
         ),
         EAdditive(
             code = "E160a",
-            name = "Beta-Karoten",
+            name = LocalizedText(
+                en = "Beta-Carotene",
+                de = "Beta-Carotin",
+                fr = "Bêta-carotène",
+                tr = "Beta-Karoten",
+                ar = "بيتا كاروتين"
+            ),
             status = HalalStatus.HELAL,
-            origin = "Bitkisel (Havuç, Palmiye meyvesi)",
-            description = "Havuç ve bitkilerden elde edilen doğal turuncu-sarı pro-vitamin A renklendirici.",
+            origin = LocalizedText(
+                en = "Plant-based (carrot, palm fruit)",
+                de = "Pflanzlich (Karotte, Palmfrucht)",
+                fr = "Origine végétale (carotte, fruit du palmier)",
+                tr = "Bitkisel (Havuç, Palmiye meyvesi)",
+                ar = "نباتي المصدر (الجزر، ثمرة النخيل)"
+            ),
+            description = LocalizedText(
+                en = "A natural orange-yellow pro-vitamin A colorant derived from carrots and plants.",
+                de = "Ein natürlicher orange-gelber Provitamin-A-Farbstoff aus Karotten und Pflanzen.",
+                fr = "Un colorant naturel orange-jaune, provitamine A, extrait de carottes et de plantes.",
+                tr = "Havuç ve bitkilerden elde edilen doğal turuncu-sarı pro-vitamin A renklendirici.",
+                ar = "صبغة طبيعية برتقالية-صفراء من نوع بروفيتامين أ مستخرجة من الجزر والنباتات."
+            ),
             alternateNames = listOf("Beta-Carotene", "Provitamin A", "CI 75130"),
-            commonUsage = "Margarinler, meyve suları, kekler, peynirler"
+            commonUsage = LocalizedText(
+                en = "Margarine, fruit juices, cakes, cheeses",
+                de = "Margarine, Fruchtsäfte, Kuchen, Käse",
+                fr = "Margarine, jus de fruits, gâteaux, fromages",
+                tr = "Margarinler, meyve suları, kekler, peynirler",
+                ar = "السمن النباتي، عصائر الفواكه، الكعك، الأجبان"
+            )
         ),
         // Additional source-dependent (şüpheli) emulsifiers/additives: like E471/E472, these are
         // genuinely either plant or animal fatty-acid derivatives depending on manufacturer sourcing,
@@ -713,93 +1098,333 @@ object InitialData {
         // or explicit "vegetable/bitkisel" origin is stated on the packaging.
         EAdditive(
             code = "E422",
-            name = "Gliserin (Glycerol)",
+            name = LocalizedText(
+                en = "Glycerin (Glycerol)",
+                de = "Glyzerin (Glycerol)",
+                fr = "Glycérine (Glycérol)",
+                tr = "Gliserin (Glycerol)",
+                ar = "الغليسرين"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel yağlar VEYA Hayvansal yağlar (Domuz/Sığır iç yağı)",
-            description = "Nem tutucu ve tatlandırıcı olarak kullanılan gliserol. Bitkisel yağ (soya, palmiye) sabunlaşmasından veya hayvansal iç yağdan elde edilebilir. Kaynak teyidi gerektirir.",
+            origin = LocalizedText(
+                en = "Vegetable oils OR animal fats (pork/beef tallow)",
+                de = "Pflanzliche Öle ODER tierische Fette (Schweine-/Rindertalg)",
+                fr = "Huiles végétales OU graisses animales (suif de porc/bœuf)",
+                tr = "Bitkisel yağlar VEYA Hayvansal yağlar (Domuz/Sığır iç yağı)",
+                ar = "زيوت نباتية أو دهون حيوانية (شحم خنزير/بقر)"
+            ),
+            description = LocalizedText(
+                en = "Glycerol used as a humectant and sweetener. Can be obtained from the saponification of vegetable oil (soy, palm) or from animal fat. Requires source confirmation.",
+                de = "Als Feuchthaltemittel und Süßungsmittel eingesetztes Glycerol. Kann aus der Verseifung von Pflanzenöl (Soja, Palme) oder aus tierischem Fett gewonnen werden. Herkunftsbestätigung erforderlich.",
+                fr = "Glycérol utilisé comme humectant et édulcorant. Peut être obtenu par saponification d'huile végétale (soja, palme) ou à partir de graisse animale. Nécessite une confirmation de la source.",
+                tr = "Nem tutucu ve tatlandırıcı olarak kullanılan gliserol. Bitkisel yağ (soya, palmiye) sabunlaşmasından veya hayvansal iç yağdan elde edilebilir. Kaynak teyidi gerektirir.",
+                ar = "غليسرول يُستخدم كمرطب ومحلي. يمكن الحصول عليه من تصبن الزيت النباتي (صويا، نخيل) أو من الدهون الحيوانية. يتطلب التأكد من المصدر."
+            ),
             alternateNames = listOf("Glycerin", "Glycerol", "E422", "Glyzerin"),
-            commonUsage = "Kek ve pastalar, sakızlar, nemlendirilmiş kuruyemişler, likit içecekler, ilaç şurupları"
+            commonUsage = LocalizedText(
+                en = "Cakes and pastries, chewing gum, moisturized dried fruit, liquid drinks, medicine syrups",
+                de = "Kuchen und Gebäck, Kaugummi, feuchtgehaltenes Trockenobst, Flüssiggetränke, Arzneisirupe",
+                fr = "Gâteaux et pâtisseries, chewing-gum, fruits secs humidifiés, boissons liquides, sirops médicamenteux",
+                tr = "Kek ve pastalar, sakızlar, nemlendirilmiş kuruyemişler, likit içecekler, ilaç şurupları",
+                ar = "الكعك والمعجنات، العلكة، الفواكه المجففة المرطبة، المشروبات السائلة، أشربة الأدوية"
+            )
         ),
         EAdditive(
             code = "E432-436",
-            name = "Polisorbatlar (Tween 20/60/80)",
+            name = LocalizedText(
+                en = "Polysorbates (Tween 20/60/80)",
+                de = "Polysorbate (Tween 20/60/80)",
+                fr = "Polysorbates (Tween 20/60/80)",
+                tr = "Polisorbatlar (Tween 20/60/80)",
+                ar = "البوليسوربات (توين 20/60/80)"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel veya Hayvansal yağ asitleri + Sorbitol",
-            description = "Yağ asidi esterinden üretilen emülgatörler. Yağ asidi kaynağı bitkisel veya hayvansal olabilir; teyit edilmedikçe şüphelidir.",
+            origin = LocalizedText(
+                en = "Plant or animal fatty acids + sorbitol",
+                de = "Pflanzliche oder tierische Fettsäuren + Sorbit",
+                fr = "Acides gras végétaux ou animaux + sorbitol",
+                tr = "Bitkisel veya Hayvansal yağ asitleri + Sorbitol",
+                ar = "أحماض دهنية نباتية أو حيوانية + السوربيتول"
+            ),
+            description = LocalizedText(
+                en = "Emulsifiers produced from fatty acid esters. The fatty acid source may be plant or animal; doubtful unless confirmed.",
+                de = "Aus Fettsäureestern hergestellte Emulgatoren. Die Fettsäurequelle kann pflanzlich oder tierisch sein; ohne Bestätigung zweifelhaft.",
+                fr = "Émulsifiants produits à partir d'esters d'acides gras. La source de l'acide gras peut être végétale ou animale ; douteux sans confirmation.",
+                tr = "Yağ asidi esterinden üretilen emülgatörler. Yağ asidi kaynağı bitkisel veya hayvansal olabilir; teyit edilmedikçe şüphelidir.",
+                ar = "مستحلبات مُنتجة من إسترات الأحماض الدهنية. قد يكون مصدر الحمض الدهني نباتياً أو حيوانياً؛ مشبوه ما لم يُؤكد."
+            ),
             alternateNames = listOf("Polysorbate 20", "Polysorbate 60", "Polysorbate 80", "Tween 80"),
-            commonUsage = "Dondurmalar, kremalar, salata sosları, unlu mamuller, vitamin takviyeleri"
+            commonUsage = LocalizedText(
+                en = "Ice cream, creams, salad dressings, baked goods, vitamin supplements",
+                de = "Eiscreme, Cremes, Salatdressings, Backwaren, Vitaminpräparate",
+                fr = "Crèmes glacées, crèmes, vinaigrettes, produits de boulangerie, compléments vitaminés",
+                tr = "Dondurmalar, kremalar, salata sosları, unlu mamuller, vitamin takviyeleri",
+                ar = "الآيس كريم، الكريمات، صلصات السلطة، المخبوزات، مكملات الفيتامينات"
+            )
         ),
         EAdditive(
             code = "E470a/E470b",
-            name = "Yağ Asitlerinin Sodyum/Potasyum/Kalsiyum Tuzları",
+            name = LocalizedText(
+                en = "Sodium/Potassium/Calcium Salts of Fatty Acids",
+                de = "Natrium-/Kalium-/Calciumsalze von Fettsäuren",
+                fr = "Sels de sodium/potassium/calcium d'acides gras",
+                tr = "Yağ Asitlerinin Sodyum/Potasyum/Kalsiyum Tuzları",
+                ar = "أملاح الصوديوم/البوتاسيوم/الكالسيوم للأحماض الدهنية"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel veya Hayvansal yağ asitleri",
-            description = "Emülgatör ve topaklanma önleyici olarak kullanılan yağ asidi tuzları. Kaynağı bitkisel veya hayvansal olabilir.",
+            origin = LocalizedText(
+                en = "Plant or animal fatty acids",
+                de = "Pflanzliche oder tierische Fettsäuren",
+                fr = "Acides gras végétaux ou animaux",
+                tr = "Bitkisel veya Hayvansal yağ asitleri",
+                ar = "أحماض دهنية نباتية أو حيوانية"
+            ),
+            description = LocalizedText(
+                en = "Fatty acid salts used as emulsifiers and anti-caking agents. The source may be plant or animal.",
+                de = "Als Emulgatoren und Antiklumpmittel eingesetzte Fettsäuresalze. Die Herkunft kann pflanzlich oder tierisch sein.",
+                fr = "Sels d'acides gras utilisés comme émulsifiants et antiagglomérants. La source peut être végétale ou animale.",
+                tr = "Emülgatör ve topaklanma önleyici olarak kullanılan yağ asidi tuzları. Kaynağı bitkisel veya hayvansal olabilir.",
+                ar = "أملاح أحماض دهنية تُستخدم كمستحلبات ومانعة للتكتل. قد يكون المصدر نباتياً أو حيوانياً."
+            ),
             alternateNames = listOf("Sodium salts of fatty acids", "Calcium stearate", "Magnesium stearate"),
-            commonUsage = "Toz içecekler, tabletler, un ve baharat karışımları, cipsler"
+            commonUsage = LocalizedText(
+                en = "Powdered drinks, tablets, flour and spice blends, chips",
+                de = "Getränkepulver, Tabletten, Mehl- und Gewürzmischungen, Chips",
+                fr = "Boissons en poudre, comprimés, mélanges de farine et d'épices, chips",
+                tr = "Toz içecekler, tabletler, un ve baharat karışımları, cipsler",
+                ar = "المشروبات المسحوقة، الأقراص، خلطات الدقيق والتوابل، رقائق البطاطس"
+            )
         ),
         EAdditive(
             code = "E473",
-            name = "Sükroz Yağ Asidi Esterleri",
+            name = LocalizedText(
+                en = "Sucrose Esters of Fatty Acids",
+                de = "Zuckerester von Fettsäuren",
+                fr = "Esters de saccharose d'acides gras",
+                tr = "Sükroz Yağ Asidi Esterleri",
+                ar = "إسترات السكروز للأحماض الدهنية"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel veya Hayvansal yağ asitleri + Şeker",
-            description = "Şeker ile yağ asitlerinin esterleşmesinden elde edilen emülgatör. Yağ asidi kaynağı teyit edilmelidir.",
+            origin = LocalizedText(
+                en = "Plant or animal fatty acids + sugar",
+                de = "Pflanzliche oder tierische Fettsäuren + Zucker",
+                fr = "Acides gras végétaux ou animaux + sucre",
+                tr = "Bitkisel veya Hayvansal yağ asitleri + Şeker",
+                ar = "أحماض دهنية نباتية أو حيوانية + السكر"
+            ),
+            description = LocalizedText(
+                en = "An emulsifier obtained by esterifying sugar with fatty acids. The fatty acid source must be confirmed.",
+                de = "Ein Emulgator, gewonnen durch Veresterung von Zucker mit Fettsäuren. Die Fettsäurequelle muss bestätigt werden.",
+                fr = "Un émulsifiant obtenu par estérification du sucre avec des acides gras. La source de l'acide gras doit être confirmée.",
+                tr = "Şeker ile yağ asitlerinin esterleşmesinden elde edilen emülgatör. Yağ asidi kaynağı teyit edilmelidir.",
+                ar = "مستحلب يُحصل عليه من أسترة السكر بالأحماض الدهنية. يجب التأكد من مصدر الحمض الدهني."
+            ),
             alternateNames = listOf("Sucrose esters of fatty acids", "Sucrose Stearate"),
-            commonUsage = "Çikolatalar, fırın ürünleri, dondurmalar, içecek tozları"
+            commonUsage = LocalizedText(
+                en = "Chocolates, baked goods, ice cream, powdered drinks",
+                de = "Schokolade, Backwaren, Eiscreme, Getränkepulver",
+                fr = "Chocolats, produits de boulangerie, crèmes glacées, boissons en poudre",
+                tr = "Çikolatalar, fırın ürünleri, dondurmalar, içecek tozları",
+                ar = "الشوكولاتة، المخبوزات، الآيس كريم، المشروبات المسحوقة"
+            )
         ),
         EAdditive(
             code = "E475",
-            name = "Poligliserol Yağ Asidi Esterleri",
+            name = LocalizedText(
+                en = "Polyglycerol Esters of Fatty Acids",
+                de = "Polyglycerinester von Fettsäuren",
+                fr = "Esters de polyglycérol d'acides gras",
+                tr = "Poligliserol Yağ Asidi Esterleri",
+                ar = "إسترات البوليغليسرول للأحماض الدهنية"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel veya Hayvansal yağ asitleri + Gliserol",
-            description = "Hamur ve yağ bazlı ürünlerde kullanılan emülgatör. Gliserol ve yağ asidi bileşenleri hayvansal kaynaklı olabilir.",
+            origin = LocalizedText(
+                en = "Plant or animal fatty acids + glycerol",
+                de = "Pflanzliche oder tierische Fettsäuren + Glycerol",
+                fr = "Acides gras végétaux ou animaux + glycérol",
+                tr = "Bitkisel veya Hayvansal yağ asitleri + Gliserol",
+                ar = "أحماض دهنية نباتية أو حيوانية + الغليسرول"
+            ),
+            description = LocalizedText(
+                en = "An emulsifier used in dough and fat-based products. Its glycerol and fatty acid components may be animal-derived.",
+                de = "Ein in Teig- und Fettprodukten eingesetzter Emulgator. Die Glycerol- und Fettsäurekomponenten können tierischen Ursprungs sein.",
+                fr = "Un émulsifiant utilisé dans les produits à base de pâte et de matières grasses. Ses composants glycérol et acides gras peuvent être d'origine animale.",
+                tr = "Hamur ve yağ bazlı ürünlerde kullanılan emülgatör. Gliserol ve yağ asidi bileşenleri hayvansal kaynaklı olabilir.",
+                ar = "مستحلب يُستخدم في منتجات العجين والدهون. قد تكون مكوناته من الغليسرول والأحماض الدهنية من مصدر حيواني."
+            ),
             alternateNames = listOf("Polyglycerol esters of fatty acids", "PGE"),
-            commonUsage = "Margarinler, kek karışımları, çikolata kaplamalar"
+            commonUsage = LocalizedText(
+                en = "Margarine, cake mixes, chocolate coatings",
+                de = "Margarine, Kuchenmischungen, Schokoladenüberzüge",
+                fr = "Margarine, préparations pour gâteaux, enrobages au chocolat",
+                tr = "Margarinler, kek karışımları, çikolata kaplamalar",
+                ar = "السمن النباتي، خلطات الكعك، أغلفة الشوكولاتة"
+            )
         ),
         EAdditive(
             code = "E481/E482",
-            name = "Sodyum/Kalsiyum Stearoil Laktilat",
+            name = LocalizedText(
+                en = "Sodium/Calcium Stearoyl Lactylate",
+                de = "Natrium-/Calciumstearoyllactylat",
+                fr = "Stéaroyl-lactylate de sodium/calcium",
+                tr = "Sodyum/Kalsiyum Stearoil Laktilat",
+                ar = "لاكتيلات الصوديوم/الكالسيوم ستيارويل"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel veya Hayvansal stearik asit + Laktik asit",
-            description = "Hamur güçlendirici emülgatör. Stearik asit bileşeni bitkisel veya hayvansal yağdan üretilebilir.",
+            origin = LocalizedText(
+                en = "Plant or animal stearic acid + lactic acid",
+                de = "Pflanzliche oder tierische Stearinsäure + Milchsäure",
+                fr = "Acide stéarique végétal ou animal + acide lactique",
+                tr = "Bitkisel veya Hayvansal stearik asit + Laktik asit",
+                ar = "حمض دهني نباتي أو حيواني (ستياريك) + حمض اللاكتيك"
+            ),
+            description = LocalizedText(
+                en = "A dough-strengthening emulsifier. Its stearic acid component can be produced from plant or animal fat.",
+                de = "Ein teigverstärkender Emulgator. Die Stearinsäurekomponente kann aus pflanzlichem oder tierischem Fett hergestellt werden.",
+                fr = "Un émulsifiant fortifiant la pâte. Son composant acide stéarique peut être produit à partir de graisse végétale ou animale.",
+                tr = "Hamur güçlendirici emülgatör. Stearik asit bileşeni bitkisel veya hayvansal yağdan üretilebilir.",
+                ar = "مستحلب معزز للعجين. يمكن إنتاج مكوّن حمض الستياريك من دهون نباتية أو حيوانية."
+            ),
             alternateNames = listOf("Sodium Stearoyl Lactylate", "SSL", "Calcium Stearoyl Lactylate", "CSL"),
-            commonUsage = "Ekmekler, hamburger ekmekleri, kek karışımları, krema tozları"
+            commonUsage = LocalizedText(
+                en = "Bread, burger buns, cake mixes, powdered creamers",
+                de = "Brot, Burgerbrötchen, Kuchenmischungen, Kaffeeweißer-Pulver",
+                fr = "Pain, pains à burger, préparations pour gâteaux, crèmes en poudre",
+                tr = "Ekmekler, hamburger ekmekleri, kek karışımları, krema tozları",
+                ar = "الخبز، خبز البرغر، خلطات الكعك، بودرة الكريمة"
+            )
         ),
         EAdditive(
             code = "E491-495",
-            name = "Sorbitan Esterleri (Span)",
+            name = LocalizedText(
+                en = "Sorbitan Esters (Span)",
+                de = "Sorbitanester (Span)",
+                fr = "Esters de sorbitan (Span)",
+                tr = "Sorbitan Esterleri (Span)",
+                ar = "إسترات السوربيتان (سبان)"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel veya Hayvansal yağ asitleri + Sorbitol",
-            description = "Polisorbatların (Tween) eşleniği olan yağ bazlı emülgatörler ailesi. Kaynağı teyit edilmedikçe şüphelidir.",
+            origin = LocalizedText(
+                en = "Plant or animal fatty acids + sorbitol",
+                de = "Pflanzliche oder tierische Fettsäuren + Sorbit",
+                fr = "Acides gras végétaux ou animaux + sorbitol",
+                tr = "Bitkisel veya Hayvansal yağ asitleri + Sorbitol",
+                ar = "أحماض دهنية نباتية أو حيوانية + السوربيتول"
+            ),
+            description = LocalizedText(
+                en = "A family of fat-based emulsifiers, the counterpart of polysorbates (Tween). Doubtful unless the source is confirmed.",
+                de = "Eine Familie fettbasierter Emulgatoren, das Gegenstück zu Polysorbaten (Tween). Ohne Herkunftsbestätigung zweifelhaft.",
+                fr = "Une famille d'émulsifiants à base de graisse, pendant des polysorbates (Tween). Douteux sans confirmation de la source.",
+                tr = "Polisorbatların (Tween) eşleniği olan yağ bazlı emülgatörler ailesi. Kaynağı teyit edilmedikçe şüphelidir.",
+                ar = "عائلة من المستحلبات الدهنية، وهي نظيرة للبوليسوربات (توين). مشبوهة ما لم يُؤكد مصدرها."
+            ),
             alternateNames = listOf("Sorbitan Monostearate", "Span 60", "Span 80", "Sorbitan Tristearate"),
-            commonUsage = "Margarinler, çikolatalar, kek karışımları, dondurmalar"
+            commonUsage = LocalizedText(
+                en = "Margarine, chocolates, cake mixes, ice cream",
+                de = "Margarine, Schokolade, Kuchenmischungen, Eiscreme",
+                fr = "Margarine, chocolats, préparations pour gâteaux, crèmes glacées",
+                tr = "Margarinler, çikolatalar, kek karışımları, dondurmalar",
+                ar = "السمن النباتي، الشوكولاتة، خلطات الكعك، الآيس كريم"
+            )
         ),
         EAdditive(
             code = "E570",
-            name = "Stearik Asit / Yağ Asitleri",
+            name = LocalizedText(
+                en = "Stearic Acid / Fatty Acids",
+                de = "Stearinsäure / Fettsäuren",
+                fr = "Acide stéarique / Acides gras",
+                tr = "Stearik Asit / Yağ Asitleri",
+                ar = "حمض الستياريك / الأحماض الدهنية"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Bitkisel yağlar VEYA Hayvansal iç yağ (Domuz/Sığır)",
-            description = "Topaklanma önleyici ve kaplama maddesi olarak kullanılan yağ asidi. Palmiye yağından veya hayvan iç yağından elde edilebilir.",
+            origin = LocalizedText(
+                en = "Vegetable oils OR animal tallow (pork/beef)",
+                de = "Pflanzliche Öle ODER tierischer Talg (Schwein/Rind)",
+                fr = "Huiles végétales OU suif animal (porc/bœuf)",
+                tr = "Bitkisel yağlar VEYA Hayvansal iç yağ (Domuz/Sığır)",
+                ar = "زيوت نباتية أو شحم حيواني (خنزير/بقر)"
+            ),
+            description = LocalizedText(
+                en = "A fatty acid used as an anti-caking and coating agent. Can be obtained from palm oil or animal tallow.",
+                de = "Eine als Antiklumpmittel und Überzugsmittel eingesetzte Fettsäure. Kann aus Palmöl oder tierischem Talg gewonnen werden.",
+                fr = "Un acide gras utilisé comme antiagglomérant et agent d'enrobage. Peut être obtenu à partir d'huile de palme ou de suif animal.",
+                tr = "Topaklanma önleyici ve kaplama maddesi olarak kullanılan yağ asidi. Palmiye yağından veya hayvan iç yağından elde edilebilir.",
+                ar = "حمض دهني يُستخدم كمانع للتكتل ومادة تغليف. يمكن الحصول عليه من زيت النخيل أو الشحم الحيواني."
+            ),
             alternateNames = listOf("Stearic Acid", "Fatty Acids", "E570"),
-            commonUsage = "Sakızlar, şekerlemeler, tablet kaplamaları, unlu mamuller"
+            commonUsage = LocalizedText(
+                en = "Chewing gum, confectionery, tablet coatings, baked goods",
+                de = "Kaugummi, Süßwaren, Tablettenüberzüge, Backwaren",
+                fr = "Chewing-gum, confiseries, enrobages de comprimés, produits de boulangerie",
+                tr = "Sakızlar, şekerlemeler, tablet kaplamaları, unlu mamuller",
+                ar = "العلكة، الحلويات، أغلفة الأقراص الدوائية، المخبوزات"
+            )
         ),
         EAdditive(
             code = "E627/E635",
-            name = "Disodyum Guanilat / Ribonükleotidler",
+            name = LocalizedText(
+                en = "Disodium Guanylate / Ribonucleotides",
+                de = "Dinatriumguanylat / Ribonukleotide",
+                fr = "Guanylate disodique / Ribonucléotides",
+                tr = "Disodyum Guanilat / Ribonükleotidler",
+                ar = "غوانيلات ثنائي الصوديوم / النيوكليوتيدات الريبية"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Et veya Balık ekstraktı VEYA bitkisel/mikrobiyal fermantasyon",
-            description = "E631 (Disodyum İnozinat) ile birlikte kullanılan umami lezzet artırıcılar. Et/balık kaynaklı üretilebildiğinden helal sertifikası yoksa şüphelidir.",
+            origin = LocalizedText(
+                en = "Meat or fish extract OR plant/microbial fermentation",
+                de = "Fleisch- oder Fischextrakt ODER pflanzliche/mikrobielle Fermentation",
+                fr = "Extrait de viande ou de poisson OU fermentation végétale/microbienne",
+                tr = "Et veya Balık ekstraktı VEYA bitkisel/mikrobiyal fermantasyon",
+                ar = "مستخلص لحم أو سمك أو تخمير نباتي/ميكروبي"
+            ),
+            description = LocalizedText(
+                en = "Umami flavor enhancers used together with E631 (Disodium Inosinate). Doubtful without a halal certificate since they can be produced from meat/fish.",
+                de = "Umami-Geschmacksverstärker, die zusammen mit E631 (Dinatriuminosinat) eingesetzt werden. Ohne Halal-Zertifikat zweifelhaft, da sie aus Fleisch/Fisch hergestellt werden können.",
+                fr = "Exhausteurs de goût umami utilisés avec l'E631 (inosinate disodique). Douteux sans certification halal car ils peuvent être produits à partir de viande/poisson.",
+                tr = "E631 (Disodyum İnozinat) ile birlikte kullanılan umami lezzet artırıcılar. Et/balık kaynaklı üretilebildiğinden helal sertifikası yoksa şüphelidir.",
+                ar = "معززات نكهة أومامي تُستخدم مع E631 (إينوزينات ثنائي الصوديوم). مشبوهة دون شهادة حلال لأنها قد تُنتج من اللحم/السمك."
+            ),
             alternateNames = listOf("Disodium Guanylate", "Disodium 5'-ribonucleotides", "GMP"),
-            commonUsage = "Hazır çorbalar, bulyonlar, cipsler, hazır soslar, noodle baharat paketleri"
+            commonUsage = LocalizedText(
+                en = "Instant soups, bouillon, chips, ready-made sauces, noodle seasoning packets",
+                de = "Instantsuppen, Brühe, Chips, Fertigsoßen, Nudelgewürzbeutel",
+                fr = "Soupes instantanées, bouillons, chips, sauces prêtes à l'emploi, sachets d'assaisonnement pour nouilles",
+                tr = "Hazır çorbalar, bulyonlar, cipsler, hazır soslar, noodle baharat paketleri",
+                ar = "الشوربات الجاهزة، المرق، رقائق البطاطس، الصلصات الجاهزة، أكياس توابل النودلز"
+            )
         ),
         EAdditive(
             code = "E640",
-            name = "Glisin ve Sodyum Glisinat",
+            name = LocalizedText(
+                en = "Glycine and Sodium Glycinate",
+                de = "Glycin und Natriumglycinat",
+                fr = "Glycine et glycinate de sodium",
+                tr = "Glisin ve Sodyum Glisinat",
+                ar = "الجليسين وجليسينات الصوديوم"
+            ),
             status = HalalStatus.SUPHELI,
-            origin = "Sentetik VEYA Hayvansal kolajen hidrolizi",
-            description = "Lezzet artırıcı ve tatlandırıcı amino asit. Sentetik üretilebildiği gibi hayvansal kolajenden de elde edilebilir.",
+            origin = LocalizedText(
+                en = "Synthetic OR animal collagen hydrolysis",
+                de = "Synthetisch ODER durch Hydrolyse von tierischem Kollagen",
+                fr = "Synthétique OU hydrolyse de collagène animal",
+                tr = "Sentetik VEYA Hayvansal kolajen hidrolizi",
+                ar = "مُصنّع أو ناتج عن تحلل الكولاجين الحيواني"
+            ),
+            description = LocalizedText(
+                en = "A flavor-enhancing and sweetening amino acid. Can be produced synthetically or obtained from animal collagen.",
+                de = "Eine geschmacksverstärkende und süßende Aminosäure. Kann synthetisch hergestellt oder aus tierischem Kollagen gewonnen werden.",
+                fr = "Un acide aminé exhausteur de goût et édulcorant. Peut être produit synthétiquement ou obtenu à partir de collagène animal.",
+                tr = "Lezzet artırıcı ve tatlandırıcı amino asit. Sentetik üretilebildiği gibi hayvansal kolajenden de elde edilebilir.",
+                ar = "حمض أميني معزز للنكهة ومُحلي. يمكن إنتاجه صناعياً أو الحصول عليه من الكولاجين الحيواني."
+            ),
             alternateNames = listOf("Glycine", "Sodium Glycinate"),
-            commonUsage = "Hazır çorbalar, işlenmiş etler, atıştırmalıklar, tatlandırıcı karışımlar"
+            commonUsage = LocalizedText(
+                en = "Instant soups, processed meats, snacks, flavoring blends",
+                de = "Instantsuppen, verarbeitetes Fleisch, Snacks, Würzmischungen",
+                fr = "Soupes instantanées, viandes transformées, en-cas, mélanges aromatisants",
+                tr = "Hazır çorbalar, işlenmiş etler, atıştırmalıklar, tatlandırıcı karışımlar",
+                ar = "الشوربات الجاهزة، اللحوم المصنعة، الوجبات الخفيفة، خلطات النكهات"
+            )
         )
     )
 }

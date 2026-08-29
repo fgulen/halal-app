@@ -1,0 +1,6 @@
+appId: com.fatihgulen.helalrehberi
+---
+- back
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 07_after_back

@@ -1,0 +1,16 @@
+appId: com.fatihgulen.helalrehberi
+---
+- launchApp:
+    clearState: false
+- waitForAnimationToEnd:
+    timeout: 4000
+- tapOn: "History"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 20_history_top
+- scroll
+- takeScreenshot: 21_history_mid
+- scroll
+- takeScreenshot: 22_history_bottom
+- scroll
+- takeScreenshot: 23_history_bottom2

@@ -7,6 +7,59 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 6 / versionName 1.4 (2026-08-29)
+
+Tablet odaklı düzeltmeler + E-Kodları rehberinin tam yerelleştirmesi.
+
+<tr-TR>
+Bu sürümde: Tabletlerde alt menü artık sistem çubuğuyla çakışmıyor.
+E-Kodları rehberindeki tüm maddeler artık seçtiğiniz dilde (İngilizce,
+Almanca, Fransızca, Türkçe, Arapça) tam gösteriliyor - bazı açıklamalar
+önceden sadece Türkçeydi. Tabletlerde yazı boyutu okunabilirlik için
+büyütüldü. Uygulama simgesi düzeltildi. Yeni güncelleme çıktığında
+artık bildirim alacaksınız.
+</tr-TR>
+
+<en-US>
+This update: fixed the bottom navigation bar overlapping the tablet's
+system navigation bar. The E-Codes & Additives guide is now fully
+translated in all 5 languages (English, German, French, Turkish,
+Arabic) - some entries were previously Turkish-only. Increased text
+size on tablets for readability. Fixed the app icon. You'll now be
+notified when a new update is available.
+</en-US>
+
+<de-DE>
+Update: Die untere Navigationsleiste überschneidet sich auf Tablets
+nicht mehr mit der System-Navigationsleiste. Der E-Nummern-Leitfaden
+ist jetzt vollständig in allen 5 Sprachen übersetzt (Englisch,
+Deutsch, Französisch, Türkisch, Arabisch) - manche Einträge waren
+zuvor nur auf Türkisch. Schriftgröße auf Tablets für bessere
+Lesbarkeit vergrößert. App-Symbol korrigiert. Sie werden nun
+benachrichtigt, wenn ein Update verfügbar ist.
+</de-DE>
+
+<fr-FR>
+Mise à jour : la barre de navigation inférieure ne chevauche plus la
+barre système sur tablette. Le guide des codes E est désormais
+entièrement traduit dans les 5 langues (anglais, allemand, français,
+turc, arabe) - certaines fiches n'étaient qu'en turc auparavant.
+Taille du texte augmentée sur tablette pour une meilleure lisibilité.
+Icône de l'application corrigée. Vous serez désormais averti lorsqu'une
+mise à jour est disponible.
+</fr-FR>
+
+<ar>
+في هذا الإصدار: لم يعد شريط التنقل السفلي يتداخل مع شريط النظام على
+الأجهزة اللوحية. أصبح دليل أكواد E مترجماً بالكامل إلى جميع اللغات
+الخمس (الإنجليزية، الألمانية، الفرنسية، التركية، العربية) - كانت بعض
+الإدخالات باللغة التركية فقط سابقاً. تم تكبير حجم الخط على الأجهزة
+اللوحية لتحسين القراءة. تم إصلاح أيقونة التطبيق. ستصلك الآن إشعارات
+عند توفر تحديث جديد.
+</ar>
+
+---
+
 ## versionCode 5 / versionName 1.3 (2026-08-28)
 
 Play Console versionCode 4'ü de "daha önce kullanıldı" diyerek reddetti

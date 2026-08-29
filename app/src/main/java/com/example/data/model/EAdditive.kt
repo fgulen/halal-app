@@ -2,10 +2,10 @@ package com.example.data.model
 
 data class EAdditive(
     val code: String,
-    val name: String,
+    val name: LocalizedText,
     val status: HalalStatus,
-    val origin: String, // Bitkisel, Hayvansal (Domuz/Sığır), Sentetik, Böcek, Fermantasyon
-    val description: String,
+    val origin: LocalizedText, // Bitkisel, Hayvansal (Domuz/Sığır), Sentetik, Böcek, Fermantasyon
+    val description: LocalizedText,
     val alternateNames: List<String> = emptyList(),
-    val commonUsage: String
+    val commonUsage: LocalizedText
 )

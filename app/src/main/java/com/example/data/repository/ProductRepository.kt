@@ -8,7 +8,6 @@ import com.example.data.local.ProductEntity
 import com.example.data.local.ScanHistoryEntity
 import com.example.data.local.toEntity
 import com.example.data.model.AppLanguage
-import com.example.data.model.EAdditive
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.data.remote.OpenFoodFactsApi
@@ -242,16 +241,4 @@ class ProductRepository(
         }
     }
 
-    fun getEAdditives(searchQuery: String = "", filterStatus: HalalStatus? = null): List<EAdditive> {
-        val q = searchQuery.trim().lowercase()
-        return InitialData.eAdditivesDirectory.filter { item ->
-            val matchesQuery = q.isEmpty() ||
-                    item.code.lowercase().contains(q) ||
-                    item.name.lowercase().contains(q) ||
-                    item.description.lowercase().contains(q) ||
-                    item.commonUsage.lowercase().contains(q)
-            val matchesStatus = filterStatus == null || item.status == filterStatus
-            matchesQuery && matchesStatus
-        }
-    }
 }
