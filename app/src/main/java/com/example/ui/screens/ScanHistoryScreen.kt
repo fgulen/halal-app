@@ -22,12 +22,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.AlertDialog
@@ -36,9 +34,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -65,6 +60,8 @@ import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.ui.components.HalalStatusBadge
+import com.example.ui.components.SearchField
+import com.example.ui.components.SearchFieldClearButton
 import com.example.ui.theme.EmeraldGreenBg
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.EmeraldPrimaryDeep
@@ -78,7 +75,6 @@ import com.example.ui.theme.HaramRedBadge
 import com.example.ui.theme.HaramRedBg
 import com.example.ui.theme.HaramRedBorder
 import com.example.ui.theme.HaramRedDark
-import com.example.ui.theme.NaturalSearchPlaceholder
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextLight
 import com.example.ui.theme.NaturalTextMuted
@@ -277,58 +273,19 @@ fun ScanHistoryScreen(
             Spacer(modifier = Modifier.height(14.dp))
 
             // Search Bar
-            OutlinedTextField(
+            SearchField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("history_search_input"),
-                textStyle = androidx.compose.ui.text.TextStyle(
-                    color = NaturalTextDark,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                ),
-                placeholder = {
-                    Text(
-                        text = AppStrings.getSearchPlaceholder(language),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = NaturalSearchPlaceholder
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = AppStrings.getSearch(language),
-                        tint = EmeraldPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                },
+                placeholder = AppStrings.getSearchPlaceholder(language),
+                modifier = Modifier.fillMaxWidth(),
+                testTag = "history_search_input",
                 trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = AppStrings.getClear(language),
-                                tint = NaturalTextDark,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
-                },
-                singleLine = true,
-                shape = CircleShape,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NaturalTextDark,
-                    unfocusedTextColor = NaturalTextDark,
-                    focusedPlaceholderColor = NaturalSearchPlaceholder,
-                    unfocusedPlaceholderColor = NaturalSearchPlaceholder,
-                    focusedContainerColor = NaturalWarmSurface,
-                    unfocusedContainerColor = NaturalWarmSurface,
-                    focusedBorderColor = EmeraldPrimary,
-                    unfocusedBorderColor = NaturalWarmBorder,
-                    cursorColor = EmeraldPrimary
-                )
+                    SearchFieldClearButton(
+                        visible = searchQuery.isNotEmpty(),
+                        onClear = { searchQuery = "" },
+                        language = language
+                    )
+                }
             )
 
             Spacer(modifier = Modifier.height(10.dp))

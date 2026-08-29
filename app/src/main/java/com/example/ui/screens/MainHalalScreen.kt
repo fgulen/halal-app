@@ -50,8 +50,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,9 +71,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -93,6 +88,7 @@ import com.example.ui.components.HalalStatusBadge
 import com.example.ui.components.LanguageSelectionDialog
 import com.example.ui.components.ManualBarcodeDialog
 import com.example.ui.components.ProductResultBottomSheet
+import com.example.ui.components.SearchField
 import com.example.ui.theme.EmeraldGreenBg
 import com.example.ui.theme.EmeraldGreenBorder
 import com.example.ui.theme.EmeraldGreenContainer
@@ -109,7 +105,6 @@ import com.example.ui.theme.HaramRedBadge
 import com.example.ui.theme.HaramRedBg
 import com.example.ui.theme.HaramRedBorder
 import com.example.ui.theme.HaramRedDark
-import com.example.ui.theme.NaturalSearchPlaceholder
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextLight
 import com.example.ui.theme.NaturalTextMuted
@@ -223,74 +218,27 @@ fun MainHalalScreen(
 
                 // Direct Fast Search Input Bar on Home Screen
                 item {
-                    Surface(
+                    SearchField(
+                        value = homeSearchQuery,
+                        onValueChange = { homeSearchQuery = it },
+                        placeholder = when (language) {
+                            AppLanguage.TR -> "Nutella, Haribo veya Barkod yazın..."
+                            AppLanguage.DE -> "Nutella, Haribo oder Barcode eingeben..."
+                            AppLanguage.FR -> "Entrez Nutella, Haribo ou code-barres..."
+                            AppLanguage.AR -> "ابحث عن نوتيلا، هاريبو أو باركود..."
+                            AppLanguage.EN -> "Type Nutella, Haribo or barcode..."
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp, vertical = 6.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        color = NaturalWarmSurface,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 14.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = null,
-                                tint = EmeraldPrimary,
-                                modifier = Modifier.size(22.dp)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            OutlinedTextField(
-                                value = homeSearchQuery,
-                                onValueChange = { homeSearchQuery = it },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .testTag("home_search_input"),
-                                textStyle = androidx.compose.ui.text.TextStyle(
-                                    color = NaturalTextDark,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                placeholder = {
-                                    Text(
-                                        text = when (language) {
-                                            AppLanguage.TR -> "Nutella, Haribo veya Barkod yazın..."
-                                            AppLanguage.DE -> "Nutella, Haribo oder Barcode eingeben..."
-                                            AppLanguage.FR -> "Entrez Nutella, Haribo ou code-barres..."
-                                            AppLanguage.AR -> "ابحث عن نوتيلا، هاريبو أو باركود..."
-                                            AppLanguage.EN -> "Type Nutella, Haribo or barcode..."
-                                        },
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Normal,
-                                        color = NaturalSearchPlaceholder,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                },
-                                singleLine = true,
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = NaturalTextDark,
-                                    unfocusedTextColor = NaturalTextDark,
-                                    focusedPlaceholderColor = NaturalSearchPlaceholder,
-                                    unfocusedPlaceholderColor = NaturalSearchPlaceholder,
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent,
-                                    focusedBorderColor = Color.Transparent,
-                                    unfocusedBorderColor = Color.Transparent,
-                                    cursorColor = EmeraldPrimary
-                                ),
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                                keyboardActions = KeyboardActions(onSearch = {
-                                    if (homeSearchQuery.isNotBlank()) {
-                                        viewModel.onBarcodeScanned(homeSearchQuery)
-                                        homeSearchQuery = ""
-                                    }
-                                })
-                            )
+                        testTag = "home_search_input",
+                        onSearchAction = {
+                            if (homeSearchQuery.isNotBlank()) {
+                                viewModel.onBarcodeScanned(homeSearchQuery)
+                                homeSearchQuery = ""
+                            }
+                        },
+                        trailingIcon = {
                             if (homeSearchQuery.isNotBlank()) {
                                 Button(
                                     onClick = {
@@ -316,7 +264,7 @@ fun MainHalalScreen(
                                 }
                             }
                         }
-                    }
+                    )
                 }
 
                 if (homeSearchQuery.isNotBlank()) {

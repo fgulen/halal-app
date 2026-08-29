@@ -19,15 +19,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -59,7 +56,6 @@ import com.example.ui.theme.HaramRed
 import com.example.ui.theme.HaramRedBg
 import com.example.ui.theme.HaramRedBorder
 import com.example.ui.theme.HaramRedDark
-import com.example.ui.theme.NaturalSearchPlaceholder
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextMuted
 import com.example.ui.theme.NaturalWarmBg
@@ -144,48 +140,25 @@ fun EAdditiveSheet(
             Spacer(modifier = Modifier.height(14.dp))
 
             // Search Box
-            OutlinedTextField(
+            SearchField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("e_additive_search_input"),
-                textStyle = androidx.compose.ui.text.TextStyle(
-                    color = NaturalTextDark,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                ),
-                placeholder = {
-                    Text(
-                        text = when (language) {
-                            AppLanguage.EN -> "Search E471, Gelatin, Carmine, E120, DATEM..."
-                            AppLanguage.DE -> "E471, Gelatine, Karmin, E120 suchen..."
-                            AppLanguage.FR -> "Rechercher E471, Gélatine, Carmin..."
-                            AppLanguage.TR -> "E471, Jelatin, Karmin, E120, Şellak ara..."
-                            AppLanguage.AR -> "ابحث عن E471، جيلاتين، كارمين..."
-                        },
-                        color = NaturalSearchPlaceholder,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 13.sp
+                placeholder = when (language) {
+                    AppLanguage.EN -> "Search E471, Gelatin, Carmine, E120, DATEM..."
+                    AppLanguage.DE -> "E471, Gelatine, Karmin, E120 suchen..."
+                    AppLanguage.FR -> "Rechercher E471, Gélatine, Carmin..."
+                    AppLanguage.TR -> "E471, Jelatin, Karmin, E120, Şellak ara..."
+                    AppLanguage.AR -> "ابحث عن E471، جيلاتين، كارمين..."
+                },
+                modifier = Modifier.fillMaxWidth(),
+                testTag = "e_additive_search_input",
+                trailingIcon = {
+                    SearchFieldClearButton(
+                        visible = searchQuery.isNotEmpty(),
+                        onClear = { searchQuery = "" },
+                        language = language
                     )
-                },
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = EmeraldPrimary)
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NaturalTextDark,
-                    unfocusedTextColor = NaturalTextDark,
-                    focusedPlaceholderColor = NaturalSearchPlaceholder,
-                    unfocusedPlaceholderColor = NaturalSearchPlaceholder,
-                    focusedBorderColor = EmeraldPrimary,
-                    focusedLabelColor = EmeraldPrimary,
-                    unfocusedContainerColor = NaturalWarmSurface,
-                    focusedContainerColor = NaturalWarmSurface,
-                    unfocusedBorderColor = NaturalWarmBorder,
-                    cursorColor = EmeraldPrimary
-                )
+                }
             )
 
             Spacer(modifier = Modifier.height(12.dp))
