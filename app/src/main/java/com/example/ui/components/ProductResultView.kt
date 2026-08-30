@@ -899,38 +899,70 @@ fun LegalDisclaimerCard(language: AppLanguage) {
 
 @Composable
 fun NotFoundSection(product: FoodProduct, language: AppLanguage) {
-    Surface(
-        color = NaturalWarmSurface,
-        shape = RoundedCornerShape(18.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = when (language) {
-                    AppLanguage.EN -> "How to Verify Packaging Label?"
-                    AppLanguage.DE -> "Wie Sie das Etikett selbst prüfen:"
-                    AppLanguage.FR -> "Comment vérifier l'emballage?"
-                    AppLanguage.TR -> "Ambalajı Nasıl Kontrol Edebilirsiniz?"
-                    AppLanguage.AR -> "كيف تفحص ملصق المكونات؟"
-                },
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = NaturalTextDark
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = when (language) {
-                    AppLanguage.EN -> "1. Inspect the 'Ingredients' section on the package.\n2. Look for E471, E441 (Gelatin), E120 (Carmine), or L-Cysteine.\n3. Check for Halal / Vegan / Kosher certification marks.\n4. Consult our E-Codes Guide tab to verify any unclear additive."
-                    AppLanguage.DE -> "1. Zutatenliste auf der Rückseite prüfen.\n2. Nach E441 (Gelatine), E120 (Karmin) oder E471 suchen.\n3. Auf Halal- oder V-Label Vegan-Siegel achten.\n4. E-Nummern im Leitfaden nachschlagen."
-                    AppLanguage.FR -> "1. Examinez la liste des ingrédients au dos.\n2. Repérez E441 (Gélatine), E120 (Cochenille) ou E471.\n3. Recherchez un label Halal ou Végan.\n4. Consultez notre guide des codes E."
-                    AppLanguage.TR -> "1. Ambalajın arkasındaki 'İçindekiler' bölümünü inceleyin.\n2. E471, E441 (Jelatin), E120 (Karmin) veya L-Sistein olup olmadığına bakın.\n3. Helal, Vegan veya Koşer logolarını arayın.\n4. E-Kodları rehberimizden şüpheli maddeleri kontrol edin."
-                    AppLanguage.AR -> "1. راجع قائمة المكونات على الغلاف.\n2. ابحث عن E441 (جيلاتين)، E120 (كارمين) أو E471.\n3. ابحث عن شعار حلال أو نباتي.\n4. استخدم دليل أكواد E في التطبيق."
-                },
-                fontSize = 13.sp,
-                color = NaturalTextMuted,
-                lineHeight = 20.sp
-            )
+    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        // The specific reason for *this* scan (not found / network error / malformed
+        // barcode / found-but-no-ingredients) was previously computed by the repository
+        // and analyzer but silently dropped here - every BULUNAMADI result looked
+        // identical regardless of cause. Surface it the same way the other three status
+        // sections already surface product.reasonOrDetails.
+        if (product.reasonOrDetails.isNotBlank()) {
+            Surface(
+                color = NaturalWarmSurface,
+                shape = RoundedCornerShape(18.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = AppStrings.getAnalysisReport(language),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = NaturalTextDark
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = product.reasonOrDetails,
+                        fontSize = 13.sp,
+                        color = NaturalTextMuted,
+                        lineHeight = 18.sp
+                    )
+                }
+            }
+        }
+
+        Surface(
+            color = NaturalWarmSurface,
+            shape = RoundedCornerShape(18.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = when (language) {
+                        AppLanguage.EN -> "How to Verify Packaging Label?"
+                        AppLanguage.DE -> "Wie Sie das Etikett selbst prüfen:"
+                        AppLanguage.FR -> "Comment vérifier l'emballage?"
+                        AppLanguage.TR -> "Ambalajı Nasıl Kontrol Edebilirsiniz?"
+                        AppLanguage.AR -> "كيف تفحص ملصق المكونات؟"
+                    },
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = NaturalTextDark
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = when (language) {
+                        AppLanguage.EN -> "1. Inspect the 'Ingredients' section on the package.\n2. Look for E471, E441 (Gelatin), E120 (Carmine), or L-Cysteine.\n3. Check for Halal / Vegan / Kosher certification marks.\n4. Consult our E-Codes Guide tab to verify any unclear additive."
+                        AppLanguage.DE -> "1. Zutatenliste auf der Rückseite prüfen.\n2. Nach E441 (Gelatine), E120 (Karmin) oder E471 suchen.\n3. Auf Halal- oder V-Label Vegan-Siegel achten.\n4. E-Nummern im Leitfaden nachschlagen."
+                        AppLanguage.FR -> "1. Examinez la liste des ingrédients au dos.\n2. Repérez E441 (Gélatine), E120 (Cochenille) ou E471.\n3. Recherchez un label Halal ou Végan.\n4. Consultez notre guide des codes E."
+                        AppLanguage.TR -> "1. Ambalajın arkasındaki 'İçindekiler' bölümünü inceleyin.\n2. E471, E441 (Jelatin), E120 (Karmin) veya L-Sistein olup olmadığına bakın.\n3. Helal, Vegan veya Koşer logolarını arayın.\n4. E-Kodları rehberimizden şüpheli maddeleri kontrol edin."
+                        AppLanguage.AR -> "1. راجع قائمة المكونات على الغلاف.\n2. ابحث عن E441 (جيلاتين)، E120 (كارمين) أو E471.\n3. ابحث عن شعار حلال أو نباتي.\n4. استخدم دليل أكواد E في التطبيق."
+                    },
+                    fontSize = 13.sp,
+                    color = NaturalTextMuted,
+                    lineHeight = 20.sp
+                )
+            }
         }
     }
 }

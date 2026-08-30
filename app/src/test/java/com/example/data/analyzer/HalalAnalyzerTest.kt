@@ -187,6 +187,31 @@ class HalalAnalyzerTest {
     }
 
     @Test
+    fun `bovine collagen peptides is Suspicious, not a false Halal`() {
+        // Regression: "Bovine collagen peptides" (e.g. Vital Proteins Collagen Peptides,
+        // barcode 0857273008666) never contains the word "gelatin", so it slipped past every
+        // gelatin rule and reached a green Helal verdict despite being an animal (cattle
+        // skin/bone) product whose zabiha slaughter status can't be confirmed - same concern
+        // as beef gelatin.
+        val result = analyze("Bovine collagen peptides")
+        assertEquals(HalalStatus.SUPHELI, result.status)
+        assertTrue(
+            "should flag the collagen rule with a zabiha-aware reason",
+            result.flaggedDetails.any { it.name.contains("Collagen", ignoreCase = true) }
+        )
+        assertTrue(result.reasonOrDetails.contains("zabiha", ignoreCase = true) || result.flaggedDetails.any { it.reason.contains("zabiha", ignoreCase = true) })
+    }
+
+    @Test
+    fun `bovine collagen with an explicit halal label reaches Halal`() {
+        val result = analyze(
+            ingredientsText = "Bovine collagen peptides",
+            labelsTags = listOf("en:halal")
+        )
+        assertEquals(HalalStatus.HELAL, result.status)
+    }
+
+    @Test
     fun `vegetable gelatin claim is not flagged Suspicious`() {
         // Regression: the bare "gelatin" keyword matched inside "vegetable gelatin" and its
         // DE/FR/TR/ES equivalents, flagging an explicit plant-based claim as if the source

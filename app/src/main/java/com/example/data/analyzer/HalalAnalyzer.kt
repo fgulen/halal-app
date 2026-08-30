@@ -173,6 +173,29 @@ object HalalAnalyzer {
             origin = "Beef / Fish"
         ),
         SuspiciousRule(
+            // Collagen/collagen peptides (e.g. "Bovine collagen peptides" on protein/beauty
+            // supplements) are chemically a precursor of gelatin - same cattle skin/bone/
+            // connective-tissue origin, same zabiha-slaughter question - but the bare word
+            // "gelatin" never appears on these labels, so the gelatin rules above never catch
+            // them. A product carrying an explicit halal claim already implies zabiha sourcing,
+            // same as the meat rule, hence suppressIfHalalClaim.
+            keywords = listOf(
+                "bovine collagen", "beef collagen", "collagen peptides", "hydrolyzed collagen",
+                "hydrolysed collagen", "collagen hydrolysate",
+                "rinderkollagen", "kollagenpeptide", "hydrolysiertes kollagen",
+                "collagène bovin", "peptides de collagène", "collagène hydrolysé",
+                "colágeno bovino", "colágeno de res", "péptidos de colágeno",
+                "sığır kolajeni", "kolajen peptit", "hidrolize kolajen"
+            ),
+            nameEn = "Bovine Collagen (Slaughter Method Unconfirmed)",
+            nameTr = "Sığır Kolajeni (Kesim Yöntemi Teyit Edilmedi)",
+            reasonEn = "Collagen/collagen peptides derived from cattle skin, bone, or connective tissue. Halal status depends on zabiha (Islamic) slaughter, which cannot be confirmed from this product's data alone.",
+            reasonTr = "Sığır deri, kemik veya bağ dokusundan elde edilen kolajen/kolajen peptit. Helal olması dinen usulüne uygun (zebiha) kesime bağlıdır; bu bilgi ürün verisinden doğrulanamaz.",
+            eCode = null,
+            origin = "Beef / Bovine",
+            suppressIfHalalClaim = true
+        ),
+        SuspiciousRule(
             keywords = listOf("gelatin", "gélatine", "gelatine", "gelatina", "jelatin"),
             nameEn = GELATIN_UNSPECIFIED_RULE_ID,
             nameTr = "Jelatin (Kaynağı Belirtilmemiş)",
