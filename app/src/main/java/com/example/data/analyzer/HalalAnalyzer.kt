@@ -70,7 +70,11 @@ object HalalAnalyzer {
             origin = "Pork / Swine"
         ),
         HaramRule(
-            keywords = listOf("pork", "pig", "swine", "porc", "schwein", "schweinefleisch", "speck", "lard", "bacon", "pork fat", "carne de cerdo", "manteca de cerdo", "domuz", "domuz eti", "domuz yağı"),
+            // "porcine" bare (not just "porcine gelatin" in the E441 rule above) so
+            // "porcine collagen", "porcine enzymes", "porcine fat" etc. don't slip through -
+            // containsKeyword's word-boundary check means only the E441 rule's exact phrase
+            // "porcine gelatin" matched before, not "porcine" followed by any other word.
+            keywords = listOf("pork", "pig", "swine", "porc", "porcine", "cochon", "jambon", "schwein", "schweinefleisch", "speck", "lard", "bacon", "ham", "pork fat", "carne de cerdo", "manteca de cerdo", "domuz", "domuz eti", "domuz yağı"),
             nameEn = "Pork / Lard / Swine Derivatives",
             nameTr = "Domuz Eti / Domuz Yağı (Lard)",
             reasonEn = "Direct pig meat or lard fats. Explicitly forbidden in the Quran.",
@@ -108,6 +112,22 @@ object HalalAnalyzer {
             reasonTr = "Helal kesim olmayan hayvan kemiklerinden elde edilen mineral.",
             eCode = "E542",
             origin = "Animal Bones"
+        ),
+        HaramRule(
+            // Specific multi-word phrases only, never bare "blood" - "blood orange"/"blutorange"/
+            // "orange sanguine" is a common, entirely blood-free juice/flavoring ingredient that
+            // a bare "blood" keyword would false-positive on (same class of bug "vin" bare would
+            // cause inside "vinegar" - see containsKeyword's word-boundary comment above).
+            keywords = listOf(
+                "blood plasma", "dried blood", "blood sausage", "black pudding",
+                "blutplasma", "blutwurst", "boudin noir", "kan plazması"
+            ),
+            nameEn = "Blood / Blood Plasma",
+            nameTr = "Kan / Kan Plazması",
+            reasonEn = "Drained/consumed blood is explicitly forbidden in Islamic law.",
+            reasonTr = "Akıtılmış kanın tüketimi dinen açıkça yasaklanmıştır.",
+            eCode = null,
+            origin = "Animal Blood"
         )
     )
 
@@ -128,6 +148,15 @@ object HalalAnalyzer {
             reasonEn = "Fatty acid derivatives used in bakery. Requires vegetable origin confirmation.",
             reasonTr = "Unlu mamul emülgatörleri. Hayvansal yağ riski nedeniyle bitkisel köken teyidi gereklidir.",
             eCode = "E472",
+            origin = "Plant or Animal"
+        ),
+        SuspiciousRule(
+            keywords = listOf("e422", "glycerin", "glycerine", "glycerol", "gliserin", "gliserol"),
+            nameEn = "E422 Glycerin / Glycerol",
+            nameTr = "E422 Gliserin / Gliserol",
+            reasonEn = "Humectant from vegetable oil (Halal) OR animal fat (Pork/Beef tallow). Source must be verified.",
+            reasonTr = "Bitkisel yağdan üretildiyse helal, hayvansal yağdan (domuz/sığır donyağı) üretildiyse sakıncalıdır. Kaynak teyidi gerekir.",
+            eCode = "E422",
             origin = "Plant or Animal"
         ),
         SuspiciousRule(
@@ -269,6 +298,11 @@ object HalalAnalyzer {
 
         val imageUrl = resolveProductImageUrl(offProduct, barcode)
 
+        // OFF frequently populates ingredients_text and ingredients_text_en with the identical
+        // string (no distinct per-language text was ever entered) - joining every field
+        // unconditionally then duplicated that one sentence, which both doubled every chip in
+        // the visible ingredients list and (harmlessly, since matching is idempotent) doubled
+        // it in the text rule-matching runs against.
         val ingredientsRaw = listOfNotNull(
             offProduct.ingredientsTextEn,
             offProduct.ingredientsTextDe,
@@ -277,7 +311,8 @@ object HalalAnalyzer {
             offProduct.ingredientsTextTr,
             offProduct.ingredientsTextAr,
             offProduct.ingredientsText
-        ).joinToString(" ")
+        ).distinctBy { it.trim().lowercase(Locale.ROOT) }
+            .joinToString(" ")
 
         // Strip negated compounds ("alcohol-free", "non-alcoholic") before matching, so a
         // hyphen boundary doesn't let e.g. "alcohol-free" trip the "alcohol" keyword - the
@@ -391,12 +426,15 @@ object HalalAnalyzer {
         val isSafeHalalOrVegan = (hasHalalClaim || (hasVeganClaim && !ingredientsLower.contains("alcohol"))) &&
                 harmfulLabels.isEmpty() && suspiciousLabels.isEmpty()
 
-        // 4. Extract tokenized ingredients list
+        // 4. Extract tokenized ingredients list. Cap raised from 15 to 40: a long real label
+        // (e.g. Dave's Killer Bread's 21-grain mix) was silently truncating before ingredients
+        // like "vinegar", "yeast", or "enzymes" ever reached the visible list - the user has no
+        // way to verify what was actually screened if the display cuts off before showing it.
         val allIngredientsList = if (ingredientsRaw.isNotBlank()) {
             ingredientsRaw.split(Regex("[,;•]"))
                 .map { it.trim().trim('.', '(', ')') }
                 .filter { it.isNotBlank() && it.length > 1 }
-                .take(15)
+                .take(40)
         } else {
             additiveTags.map { it.uppercase(Locale.ROOT) }
         }

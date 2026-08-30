@@ -212,6 +212,58 @@ class HalalAnalyzerTest {
     }
 
     @Test
+    fun `bare porcine is Haram, not just porcine gelatin`() {
+        // Regression: only the E441 rule's exact phrase "porcine gelatin" matched before -
+        // "porcine collagen", "porcine enzymes" etc. slipped past every rule to a false Halal.
+        val result = analyze("water, porcine collagen, sugar")
+        assertEquals(HalalStatus.HARAM, result.status)
+    }
+
+    @Test
+    fun `blood orange is not flagged as blood`() {
+        // Regression guard: a bare "blood" keyword would false-positive on "blood orange" /
+        // "blutorange" - a common, entirely blood-free juice/flavoring ingredient. The blood
+        // rule only matches specific phrases like "blood plasma", never bare "blood".
+        val result = analyze("water, blood orange juice, sugar")
+        assertFalse(
+            "blood orange must not be flagged as containing animal blood",
+            result.flaggedDetails.any { it.name.contains("Blood", ignoreCase = true) }
+        )
+        assertEquals(HalalStatus.HELAL, result.status)
+    }
+
+    @Test
+    fun `blood plasma is Haram`() {
+        val result = analyze("water, blood plasma, salt")
+        assertEquals(HalalStatus.HARAM, result.status)
+        assertTrue(result.flaggedDetails.any { it.name.contains("Blood", ignoreCase = true) })
+    }
+
+    @Test
+    fun `glycerin is Suspicious with unverified source`() {
+        val result = analyze("water, glycerin, sugar")
+        assertEquals(HalalStatus.SUPHELI, result.status)
+        assertTrue(result.flaggedDetails.any { it.name.contains("Glycerin", ignoreCase = true) })
+    }
+
+    @Test
+    fun `duplicate ingredients_text and ingredients_text_en do not double every chip`() {
+        // Regression: OFF frequently returns the identical string in both fields (no distinct
+        // translation was ever entered). Joining both unconditionally doubled every visible
+        // ingredient chip, e.g. "Bovine collagen peptides Bovine collagen peptides".
+        val result = HalalAnalyzer.analyzeOpenFoodFactsProduct(
+            barcode = "0000000000000",
+            offProduct = OffProduct(
+                productName = "Test Product",
+                ingredientsText = "Bovine collagen peptides",
+                ingredientsTextEn = "Bovine collagen peptides"
+            ),
+            language = AppLanguage.EN
+        )
+        assertEquals(listOf("Bovine collagen peptides"), result.allIngredients)
+    }
+
+    @Test
     fun `vegetable gelatin claim is not flagged Suspicious`() {
         // Regression: the bare "gelatin" keyword matched inside "vegetable gelatin" and its
         // DE/FR/TR/ES equivalents, flagging an explicit plant-based claim as if the source
