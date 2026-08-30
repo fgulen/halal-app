@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 8 / versionName 1.6 (2026-08-30)
+
+Barkod sonuçlarında gerçek sebep gösterimi, genişletilmiş içerik tespiti (sığır kolajeni, kan ürünleri, gliserin), tekrarlanan içerik metni düzeltmesi, uzun içerik listelerinin artık kırpılmaması, ve yeni "Nasıl Çalışıyor?" sayfası.
+
+<tr-TR>
+Bu sürümde: Eşleşmeyen barkod sonuçlarında artık gerçek sebep gösteriliyor (ağ hatası, içerik eksik vb.), genel bir mesaj yerine. İçerik tarayıcı artık kaynağı belirsiz sığır kolajenini, jelatin dışı domuz türevlerini, kan ürünlerini ve gliserini de yakalıyor. Bazı içeriklerin iki kez gösterilmesine neden olan hata düzeltildi. Uzun içerik listeleri artık kırpılmıyor. Sonuç ekranına, Helal/Şüpheli/Haram mantığını açıklayan yeni bir "Nasıl Çalışıyor?" sayfası eklendi.
+</tr-TR>
+
+<en-US>
+This update: barcode results that couldn't be matched now explain the real reason (network issue, missing ingredient data, etc.) instead of a generic message. The ingredient checker now also catches unverified bovine collagen, pork derivatives beyond gelatin, blood products, and glycerin. Fixed a bug that sometimes showed an ingredient twice. Long ingredient lists are no longer cut short. Added a new "How does this work?" page explaining the Halal/Doubtful/Haram logic.
+</en-US>
+
+<de-DE>
+Update: Nicht gefundene Barcode-Ergebnisse zeigen jetzt den tatsächlichen Grund (Netzwerkfehler, fehlende Zutatenliste usw.) statt einer allgemeinen Meldung. Die Zutatenprüfung erkennt jetzt auch nicht bestätigtes Rinderkollagen, Schweinederivate über Gelatine hinaus, Blutprodukte und Glycerin. Ein Fehler, der manche Zutaten doppelt anzeigte, wurde behoben. Lange Zutatenlisten werden nicht mehr abgeschnitten. Neue Seite "Wie funktioniert das?" mit Erklärung der Halal/Zweifelhaft/Haram-Logik.
+</de-DE>
+
+<fr-FR>
+Mise à jour : les résultats de codes-barres non trouvés affichent désormais la raison réelle (erreur réseau, ingrédients manquants, etc.) au lieu d'un message générique. Le contrôle des ingrédients détecte maintenant aussi le collagène bovin non vérifié, les dérivés porcins au-delà de la gélatine, les produits sanguins et la glycérine. Correction d'un bug affichant certains ingrédients en double. Les longues listes d'ingrédients ne sont plus tronquées. Nouvelle page « Comment ça marche ? » expliquant la logique Halal/Douteux/Haram.
+</fr-FR>
+
+<ar>
+في هذا الإصدار: نتائج الباركود غير الموجودة تعرض الآن السبب الحقيقي (خطأ في الشبكة، مكونات غير مدرجة، إلخ) بدلاً من رسالة عامة. يكتشف فحص المكونات الآن أيضاً الكولاجين البقري غير المؤكد المصدر، مشتقات الخنزير غير الجيلاتين، منتجات الدم، والجليسرين. تم إصلاح خطأ كان يعرض بعض المكونات مرتين. لم تعد قوائم المكونات الطويلة تُقتطع. تمت إضافة صفحة جديدة "كيف يعمل هذا؟" تشرح منطق حلال/مشبوه/حرام.
+</ar>
+
+---
+
 ## versionCode 7 / versionName 1.5 (2026-08-29)
 
 Ana sayfa, geçmiş ve E-Kodları ekranlarındaki arama kutuları tek bir
