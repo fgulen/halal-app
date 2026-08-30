@@ -49,7 +49,12 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -849,6 +854,8 @@ fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage) {
 
 @Composable
 fun LegalDisclaimerCard(language: AppLanguage) {
+    var showHowItWorks by remember { mutableStateOf(false) }
+
     Surface(
         color = NaturalWarmSurface,
         shape = RoundedCornerShape(16.dp),
@@ -892,8 +899,28 @@ fun LegalDisclaimerCard(language: AppLanguage) {
                     color = NaturalTextMuted,
                     lineHeight = 15.sp
                 )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = when (language) {
+                        AppLanguage.EN -> "How does this work? →"
+                        AppLanguage.DE -> "Wie funktioniert das? →"
+                        AppLanguage.FR -> "Comment ça marche ? →"
+                        AppLanguage.TR -> "Nasıl Çalışıyor? →"
+                        AppLanguage.AR -> "كيف يعمل هذا؟ ←"
+                    },
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = EmeraldPrimaryDeep,
+                    modifier = Modifier
+                        .clickable { showHowItWorks = true }
+                        .testTag("how_it_works_link")
+                )
             }
         }
+    }
+
+    if (showHowItWorks) {
+        HowItWorksDialog(language = language, onDismiss = { showHowItWorks = false })
     }
 }
 
