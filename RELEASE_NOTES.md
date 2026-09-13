@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 10 / versionName 1.8 (2026-09-13)
+
+Barkodu bulunamayan ürünler için fotoğrafla içindekiler analizi, ağ hatalarında ayrı "tekrar dene" ekranı, ve uygulamayı paylaşma butonu.
+
+<tr-TR>
+Bu sürümde: Barkodu veritabanında bulunamayan bir ürün için artık içindekiler etiketinin fotoğrafını çekip analiz ettirebilirsiniz — metin otomatik okunur, analiz etmeden önce gözden geçirip düzeltebilirsiniz. İnternet bağlantısı sorununda artık ürün "bulunamadı" değil, ayrı bir "tekrar dene" ekranı gösterilir. Ayrıca uygulamayı arkadaşlarınızla paylaşma butonu eklendi.
+</tr-TR>
+
+<en-US>
+This update: for products not found by barcode, you can now photograph the ingredients label and get it analyzed — text is read automatically, and you can review and fix it before analysis runs. A connectivity problem now shows a dedicated retry screen instead of a false "not found" result. Also added: a button to share the app with friends.
+</en-US>
+
+<de-DE>
+Update: Für Produkte, die per Barcode nicht gefunden werden, können Sie jetzt die Zutatenliste fotografieren und analysieren lassen - der Text wird automatisch erkannt und kann vor der Analyse überprüft und korrigiert werden. Bei Verbindungsproblemen erscheint jetzt ein eigener "Erneut versuchen"-Bildschirm statt eines falschen "nicht gefunden"-Ergebnisses. Außerdem neu: ein Button zum Teilen der App.
+</de-DE>
+
+<fr-FR>
+Mise à jour : pour les produits non trouvés par code-barres, vous pouvez désormais photographier la liste des ingrédients pour l'analyser - le texte est lu automatiquement et peut être vérifié et corrigé avant l'analyse. Un problème de connexion affiche désormais un écran « réessayer » dédié au lieu d'un faux résultat « non trouvé ». Nouveau aussi : un bouton pour partager l'application.
+</fr-FR>
+
+<ar>
+في هذا الإصدار: بالنسبة للمنتجات التي لا يُعثر عليها بالباركود، يمكنك الآن تصوير ملصق المكونات لتحليله - يتم قراءة النص تلقائياً، ويمكنك مراجعته وتصحيحه قبل التحليل. عند وجود مشكلة في الاتصال، تظهر الآن شاشة "إعادة المحاولة" مخصصة بدلاً من نتيجة "غير موجود" خاطئة. كما تمت إضافة زر لمشاركة التطبيق.
+</ar>
+
+---
+
 ## versionCode 9 / versionName 1.7 (2026-08-30)
 
 Bazı ürünlerde taranan barkodun eşleştiği fotoğraf/bilgi farklı bir ürüne aitti; bu artık düzeltildi ve barkod eşleşmesinde canlı veri tabanı her zaman önceliklidir.
