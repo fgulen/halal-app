@@ -622,7 +622,56 @@ object HalalAnalyzer {
             ingredientsText = ingredientsText,
             categories = "Analyzed Ingredients"
         )
-        return analyzeOpenFoodFactsProduct(barcode, dummyOff, language)
+        val result = analyzeOpenFoodFactsProduct(barcode, dummyOff, language)
+
+        // A photo of the nutrition-facts panel (Energie/Eiweiß/Kohlenhydrate/kcal/...) contains
+        // no E-numbers or ingredient names at all, so the rule engine above finds nothing to flag
+        // and falls through to the "no prohibited ingredients found" Helal verdict - which then
+        // reads as a confident halal claim about a product whose real ingredients were never
+        // actually looked at (caught via a barcode re-scan of "Yogurette": photographing its
+        // nutrition table instead of its ingredients list produced Helal here, while the barcode
+        // scan correctly flags it Şüpheli for E471). Downgrade only that specific
+        // false-confidence case to Doubtful with an explicit retake prompt; a verdict that
+        // already found something Haram/Doubtful despite the wrong panel is left as is.
+        if (result.status == HalalStatus.HELAL && looksLikeNutritionTableText(ingredientsText)) {
+            return result.copy(
+                status = HalalStatus.SUPHELI,
+                reasonOrDetails = when (language) {
+                    AppLanguage.EN -> "This photo looks like the nutrition facts panel (calories, protein, fat...), not the ingredients list, so no additives could be checked. Please retake a photo of the 'Ingredients' section on the packaging."
+                    AppLanguage.DE -> "Dieses Foto sieht nach der Nährwerttabelle aus (Kalorien, Eiweiß, Fett...), nicht nach der Zutatenliste - Zusatzstoffe konnten daher nicht geprüft werden. Bitte fotografieren Sie den Abschnitt 'Zutaten' auf der Verpackung."
+                    AppLanguage.FR -> "Cette photo ressemble au tableau nutritionnel (calories, protéines, lipides...), pas à la liste des ingrédients - les additifs n'ont donc pas pu être vérifiés. Merci de reprendre une photo de la section « Ingrédients » sur l'emballage."
+                    AppLanguage.TR -> "Bu fotoğraf içindekiler listesine değil, besin değerleri tablosuna (kalori, protein, yağ vb.) benziyor; bu yüzden katkı maddeleri kontrol edilemedi. Lütfen ambalajdaki 'İçindekiler' bölümünün fotoğrafını tekrar çekin."
+                    AppLanguage.AR -> "تبدو هذه الصورة وكأنها جدول القيم الغذائية (السعرات، البروتين، الدهون...) وليست قائمة المكونات، لذا تعذّر التحقق من الإضافات. يرجى إعادة تصوير قسم 'المكونات' على العبوة."
+                },
+                halalCertificate = null,
+                allIngredients = emptyList()
+            )
+        }
+        return result
+    }
+
+    // Nutrition-table words in the languages this app ships (EN/DE/FR/TR/AR); ">= 2 hits" avoids
+    // a false positive from one stray word (e.g. a genuine ingredient list that happens to
+    // mention "sugar"/"salt"). Suppressed entirely if the text names an actual ingredients
+    // section, since some labels print both panels close together in one photo.
+    // internal (not private): PhotoIngredientCapture.kt reuses these same word lists to locate
+    // the ingredients block among a photo's OCR text blocks, so both layers agree on what
+    // "looks like an ingredients section" vs "looks like a nutrition table" means.
+    internal val NUTRITION_TABLE_MARKERS = listOf(
+        "nährwerte", "brennwert", "energie", "eiweiß", "kohlenhydrate", "gesättigte fettsäuren",
+        "nutrition facts", "energy value", "calories", "protein", "carbohydrate", "saturated fat", "sodium",
+        "valeur nutritionnelle", "valeur énergétique", "glucides", "protéines", "matières grasses", "lipides",
+        "besin değerleri", "enerji", "karbonhidrat", "kkal", "doymuş yağ",
+        "القيم الغذائية", "السعرات", "البروتين", "الدهون المشبعة"
+    )
+    internal val INGREDIENT_SECTION_MARKERS = listOf(
+        "zutaten", "ingredients", "içindekiler", "ingrédients", "ingredientes", "المكونات"
+    )
+
+    fun looksLikeNutritionTableText(text: String): Boolean {
+        val lower = text.lowercase(Locale.ROOT)
+        if (INGREDIENT_SECTION_MARKERS.any { lower.contains(it) }) return false
+        return NUTRITION_TABLE_MARKERS.count { lower.contains(it) } >= 2
     }
 
     fun resolveProductImageUrl(offProduct: OffProduct, barcode: String): String? {

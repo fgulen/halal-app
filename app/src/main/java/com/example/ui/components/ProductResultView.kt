@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Dangerous
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.ReportProblem
@@ -110,6 +111,7 @@ fun ProductResultBottomSheet(
     language: AppLanguage,
     onDismiss: () -> Unit,
     onScanAgain: () -> Unit,
+    onAnalyzePhoto: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -236,7 +238,7 @@ fun ProductResultBottomSheet(
                         SuspiciousWarningSection(product, language)
                     }
                     HalalStatus.BULUNAMADI -> {
-                        NotFoundSection(product, language)
+                        NotFoundSection(product, language, onAnalyzePhoto)
                     }
                 }
 
@@ -925,7 +927,7 @@ fun LegalDisclaimerCard(language: AppLanguage) {
 }
 
 @Composable
-fun NotFoundSection(product: FoodProduct, language: AppLanguage) {
+fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto: () -> Unit = {}) {
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
         // The specific reason for *this* scan (not found / network error / malformed
         // barcode / found-but-no-ingredients) was previously computed by the repository
@@ -990,6 +992,23 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage) {
                     lineHeight = 20.sp
                 )
             }
+        }
+
+        Button(
+            onClick = onAnalyzePhoto,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .testTag("analyze_photo_button"),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
+        ) {
+            Icon(imageVector = Icons.Default.PhotoCamera, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = AppStrings.getAnalyzePhotoButton(language),
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

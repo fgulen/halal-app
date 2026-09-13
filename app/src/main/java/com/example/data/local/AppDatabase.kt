@@ -5,10 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Database(
     entities = [ProductEntity::class, ScanHistoryEntity::class],
@@ -17,7 +15,13 @@ import kotlinx.coroutines.launch
     // v3: added ProductEntity.language and reworked the no-claim/no-flag default from Şüpheli
     // to Helal (see HalalAnalyzer.kt Rule 4) - old rows carry stale verdicts/text either way,
     // so they're cleared rather than silently kept.
-    version = 3,
+    // v4: `products` is a resolved-answer cache, not a browsable table - InitialData.sampleProducts
+    // is looked up in-memory (ProductRepository) and no longer bulk-inserted into it, since a wrong
+    // curated barcode (e.g. a "Milka Daim" entry whose barcode was actually LU "Prince" biscuits'
+    // real barcode) would sit there and permanently shadow the real product's live Open Food Facts
+    // data for every device that had already cached it. Existing cached rows are cleared here so
+    // already-installed devices drop any such stale/wrong rows; scan_history is untouched.
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -28,37 +32,24 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context, scope: CoroutineScope): AppDatabase {
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DELETE FROM products")
+            }
+        }
+
+        fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "halal_kontrol_database"
                 )
-                .addCallback(DatabaseCallback(scope))
+                .addMigrations(MIGRATION_3_4)
                 .fallbackToDestructiveMigration(dropAllTables = true)
                 .build()
                 INSTANCE = instance
                 instance
-            }
-        }
-
-        private class DatabaseCallback(
-            private val scope: CoroutineScope
-        ) : Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-                INSTANCE?.let { database ->
-                    scope.launch(Dispatchers.IO) {
-                        populateDatabase(database.productDao())
-                    }
-                }
-            }
-
-            suspend fun populateDatabase(dao: ProductDao) {
-                if (dao.getProductCount() == 0) {
-                    dao.insertProducts(InitialData.sampleProducts)
-                }
             }
         }
     }

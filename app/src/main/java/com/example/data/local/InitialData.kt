@@ -61,36 +61,17 @@ object InitialData {
                 "Dandies Vegan Marshmallows (Plant-based / Tapioca)",
                 "Ziyad Halal Certified Marshmallows"
             ),
-            imageUrl = "https://images.openfoodfacts.org/images/products/400/168/630/1265/1.400.jpg"
+            // No verified OFF entry for this barcode - leave null rather than reuse another
+            // product's image (was previously copy-pasted from the Haribo entry above).
+            imageUrl = null
         ),
 
-        // 3. HARAM - EU: Milka Daim (Alcohol Flavoring)
-        ProductEntity(
-            barcode = "7622210449283",
-            name = "Milka Daim Chocolate (EU Edition)",
-            brand = "Mondelez / Milka",
-            category = "Chocolate & Confectionery",
-            status = HalalStatus.HARAM,
-            halalCertificate = null,
-            harmfulOrSuspiciousIngredients = listOf("Ethyl Alcohol / Liqueur Extract", "E476 (Polyglycerol Polyricinoleate)"),
-            allIngredients = listOf(
-                "Sugar",
-                "Cocoa butter",
-                "Skimmed milk powder",
-                "Cocoa mass",
-                "Butterfat",
-                "Ethyl alcohol / Liqueur flavoring",
-                "Soya lecithin (E322)",
-                "E476"
-            ),
-            reasonOrDetails = "Contains alcohol / liqueur extract in the flavor blend. All intoxicants and alcohol additives are non-compliant with Islamic dietary standards.",
-            alternatives = listOf(
-                "Ritter Sport Vegan & Halal editions",
-                "Lindt Excellence Dark Chocolate (Alcohol-free)",
-                "Godiva Pure Milk Chocolate"
-            ),
-            imageUrl = "https://images.openfoodfacts.org/images/products/762/221/044/9283/1.400.jpg"
-        ),
+        // 3. Removed "Milka Daim (Alcohol Flavoring)" - its hardcoded barcode 7622210449283
+        // is the real, verified barcode for an unrelated product (LU "Prince" chocolate wheat
+        // biscuits, confirmed via Open Food Facts). Because curated entries here are matched
+        // before the live OFF lookup, this made every real scan of that Prince biscuit show
+        // fabricated Milka/alcohol data. No verified barcode for an actual Milka Daim product
+        // was found, so the entry was dropped rather than reassigned to a guess.
 
         // 4. SUSPICIOUS - USA: Doritos Nacho Cheese (Animal Enzymes)
         ProductEntity(
@@ -147,7 +128,9 @@ object InitialData {
             ),
             reasonOrDetails = "Oreo cookies in Europe and USA are produced with 100% plant-based ingredients and vegetable oils. No gelatin, animal enzymes, or alcohol.",
             alternatives = emptyList(),
-            imageUrl = "https://images.openfoodfacts.org/images/products/541/012/600/6957/front_en.161.400.jpg"
+            // No verified OFF entry for this barcode - leave null rather than reuse the
+            // Lotus Biscoff entry's image below (was previously copy-pasted from it).
+            imageUrl = null
         ),
 
         // 6. HELAL - Global: Lotus Biscoff Spread
@@ -220,8 +203,11 @@ object InitialData {
         ),
 
         // 9. HELAL - EU/Global: Skittles Fruits
+        // Barcode corrected: the old "5000159461122" is the real barcode of an unrelated
+        // Snickers product (verified via Open Food Facts). 5000159376655 is the actual
+        // "Skittles Fruits" barcode - its ingredients list matches what's hardcoded below.
         ProductEntity(
-            barcode = "5000159461122",
+            barcode = "5000159376655",
             name = "Skittles Fruits (Gelatin-Free)",
             brand = "Mars Wrigley",
             category = "Candy & Sweets",
@@ -246,7 +232,7 @@ object InitialData {
             ),
             reasonOrDetails = "Reformulated in Europe and USA without animal gelatin or carmine (E120). Plant-based starch and natural beetroot red (E162) are used.",
             alternatives = emptyList(),
-            imageUrl = "https://images.openfoodfacts.org/images/products/500/015/946/1122/1.400.jpg"
+            imageUrl = "https://images.openfoodfacts.org/images/products/500/015/937/6655/front_en.132.400.jpg"
         ),
 
         // 7. HELAL - EU/USA: Nutella Hazelnut Spread (Standard 400g/750g EU)
@@ -338,7 +324,9 @@ object InitialData {
             ),
             reasonOrDetails = "Zertifiziert vegetarisch. 100% pflanzliches Sojalecithin.",
             alternatives = emptyList(),
-            imageUrl = "https://images.openfoodfacts.org/images/products/400/840/040/2222/1.400.jpg"
+            // Was copy-pasted from the 4008400402222 entry above - leave null rather than
+            // show a different barcode's jar photo.
+            imageUrl = null
         ),
 
         // 7d. HELAL - Nutella B-ready
@@ -447,7 +435,9 @@ object InitialData {
             ),
             reasonOrDetails = "Bitkisel içerikli ve süt ürünüdür. Domuz yağı, domuz jelatini ve alkol içermez. Emülgatör olarak bitkisel soya lesitini kullanılmıştır.",
             alternatives = emptyList(),
-            imageUrl = "https://images.openfoodfacts.org/images/products/400/840/040/2222/1.400.jpg"
+            // Was copy-pasted from the 4008400402222 entry above - leave null rather than
+            // show a different barcode's jar photo.
+            imageUrl = null
         ),
 
         // 7i. HELAL - Nutella Kakaolu Fındık Kreması 400g Turkey
@@ -470,7 +460,9 @@ object InitialData {
             ),
             reasonOrDetails = "Domuz türevi ve alkol içermez. %100 bitkisel soya lesitini.",
             alternatives = emptyList(),
-            imageUrl = "https://images.openfoodfacts.org/images/products/400/840/040/2222/1.400.jpg"
+            // Was copy-pasted from the 4008400402222 entry above - leave null rather than
+            // show a different barcode's jar photo.
+            imageUrl = null
         ),
 
         // 7j. HELAL - Nutella Biscuits 304g Italy / EU
@@ -500,8 +492,11 @@ object InitialData {
         ),
 
         // 7k. HELAL - Nutella 1kg Italy / Glass
+        // Barcode corrected: the old "8000500037560" is the real barcode of an unrelated
+        // Kinder Bueno product (verified via Open Food Facts). 8000500193389 is the actual
+        // 1kg Nutella jar barcode.
         ProductEntity(
-            barcode = "8000500037560",
+            barcode = "8000500193389",
             name = "Nutella Crema Spalmabile 1000g (Ferrero Italy)",
             brand = "Ferrero",
             category = "Spreads & Breakfast",
@@ -519,7 +514,7 @@ object InitialData {
             ),
             reasonOrDetails = "Senza ingredienti animali o alcol. 100% lecitina vegetale.",
             alternatives = emptyList(),
-            imageUrl = "https://images.openfoodfacts.org/images/products/800/050/003/7560/1.400.jpg"
+            imageUrl = "https://images.openfoodfacts.org/images/products/800/050/019/3389/front_fr.4.400.jpg"
         ),
 
         // 7l. HELAL - Nutella US UPC variations

@@ -1,6 +1,7 @@
 package com.example.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +25,14 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
+import com.example.ui.theme.EmeraldPrimaryDeep
 import com.example.ui.theme.NaturalTextDark
 import com.example.ui.theme.NaturalTextMuted
 import com.example.ui.theme.NaturalWarmBg
@@ -141,9 +144,86 @@ fun HowItWorksDialog(language: AppLanguage, onDismiss: () -> Unit) {
                         AppLanguage.AR -> "هذا ليس فتوى دينية ولا شهادة حلال رسمية - إنه فحص أولي آلي.\n\nيعتمد الكشف على قائمة ثابتة من أسماء المكونات المعروفة بعدة لغات. قد يفوتنا مصطلح نادر، أو لغة غير مغطاة، أو بيانات ناقصة/خاطئة في Open Food Facts.\n\nعند الشك، يرجى فحص الغلاف بنفسك أو التواصل مع الشركة المصنعة."
                     }
                 )
+
+                HowItWorksSourcesSection(language)
             }
         }
     }
+}
+
+@Composable
+private fun HowItWorksSourcesSection(language: AppLanguage) {
+    Surface(
+        color = NaturalWarmSurface,
+        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(1.dp, NaturalWarmBorder),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = when (language) {
+                    AppLanguage.EN -> "Sources & attribution"
+                    AppLanguage.DE -> "Quellen & Namensnennung"
+                    AppLanguage.FR -> "Sources et attribution"
+                    AppLanguage.TR -> "Kaynaklar ve Atıf"
+                    AppLanguage.AR -> "المصادر والإسناد"
+                },
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp,
+                color = NaturalTextDark
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = when (language) {
+                    AppLanguage.EN -> "Product data is provided by Open Food Facts, licensed under the Open Database License (ODbL)."
+                    AppLanguage.DE -> "Produktdaten werden von Open Food Facts bereitgestellt, lizenziert unter der Open Database License (ODbL)."
+                    AppLanguage.FR -> "Les données produit sont fournies par Open Food Facts, sous licence Open Database License (ODbL)."
+                    AppLanguage.TR -> "Ürün verileri, Open Database License (ODbL) altında lisanslanan Open Food Facts tarafından sağlanmaktadır."
+                    AppLanguage.AR -> "بيانات المنتج مقدمة من Open Food Facts، مرخصة بموجب رخصة قاعدة البيانات المفتوحة (ODbL)."
+                },
+                fontSize = 13.sp,
+                color = NaturalTextMuted,
+                lineHeight = 19.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            HowItWorksLinkRow("Open Food Facts — openfoodfacts.org", "https://openfoodfacts.org")
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = when (language) {
+                    AppLanguage.EN -> "Ingredient and additive classifications are cross-checked against definitions published by these public health and food-safety bodies:"
+                    AppLanguage.DE -> "Zutaten- und Zusatzstoffklassifizierungen werden mit Definitionen dieser Gesundheits- und Lebensmittelsicherheitsbehörden abgeglichen:"
+                    AppLanguage.FR -> "Les classifications des ingrédients et additifs sont vérifiées par rapport aux définitions publiées par ces organismes de santé publique et de sécurité alimentaire :"
+                    AppLanguage.TR -> "Madde ve katkı sınıflandırmaları, aşağıdaki halk sağlığı ve gıda güvenliği kurumlarının yayınladığı tanımlarla karşılaştırılarak doğrulanır:"
+                    AppLanguage.AR -> "يتم التحقق من تصنيفات المكونات والإضافات مقابل التعريفات التي تنشرها هيئات الصحة العامة وسلامة الغذاء التالية:"
+                },
+                fontSize = 13.sp,
+                color = NaturalTextMuted,
+                lineHeight = 19.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            HowItWorksLinkRow("FAO — fao.org", "https://www.fao.org/home/en/")
+            HowItWorksLinkRow("WHO — who.int", "https://www.who.int/")
+            HowItWorksLinkRow("EFSA — efsa.europa.eu", "https://www.efsa.europa.eu/en")
+            HowItWorksLinkRow("FDA — fda.gov", "https://www.fda.gov/")
+            HowItWorksLinkRow("Australian Legislation — legislation.gov.au", "https://www.legislation.gov.au/")
+        }
+    }
+}
+
+@Composable
+private fun HowItWorksLinkRow(label: String, url: String) {
+    val uriHandler = LocalUriHandler.current
+    Text(
+        text = "• $label",
+        fontSize = 12.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = EmeraldPrimaryDeep,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { uriHandler.openUri(url) }
+            .padding(vertical = 3.dp)
+    )
 }
 
 @Composable

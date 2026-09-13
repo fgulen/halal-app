@@ -492,6 +492,30 @@ object AppStrings {
         AppLanguage.AR -> "حدث خطأ غير متوقع: $details. يرجى المحاولة مرة أخرى."
     }
 
+    fun getNetworkErrorTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "No Connection"
+        AppLanguage.DE -> "Keine Verbindung"
+        AppLanguage.FR -> "Pas de connexion"
+        AppLanguage.TR -> "Bağlantı Yok"
+        AppLanguage.AR -> "لا يوجد اتصال"
+    }
+
+    fun getNetworkErrorMessage(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Couldn't reach Open Food Facts to check this product. This doesn't mean it's unregistered — check your internet connection and try again."
+        AppLanguage.DE -> "Open Food Facts konnte nicht erreicht werden, um dieses Produkt zu prüfen. Das heißt nicht, dass es nicht registriert ist — bitte Internetverbindung prüfen und erneut versuchen."
+        AppLanguage.FR -> "Impossible de contacter Open Food Facts pour vérifier ce produit. Cela ne signifie pas qu'il n'est pas répertorié — vérifiez votre connexion internet et réessayez."
+        AppLanguage.TR -> "Bu ürünü kontrol etmek için Open Food Facts'e ulaşılamadı. Bu, ürünün sistemde kayıtlı olmadığı anlamına gelmez — internet bağlantınızı kontrol edip tekrar deneyin."
+        AppLanguage.AR -> "تعذر الوصول إلى Open Food Facts للتحقق من هذا المنتج. هذا لا يعني أنه غير مسجل — تحقق من اتصال الإنترنت وحاول مرة أخرى."
+    }
+
+    fun getRetryLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Try Again"
+        AppLanguage.DE -> "Erneut versuchen"
+        AppLanguage.FR -> "Réessayer"
+        AppLanguage.TR -> "Tekrar Dene"
+        AppLanguage.AR -> "إعادة المحاولة"
+    }
+
     fun getReasonLabel(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Reason"
         AppLanguage.DE -> "Grund"
@@ -652,11 +676,107 @@ object AppStrings {
         AppLanguage.AR -> "مشاركة"
     }
 
+    fun getShareApp(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Share App"
+        AppLanguage.DE -> "App teilen"
+        AppLanguage.FR -> "Partager l'app"
+        AppLanguage.TR -> "Uygulamayı Paylaş"
+        AppLanguage.AR -> "مشاركة التطبيق"
+    }
+
+    fun getShareAppMessage(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Check out Halal Checker — scan any barcode to instantly see if a product is halal, haram, or doubtful: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+        AppLanguage.DE -> "Schau dir Halal Prüfer an — scanne einen Barcode und sieh sofort, ob ein Produkt halal, haram oder zweifelhaft ist: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+        AppLanguage.FR -> "Découvrez Contrôle Halal — scannez un code-barres pour savoir instantanément si un produit est halal, haram ou douteux : https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+        AppLanguage.TR -> "Helal Rehberi'ni dene — barkod okutarak bir ürünün helal mi, haram mı, yoksa şüpheli mi olduğunu anında öğren: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+        AppLanguage.AR -> "جرّب دليل الحلال — امسح أي باركود لتعرف فوراً إن كان المنتج حلالاً أم حراماً أم مشبوهاً: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+    }
+
     fun getLanguageSelection(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Select Language"
         AppLanguage.DE -> "Sprache wählen"
         AppLanguage.FR -> "Choisir la langue"
         AppLanguage.TR -> "Dil Seçimi"
         AppLanguage.AR -> "اختر اللغة"
+    }
+
+    fun getAnalyzePhotoButton(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Analyze from a Photo"
+        AppLanguage.DE -> "Per Foto analysieren"
+        AppLanguage.FR -> "Analyser depuis une photo"
+        AppLanguage.TR -> "Fotoğraf Çekerek Analiz Et"
+        AppLanguage.AR -> "التحليل من صورة"
+    }
+
+    fun getPhotoAnalysisDialogTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Confirm Ingredients Text"
+        AppLanguage.DE -> "Zutatentext bestätigen"
+        AppLanguage.FR -> "Confirmer le texte des ingrédients"
+        AppLanguage.TR -> "İçindekiler Metnini Onayla"
+        AppLanguage.AR -> "تأكيد نص المكونات"
+    }
+
+    fun getPhotoAnalysisDialogSubtitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Check the text below and fix any misread words before analyzing."
+        AppLanguage.DE -> "Prüfen Sie den Text unten und korrigieren Sie falsch erkannte Wörter vor der Analyse."
+        AppLanguage.FR -> "Vérifiez le texte ci-dessous et corrigez les mots mal reconnus avant d'analyser."
+        AppLanguage.TR -> "Analiz etmeden önce aşağıdaki metni kontrol edin, yanlış okunan kelimeleri düzeltin."
+        AppLanguage.AR -> "راجع النص أدناه وصحّح أي كلمات قُرئت بشكل خاطئ قبل التحليل."
+    }
+
+    fun getPhotoAnalysisProductNameHint(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Product name (optional)"
+        AppLanguage.DE -> "Produktname (optional)"
+        AppLanguage.FR -> "Nom du produit (facultatif)"
+        AppLanguage.TR -> "Ürün adı (opsiyonel)"
+        AppLanguage.AR -> "اسم المنتج (اختياري)"
+    }
+
+    fun getPhotoAnalysisIngredientsHint(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Ingredients text"
+        AppLanguage.DE -> "Zutatentext"
+        AppLanguage.FR -> "Texte des ingrédients"
+        AppLanguage.TR -> "İçindekiler metni"
+        AppLanguage.AR -> "نص المكونات"
+    }
+
+    fun getPhotoAnalysisIngredientsPreviewLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Detected items (preview)"
+        AppLanguage.DE -> "Erkannte Bestandteile (Vorschau)"
+        AppLanguage.FR -> "Éléments détectés (aperçu)"
+        AppLanguage.TR -> "Tespit edilen maddeler (önizleme)"
+        AppLanguage.AR -> "العناصر المكتشفة (معاينة)"
+    }
+
+    fun getPhotoAnalysisNutritionTableWarning(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "This looks like the nutrition facts panel, not the ingredients list. Additives can't be checked from it - retake a photo of the 'Ingredients' section instead."
+        AppLanguage.DE -> "Das sieht nach der Nährwerttabelle aus, nicht nach der Zutatenliste. Zusatzstoffe lassen sich daraus nicht prüfen - fotografieren Sie stattdessen den Abschnitt 'Zutaten'."
+        AppLanguage.FR -> "Ceci ressemble au tableau nutritionnel, pas à la liste des ingrédients. Les additifs ne peuvent pas être vérifiés à partir de ce texte - reprenez une photo de la section « Ingrédients »."
+        AppLanguage.TR -> "Bu, içindekiler listesine değil besin değerleri tablosuna benziyor. Bundan katkı maddeleri kontrol edilemez - bunun yerine 'İçindekiler' bölümünün fotoğrafını çekin."
+        AppLanguage.AR -> "يبدو هذا كجدول القيم الغذائية وليس قائمة المكونات. لا يمكن التحقق من الإضافات منه - أعد تصوير قسم 'المكونات' بدلاً من ذلك."
+    }
+
+    fun getPhotoAnalysisEmptyOcrWarning(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "No text was detected in the photo. You can type the ingredients manually below."
+        AppLanguage.DE -> "Im Foto wurde kein Text erkannt. Sie können die Zutaten unten manuell eingeben."
+        AppLanguage.FR -> "Aucun texte détecté sur la photo. Vous pouvez saisir les ingrédients manuellement ci-dessous."
+        AppLanguage.TR -> "Fotoğrafta metin tespit edilemedi. Aşağıya içindekileri elle yazabilirsiniz."
+        AppLanguage.AR -> "لم يتم العثور على نص في الصورة. يمكنك كتابة المكونات يدوياً أدناه."
+    }
+
+    fun getPhotoAnalysisAnalyzeButton(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Analyze"
+        AppLanguage.DE -> "Analysieren"
+        AppLanguage.FR -> "Analyser"
+        AppLanguage.TR -> "Analiz Et"
+        AppLanguage.AR -> "تحليل"
+    }
+
+    fun getPhotoAnalysisDefaultName(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Photo Analysis"
+        AppLanguage.DE -> "Fotoanalyse"
+        AppLanguage.FR -> "Analyse photo"
+        AppLanguage.TR -> "Fotoğraftan Analiz"
+        AppLanguage.AR -> "تحليل من صورة"
     }
 }

@@ -317,4 +317,45 @@ class HalalAnalyzerTest {
             result.flaggedDetails.any { it.name.contains("Unspecified", ignoreCase = true) || it.name.contains("Belirtilmemiş", ignoreCase = true) }
         )
     }
+
+    @Test
+    fun `photo of a nutrition table is not silently reported Helal`() {
+        // Regression found by comparing a barcode scan of Yogurette (Şüpheli, E471) against a
+        // photo-analysis scan of the same product where the user photographed the nutrition
+        // panel instead of the ingredients list. E471 never appears on a nutrition table, so the
+        // rule engine found nothing to flag and fell through to Helal - a false, dangerous
+        // "safe" verdict for a product that is actually Doubtful.
+        val ocrText = "Nährwerte pro 100g\nBrennwert 2382 kJ / 574 kcal\nFett 35g\ndavon gesättigte Fettsäuren 20g\nKohlenhydrate 56g\ndavon Zucker 55g\nEiweiß 6g\nSalz 0.1g"
+        val result = HalalAnalyzer.analyzeIngredientsText(
+            productName = "Test Snack",
+            ingredientsText = ocrText,
+            language = AppLanguage.DE
+        )
+        assertEquals(HalalStatus.SUPHELI, result.status)
+        assertTrue("ingredients list must not show fabricated nutrition-table chips", result.allIngredients.isEmpty())
+    }
+
+    @Test
+    fun `a real Haram verdict from a nutrition-table-like photo is not downgraded`() {
+        // The nutrition-table safety net only intercepts a would-be Helal verdict - if something
+        // was already flagged (however unlikely on a real nutrition panel), that flag must stand.
+        val ocrText = "Nährwerte Energie 500 kcal Eiweiß 5g Kohlenhydrate 10g enthält Schweinegelatine"
+        val result = HalalAnalyzer.analyzeIngredientsText(
+            productName = "Test Snack",
+            ingredientsText = ocrText,
+            language = AppLanguage.DE
+        )
+        assertEquals(HalalStatus.HARAM, result.status)
+    }
+
+    @Test
+    fun `a genuine ingredients list is not mistaken for a nutrition table`() {
+        val result = HalalAnalyzer.analyzeIngredientsText(
+            productName = "Test Snack",
+            ingredientsText = "Zutaten: Zucker, Weizenmehl, Kakaobutter, Vollmilchpulver, Emulgator Lecithine (Soja), Aroma",
+            language = AppLanguage.DE
+        )
+        assertEquals(HalalStatus.HELAL, result.status)
+        assertTrue(result.allIngredients.isNotEmpty())
+    }
 }

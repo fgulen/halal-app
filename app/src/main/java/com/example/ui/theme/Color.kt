@@ -3,7 +3,9 @@ package com.example.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Natural Tones - Organic Linen, Warm Emerald & Earthy Palettes
-val NaturalWarmBg = Color(0xFFFDF8F6)
+// Bg is kept a visibly deeper linen tone than Surface (white) so cards/rows
+// separate from the page at a glance instead of relying on shadow alone.
+val NaturalWarmBg = Color(0xFFF3ECE2)
 val NaturalWarmSurface = Color(0xFFFFFFFF)
 val NaturalWarmSurfaceVariant = Color(0xFFF5EFEA)
 val NaturalWarmBorder = Color(0xFFEFE8E1)

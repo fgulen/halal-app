@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import android.Manifest
+import android.content.Intent
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -41,8 +42,11 @@ import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -83,10 +87,12 @@ import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.ui.camera.CameraScannerView
+import com.example.ui.camera.rememberPhotoIngredientsCaptureLauncher
 import com.example.ui.components.EAdditiveSheet
 import com.example.ui.components.HalalStatusBadge
 import com.example.ui.components.LanguageSelectionDialog
 import com.example.ui.components.ManualBarcodeDialog
+import com.example.ui.components.PhotoIngredientsDialog
 import com.example.ui.components.ProductResultBottomSheet
 import com.example.ui.components.SearchField
 import com.example.ui.theme.EmeraldGreenBg
@@ -117,6 +123,7 @@ import com.example.ui.theme.SuspiciousAmberBg
 import com.example.ui.theme.SuspiciousAmberBorder
 import com.example.ui.theme.SuspiciousAmberDark
 import com.example.ui.viewmodel.HalalScannerViewModel
+import com.example.ui.viewmodel.ScanError
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -136,9 +143,31 @@ fun MainHalalScreen(
     val scanHistory by viewModel.scanHistory.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val scanError by viewModel.scanError.collectAsState()
 
     val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+    val photoIngredientsReview by viewModel.photoIngredientsReview.collectAsState()
+    val photoCaptureLauncher = rememberPhotoIngredientsCaptureLauncher(
+        onTextRecognized = { text -> viewModel.onPhotoTextRecognized(text) },
+        onCancelled = {}
+    )
+    var photoCapturePending by remember { mutableStateOf(false) }
+    LaunchedEffect(cameraPermissionState.status.isGranted) {
+        if (photoCapturePending && cameraPermissionState.status.isGranted) {
+            photoCapturePending = false
+            photoCaptureLauncher()
+        }
+    }
+    val onTriggerPhotoCapture = {
+        if (cameraPermissionState.status.isGranted) {
+            photoCaptureLauncher()
+        } else {
+            photoCapturePending = true
+            cameraPermissionState.launchPermissionRequest()
+        }
+    }
     var selectedBottomNavIndex by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
 
     // Opening the scanner immediately after launchPermissionRequest() raced the async
     // permission dialog and mounted the camera before permission was actually granted,
@@ -212,7 +241,14 @@ fun MainHalalScreen(
                     NaturalAppHeader(
                         language = language,
                         onLanguageClick = { viewModel.openLanguageDialog() },
-                        onECodesClick = { viewModel.openEAdditives() }
+                        onECodesClick = { viewModel.openEAdditives() },
+                        onShareAppClick = {
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, AppStrings.getShareAppMessage(language))
+                            }
+                            context.startActivity(Intent.createChooser(shareIntent, AppStrings.getShareApp(language)))
+                        }
                     )
                 }
 
@@ -472,6 +508,22 @@ fun MainHalalScreen(
             onScanAgain = {
                 viewModel.dismissResult()
                 onTriggerScanner()
+            },
+            onAnalyzePhoto = {
+                viewModel.dismissResult()
+                onTriggerPhotoCapture()
+            }
+        )
+    }
+
+    // Photo OCR Review Sheet (from the "not found" screen's "Analyze from a Photo" button)
+    photoIngredientsReview?.let { ocrText ->
+        PhotoIngredientsDialog(
+            language = language,
+            initialIngredientsText = ocrText,
+            onDismiss = { viewModel.dismissPhotoReview() },
+            onAnalyze = { productName, ingredientsText ->
+                viewModel.analyzeIngredientsPhoto(productName, ingredientsText)
             }
         )
     }
@@ -492,6 +544,18 @@ fun MainHalalScreen(
         EAdditiveSheet(
             language = language,
             onDismiss = { viewModel.closeEAdditives() }
+        )
+    }
+
+    // Scan Error Dialog - a connectivity/unexpected failure is not a halal verdict, so it
+    // gets its own banner rather than routing through ProductResultBottomSheet with a
+    // BULUNAMADI status (which read to users as "not registered in our database").
+    scanError?.let { error ->
+        ScanErrorDialog(
+            error = error,
+            language = language,
+            onRetry = { viewModel.retryLastScan() },
+            onDismiss = { viewModel.dismissScanError() }
         )
     }
 
@@ -566,10 +630,100 @@ fun MainHalalScreen(
 }
 
 @Composable
+fun ScanErrorDialog(
+    error: ScanError,
+    language: AppLanguage,
+    onRetry: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val isNetworkError = error is ScanError.NetworkUnavailable
+    val message = when (error) {
+        is ScanError.NetworkUnavailable -> AppStrings.getNetworkErrorMessage(language)
+        is ScanError.Unexpected -> error.message
+    }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = NaturalWarmSurface,
+            shadowElevation = 10.dp,
+            border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .background(Color(0xFFE2E8F0), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isNetworkError) Icons.Default.WifiOff else Icons.Default.ErrorOutline,
+                            contentDescription = null,
+                            tint = Color(0xFF475569),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Text(
+                        text = if (isNetworkError) AppStrings.getNetworkErrorTitle(language) else AppStrings.getUnknownError(language),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = NaturalTextDark
+                    )
+                }
+                Spacer(modifier = Modifier.height(14.dp))
+                Text(
+                    text = message,
+                    fontSize = 13.sp,
+                    color = NaturalTextMuted,
+                    lineHeight = 18.sp
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    androidx.compose.material3.TextButton(onClick = onDismiss) {
+                        Text(
+                            text = when (language) {
+                                AppLanguage.TR -> "Kapat"
+                                AppLanguage.DE -> "Schließen"
+                                AppLanguage.FR -> "Fermer"
+                                AppLanguage.AR -> "إغلاق"
+                                AppLanguage.EN -> "Close"
+                            },
+                            fontSize = 13.sp,
+                            color = NaturalTextMuted
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    if (isNetworkError) {
+                        Button(
+                            onClick = onRetry,
+                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = AppStrings.getRetryLabel(language),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun NaturalAppHeader(
     language: AppLanguage,
     onLanguageClick: () -> Unit,
-    onECodesClick: () -> Unit
+    onECodesClick: () -> Unit,
+    onShareAppClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -628,6 +782,25 @@ fun NaturalAppHeader(
                     Icon(
                         imageVector = Icons.Default.AutoStories,
                         contentDescription = AppStrings.getNavECodes(language),
+                        tint = EmeraldPrimaryDeep,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
+            // Share App Button
+            Surface(
+                onClick = onShareAppClick,
+                shape = CircleShape,
+                color = EmeraldGreenContainer,
+                modifier = Modifier
+                    .size(42.dp)
+                    .testTag("header_share_app_button")
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = AppStrings.getShareApp(language),
                         tint = EmeraldPrimaryDeep,
                         modifier = Modifier.size(20.dp)
                     )
@@ -715,50 +888,36 @@ fun NaturalStatsCard(
     val haramCount = scanHistory.count { it.status == HalalStatus.HARAM }
     val suspiciousCount = scanHistory.count { it.status == HalalStatus.SUPHELI }
 
-    Surface(
-        color = NaturalWarmSurface,
-        shape = RoundedCornerShape(24.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
-        shadowElevation = 2.dp,
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 10.dp)
+            .padding(horizontal = 24.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp, horizontal = 18.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            NaturalStatItem(
-                label = AppStrings.getTotalScans(language),
-                count = scanHistory.size.toString(),
-                color = EmeraldPrimaryDeep
-            )
-            Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .height(32.dp)
-                    .background(NaturalWarmBorder)
-            )
-            NaturalStatItem(
-                label = AppStrings.getHalalProducts(language),
-                count = halalCount.toString(),
-                color = HalalGreenDark
-            )
-            Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .height(32.dp)
-                    .background(NaturalWarmBorder)
-            )
-            NaturalStatItem(
-                label = AppStrings.getHaramOrDoubtful(language),
-                count = (haramCount + suspiciousCount).toString(),
-                color = HaramRed
-            )
-        }
+        NaturalStatItem(
+            modifier = Modifier.weight(1f),
+            label = AppStrings.getTotalScans(language),
+            count = scanHistory.size.toString(),
+            color = EmeraldPrimaryDeep,
+            bgColor = EmeraldGreenBg,
+            borderColor = EmeraldGreenBorder
+        )
+        NaturalStatItem(
+            modifier = Modifier.weight(1f),
+            label = AppStrings.getHalalProducts(language),
+            count = halalCount.toString(),
+            color = HalalGreenDark,
+            bgColor = HalalGreenBg,
+            borderColor = HalalGreenBorder
+        )
+        NaturalStatItem(
+            modifier = Modifier.weight(1f),
+            label = AppStrings.getHaramOrDoubtful(language),
+            count = (haramCount + suspiciousCount).toString(),
+            color = HaramRed,
+            bgColor = HaramRedBg,
+            borderColor = HaramRedBorder
+        )
     }
 }
 
@@ -766,22 +925,39 @@ fun NaturalStatsCard(
 fun NaturalStatItem(
     label: String,
     count: String,
-    color: Color
+    color: Color,
+    bgColor: Color,
+    borderColor: Color,
+    modifier: Modifier = Modifier
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = count,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Black,
-            color = color
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = label,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = NaturalTextMuted
-        )
+    Surface(
+        modifier = modifier,
+        color = bgColor,
+        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = count,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Black,
+                color = color
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = label,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = NaturalTextMuted,
+                textAlign = TextAlign.Center,
+                maxLines = 1
+            )
+        }
     }
 }
 

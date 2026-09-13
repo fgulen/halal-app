@@ -20,6 +20,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+sealed class ScanError {
+    data class NetworkUnavailable(val query: String) : ScanError()
+    data class Unexpected(val message: String) : ScanError()
+}
+
 class HalalScannerViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: ProductRepository
@@ -49,14 +54,18 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _scanError = MutableStateFlow<ScanError?>(null)
+    val scanError: StateFlow<ScanError?> = _scanError.asStateFlow()
+
+    private val _photoIngredientsReview = MutableStateFlow<String?>(null)
+    val photoIngredientsReview: StateFlow<String?> = _photoIngredientsReview.asStateFlow()
+
+    private var lastScanQuery: String? = null
     private var scanJob: Job? = null
 
     init {
-        val database = AppDatabase.getDatabase(application, viewModelScope)
-        repository = ProductRepository(database.productDao())
-        viewModelScope.launch {
-            repository.ensureDatabaseSeeded()
-        }
+        val database = AppDatabase.getDatabase(application)
+        repository = ProductRepository(database.productDao(), appContext = application)
         viewModelScope.launch {
             _selectedLanguage.value = userPreferences.selectedLanguage.first()
         }
@@ -122,26 +131,21 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun onBarcodeScanned(barcode: String) {
+        lastScanQuery = barcode
         scanJob = viewModelScope.launch {
             _isLoading.value = true
             _isScannerOpen.value = false
+            _scanError.value = null
             try {
                 val product = repository.checkBarcode(barcode, _selectedLanguage.value)
                 _activeProduct.value = product
+            } catch (e: ProductRepository.NetworkUnavailableException) {
+                Log.w("HalalScannerViewModel", "Network unavailable while checking '$barcode'")
+                _scanError.value = ScanError.NetworkUnavailable(barcode)
             } catch (e: Exception) {
                 Log.e("HalalScannerViewModel", "checkBarcode failed for '$barcode'", e)
-                _activeProduct.value = FoodProduct(
-                    barcode = barcode,
-                    name = "Error",
-                    brand = "",
-                    category = "Global Food",
-                    status = HalalStatus.BULUNAMADI,
-                    halalCertificate = null,
-                    harmfulOrSuspiciousIngredients = emptyList(),
-                    allIngredients = emptyList(),
-                    reasonOrDetails = AppStrings.getUnexpectedError(_selectedLanguage.value, e.message ?: AppStrings.getUnknownError(_selectedLanguage.value)),
-                    alternatives = emptyList(),
-                    imageUrl = null
+                _scanError.value = ScanError.Unexpected(
+                    AppStrings.getUnexpectedError(_selectedLanguage.value, e.message ?: AppStrings.getUnknownError(_selectedLanguage.value))
                 )
             } finally {
                 _isLoading.value = false
@@ -149,8 +153,39 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    fun dismissScanError() {
+        _scanError.value = null
+    }
+
+    fun retryLastScan() {
+        val query = lastScanQuery ?: return
+        _scanError.value = null
+        onBarcodeScanned(query)
+    }
+
     fun selectHistoryItem(product: FoodProduct) {
         _activeProduct.value = product
+    }
+
+    /** A photo was captured and OCR'd (possibly to an empty string if nothing was recognized). */
+    fun onPhotoTextRecognized(ocrText: String) {
+        _photoIngredientsReview.value = ocrText
+    }
+
+    fun dismissPhotoReview() {
+        _photoIngredientsReview.value = null
+    }
+
+    fun analyzeIngredientsPhoto(productName: String, ingredientsText: String) {
+        _photoIngredientsReview.value = null
+        viewModelScope.launch {
+            val product = repository.analyzeIngredientsPhoto(
+                productName = productName,
+                ingredientsText = ingredientsText,
+                language = _selectedLanguage.value
+            )
+            _activeProduct.value = product
+        }
     }
 
     fun clearAllHistory() {

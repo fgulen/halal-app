@@ -1,5 +1,8 @@
 package com.example.data.repository
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import com.example.data.analyzer.HalalAnalyzer
 import com.example.data.local.InitialData
@@ -8,6 +11,7 @@ import com.example.data.local.ProductEntity
 import com.example.data.local.ScanHistoryEntity
 import com.example.data.local.toEntity
 import com.example.data.model.AppLanguage
+import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.data.remote.OpenFoodFactsApi
@@ -20,22 +24,38 @@ private const val TAG = "ProductRepository"
 
 class ProductRepository(
     private val productDao: ProductDao,
-    private val openFoodFactsApi: OpenFoodFactsApi = OpenFoodFactsApi.create()
+    private val openFoodFactsApi: OpenFoodFactsApi = OpenFoodFactsApi.create(),
+    private val appContext: Context? = null
 ) {
 
-    suspend fun ensureDatabaseSeeded() = withContext(Dispatchers.IO) {
-        // Seed or refresh sample products to ensure images and data are up-to-date
-        productDao.insertProducts(InitialData.sampleProducts)
+    /**
+     * Thrown when the product genuinely could not be checked because of a connectivity
+     * problem, as opposed to a confirmed "not in Open Food Facts" result. Callers must not
+     * treat this as a not-found verdict: no history entry should be recorded for it.
+     */
+    class NetworkUnavailableException(val query: String) : Exception("No network reachable while checking '$query'")
+
+    private fun isOnline(): Boolean {
+        val context = appContext ?: return true
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            ?: return true
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+            capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
     suspend fun checkBarcode(input: String, language: AppLanguage = AppLanguage.EN): FoodProduct = withContext(Dispatchers.IO) {
-        ensureDatabaseSeeded()
         val query = input.trim()
         if (query.isBlank()) {
             return@withContext createNotFoundProduct(query, language)
         }
 
-        var hadNetworkError = false
+        // Known offline up front: skip the live OFF calls below entirely (no point eating
+        // two request timeouts) but still let the Room cache and curated fallback answer -
+        // both work without a network.
+        var hadNetworkError = !isOnline()
+        var staleLanguageCacheHit: ProductEntity? = null
         val lowerQuery = query.lowercase()
 
         // 1. Direct Nutella / Ferrero intelligent matcher
@@ -72,7 +92,15 @@ class ProductRepository(
 
         val digitsOnly = query.filter { it.isDigit() }
 
-        // 3. Barcode search across local curated, database, and live Open Food Facts
+        // 3. Barcode search: Room cache, then live Open Food Facts, then curated fallback.
+        // Live OFF is checked BEFORE the curated list (not after): a scanned barcode is a
+        // real-world claim about a real product, and a curated entry must never be allowed
+        // to preempt the actual product that barcode belongs to. This ordering is the fix for
+        // a class of bugs where a curated entry's barcode was wrong/typo'd but happened to
+        // collide with a real, different product's real barcode (e.g. a hardcoded "Milka
+        // Daim" entry that was actually LU's real barcode for "Prince" biscuits) - previously
+        // curated data was checked first and permanently hijacked every real scan of that
+        // barcode. Curated data now only answers once OFF has confirmed it has nothing.
         if (digitsOnly.isNotEmpty()) {
             val candidates = buildList {
                 add(digitsOnly)
@@ -82,7 +110,57 @@ class ProductRepository(
             }.distinct()
 
             for (barcodeCandidate in candidates) {
-                // Check sample products first (curated verified list)
+                // Check local Room cached DB. A cache hit in a *different* language than
+                // requested is stale text, not a valid result - fall through to the live OFF
+                // fetch below instead of returning it, so re-scanning after a language switch
+                // shows the reason/certificate translated correctly instead of frozen in
+                // whatever language the product was first analyzed in.
+                val localProduct = productDao.getProductByBarcode(barcodeCandidate)
+                if (localProduct != null && localProduct.status != HalalStatus.BULUNAMADI) {
+                    if (localProduct.language == language) {
+                        val domain = localProduct.toDomainModel()
+                        recordScan(domain)
+                        return@withContext domain
+                    } else if (staleLanguageCacheHit == null) {
+                        // Cached in a different language than requested - not a valid result on
+                        // its own (see ordering note below), but a real answer worth keeping in
+                        // reserve in case OFF turns out to be unreachable.
+                        staleLanguageCacheHit = localProduct
+                    }
+                }
+            }
+
+            // 4. Query live global Open Food Facts API (multi-region v2/v0 endpoints)
+            if (!hadNetworkError) {
+                try {
+                    val response = openFoodFactsApi.getProductByBarcode(digitsOnly)
+                    if ((response.status == 1 || response.product != null) && response.product != null) {
+                        val analyzedProduct = HalalAnalyzer.analyzeOpenFoodFactsProduct(
+                            response.code ?: digitsOnly,
+                            response.product,
+                            language
+                        )
+                        Log.d(TAG, "Resolved barcode=$digitsOnly name=${analyzedProduct.name} image=${analyzedProduct.imageUrl}")
+                        productDao.insertProduct(analyzedProduct.toEntity())
+                        recordScan(analyzedProduct)
+                        return@withContext analyzedProduct
+                    }
+                    // getProductByBarcode swallows its own request exceptions and reports the
+                    // outcome via statusVerbose instead of throwing, so check it here rather
+                    // than relying on the catch block below (which network failures never reach).
+                    if (response.statusVerbose == "network error") {
+                        hadNetworkError = true
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "Open Food Facts lookup failed for barcode=$digitsOnly: ${e.message}")
+                    hadNetworkError = true
+                }
+            }
+
+            // 5. Curated fallback - only reached once live OFF confirmed it has nothing (or
+            // is unreachable) for every candidate barcode, so it can no longer shadow real
+            // product data.
+            for (barcodeCandidate in candidates) {
                 val sampleMatch = InitialData.sampleProducts.find { it.barcode == barcodeCandidate }
                 if (sampleMatch != null) {
                     val domain = sampleMatch.toDomainModel()
@@ -90,49 +168,10 @@ class ProductRepository(
                     recordScan(domain)
                     return@withContext domain
                 }
-
-                // Check local Room cached DB. A cache hit in a *different* language than
-                // requested is stale text, not a valid result - fall through to the live OFF
-                // fetch below instead of returning it, so re-scanning after a language switch
-                // shows the reason/certificate translated correctly instead of frozen in
-                // whatever language the product was first analyzed in.
-                val localProduct = productDao.getProductByBarcode(barcodeCandidate)
-                if (localProduct != null && localProduct.status != HalalStatus.BULUNAMADI &&
-                    localProduct.language == language
-                ) {
-                    val domain = localProduct.toDomainModel()
-                    recordScan(domain)
-                    return@withContext domain
-                }
-            }
-
-            // 4. Query live global Open Food Facts API (multi-region v2/v0 endpoints)
-            try {
-                val response = openFoodFactsApi.getProductByBarcode(digitsOnly)
-                if ((response.status == 1 || response.product != null) && response.product != null) {
-                    val analyzedProduct = HalalAnalyzer.analyzeOpenFoodFactsProduct(
-                        response.code ?: digitsOnly,
-                        response.product,
-                        language
-                    )
-                    Log.d(TAG, "Resolved barcode=$digitsOnly name=${analyzedProduct.name} image=${analyzedProduct.imageUrl}")
-                    productDao.insertProduct(analyzedProduct.toEntity())
-                    recordScan(analyzedProduct)
-                    return@withContext analyzedProduct
-                }
-                // getProductByBarcode swallows its own request exceptions and reports the
-                // outcome via statusVerbose instead of throwing, so check it here rather
-                // than relying on the catch block below (which network failures never reach).
-                if (response.statusVerbose == "network error") {
-                    hadNetworkError = true
-                }
-            } catch (e: Exception) {
-                Log.w(TAG, "Open Food Facts lookup failed for barcode=$digitsOnly: ${e.message}")
-                hadNetworkError = true
             }
         }
 
-        // 5. Name / Keyword search in local curated database
+        // 6. Name / Keyword search in local curated database
         val sampleNameMatch = InitialData.sampleProducts.find {
             it.name.lowercase().contains(lowerQuery) ||
             it.brand.lowercase().contains(lowerQuery) ||
@@ -145,31 +184,46 @@ class ProductRepository(
             return@withContext domain
         }
 
-        // 6. Search live Open Food Facts by product name / terms
-        try {
-            val searchResults = openFoodFactsApi.searchProductsByName(query)
-            if (searchResults.isNotEmpty()) {
-                val (code, offProduct) = searchResults.first()
-                val analyzedProduct = HalalAnalyzer.analyzeOpenFoodFactsProduct(
-                    code,
-                    offProduct,
-                    language
-                )
-                productDao.insertProduct(analyzedProduct.toEntity())
-                recordScan(analyzedProduct)
-                return@withContext analyzedProduct
+        // 7. Search live Open Food Facts by product name / terms
+        if (!hadNetworkError) {
+            try {
+                val searchResults = openFoodFactsApi.searchProductsByName(query)
+                if (searchResults.isNotEmpty()) {
+                    val (code, offProduct) = searchResults.first()
+                    val analyzedProduct = HalalAnalyzer.analyzeOpenFoodFactsProduct(
+                        code,
+                        offProduct,
+                        language
+                    )
+                    productDao.insertProduct(analyzedProduct.toEntity())
+                    recordScan(analyzedProduct)
+                    return@withContext analyzedProduct
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Open Food Facts name search failed for '$query': ${e.message}")
+                hadNetworkError = true
             }
-        } catch (e: Exception) {
-            Log.w(TAG, "Open Food Facts name search failed for '$query': ${e.message}")
-            hadNetworkError = true
         }
 
-        val notFound = createNotFoundProduct(if (digitsOnly.isNotEmpty()) digitsOnly else query, language, hadNetworkError)
+        // A network failure is not a verdict about the product: fall back to a cache hit in
+        // the wrong language rather than declaring it unavailable, and never let a connectivity
+        // problem masquerade as a confirmed "not found" - surface it to the caller distinctly so
+        // it isn't recorded into scan history as one.
+        if (hadNetworkError) {
+            staleLanguageCacheHit?.let { cached ->
+                val domain = cached.toDomainModel()
+                recordScan(domain)
+                return@withContext domain
+            }
+            throw NetworkUnavailableException(if (digitsOnly.isNotEmpty()) digitsOnly else query)
+        }
+
+        val notFound = createNotFoundProduct(if (digitsOnly.isNotEmpty()) digitsOnly else query, language)
         recordScan(notFound)
         notFound
     }
 
-    private fun createNotFoundProduct(barcode: String, language: AppLanguage, hadNetworkError: Boolean = false): FoodProduct {
+    private fun createNotFoundProduct(barcode: String, language: AppLanguage): FoodProduct {
         val name = when (language) {
             AppLanguage.EN -> "Unregistered Product"
             AppLanguage.DE -> "Nicht registriertes Produkt"
@@ -184,22 +238,12 @@ class ProductRepository(
             AppLanguage.TR -> "Bilinmeyen Marka"
             AppLanguage.AR -> "علامة غير معروفة"
         }
-        val reason = if (hadNetworkError) {
-            when (language) {
-                AppLanguage.EN -> "Could not reach Open Food Facts ($barcode). Check your internet connection and try again."
-                AppLanguage.DE -> "Open Food Facts konnte nicht erreicht werden ($barcode). Bitte Internetverbindung prüfen und erneut versuchen."
-                AppLanguage.FR -> "Impossible de contacter Open Food Facts ($barcode). Vérifiez votre connexion internet et réessayez."
-                AppLanguage.TR -> "Open Food Facts sunucusuna ulaşılamadı ($barcode). İnternet bağlantınızı kontrol edip tekrar deneyin."
-                AppLanguage.AR -> "تعذر الوصول إلى Open Food Facts ($barcode). يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى."
-            }
-        } else {
-            when (language) {
-                AppLanguage.EN -> "Barcode ($barcode) was not found in Open Food Facts (EU/US). Please check ingredients list on the packaging for E-additives."
-                AppLanguage.DE -> "Barcode ($barcode) wurde in Open Food Facts nicht gefunden. Bitte Zutatenliste auf der Packung prüfen."
-                AppLanguage.FR -> "Code-barres ($barcode) non trouvé dans Open Food Facts. Veuillez inspecter la liste des ingrédients sur l'emballage."
-                AppLanguage.TR -> "Bu barkod ($barcode) küresel veri tabanında bulunamadı. Lütfen paket üzerindeki içindekiler kısmını inceleyin."
-                AppLanguage.AR -> "لم يتم العثور على هذا الباركود ($barcode) في قاعدة البيانات. يرجى مراجعة المكونات على الغلاف."
-            }
+        val reason = when (language) {
+            AppLanguage.EN -> "Barcode ($barcode) was not found in Open Food Facts (EU/US). Please check ingredients list on the packaging for E-additives."
+            AppLanguage.DE -> "Barcode ($barcode) wurde in Open Food Facts nicht gefunden. Bitte Zutatenliste auf der Packung prüfen."
+            AppLanguage.FR -> "Code-barres ($barcode) non trouvé dans Open Food Facts. Veuillez inspecter la liste des ingrédients sur l'emballage."
+            AppLanguage.TR -> "Bu barkod ($barcode) küresel veri tabanında bulunamadı. Lütfen paket üzerindeki içindekiler kısmını inceleyin."
+            AppLanguage.AR -> "لم يتم العثور على هذا الباركود ($barcode) في قاعدة البيانات. يرجى مراجعة المكونات على الغلاف."
         }
         return FoodProduct(
             barcode = barcode,
@@ -219,6 +263,28 @@ class ProductRepository(
 
     suspend fun recordScan(product: FoodProduct) = withContext(Dispatchers.IO) {
         productDao.insertScanHistory(ScanHistoryEntity.fromDomain(product))
+    }
+
+    /**
+     * Analyzes ingredients text captured from a photo (OCR) for a product that has no barcode
+     * match - e.g. reached from the "not found" screen. Runs entirely offline (no OFF lookup)
+     * and records the result to scan history like any other scan, keyed by a synthetic barcode
+     * since there is no real one to key it by.
+     */
+    suspend fun analyzeIngredientsPhoto(
+        productName: String,
+        ingredientsText: String,
+        language: AppLanguage
+    ): FoodProduct = withContext(Dispatchers.IO) {
+        val barcode = "PHOTO-${System.currentTimeMillis()}"
+        val analyzed = HalalAnalyzer.analyzeIngredientsText(
+            productName = productName.ifBlank { AppStrings.getPhotoAnalysisDefaultName(language) },
+            ingredientsText = ingredientsText,
+            barcode = barcode,
+            language = language
+        )
+        recordScan(analyzed)
+        analyzed
     }
 
     fun getScanHistory(): Flow<List<FoodProduct>> {

@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 9 / versionName 1.7 (2026-08-30)
+
+Bazı ürünlerde taranan barkodun eşleştiği fotoğraf/bilgi farklı bir ürüne aitti; bu artık düzeltildi ve barkod eşleşmesinde canlı veri tabanı her zaman önceliklidir.
+
+<tr-TR>
+Bu sürümde: Bazı ürünlerde tarama sonucunda gösterilen fotoğraf veya bilgiler farklı bir ürüne ait olabiliyordu (ör. yanlış ürün fotoğrafı). Barkod eşleştirme mantığı, uygulama içindeki örnek verilerin gerçek ürün veri tabanının önüne geçmeyecek şekilde düzeltildi. Cihazınızda önceden hatalı önbelleğe alınmış sonuçlar bu güncellemeyle temizlenir (tarama geçmişiniz etkilenmez).
+</tr-TR>
+
+<en-US>
+This update: some products were showing a photo or details that belonged to a different product after scanning. The barcode-matching logic was fixed so the app's built-in sample data can never override the real product database. Any incorrect results previously cached on your device are cleared by this update (your scan history is not affected).
+</en-US>
+
+<de-DE>
+Update: Bei manchen Produkten wurden nach dem Scannen ein Foto oder Angaben eines anderen Produkts angezeigt. Die Barcode-Zuordnung wurde korrigiert, sodass die eingebauten Beispieldaten der App die echte Produktdatenbank nie mehr überschreiben können. Zuvor fehlerhaft zwischengespeicherte Ergebnisse werden mit diesem Update entfernt (Ihr Scan-Verlauf bleibt erhalten).
+</de-DE>
+
+<fr-FR>
+Mise à jour : certains produits affichaient après un scan une photo ou des informations appartenant à un autre produit. La logique de correspondance des codes-barres a été corrigée afin que les données d'exemple intégrées à l'application ne puissent plus jamais remplacer la base de données réelle des produits. Les résultats erronés précédemment mis en cache sur votre appareil sont supprimés par cette mise à jour (votre historique de scan n'est pas affecté).
+</fr-FR>
+
+<ar>
+في هذا الإصدار: كانت بعض المنتجات تعرض بعد المسح صورة أو معلومات تخص منتجاً مختلفاً. تم إصلاح منطق مطابقة الباركود بحيث لا يمكن للبيانات النموذجية المدمجة في التطبيق أن تحل محل قاعدة بيانات المنتجات الحقيقية بعد الآن. يتم مسح أي نتائج مخزّنة مؤقتاً بشكل خاطئ على جهازك مع هذا التحديث (سجل المسح الخاص بك لا يتأثر).
+</ar>
+
+---
+
 ## versionCode 8 / versionName 1.6 (2026-08-30)
 
 Barkod sonuçlarında gerçek sebep gösterimi, genişletilmiş içerik tespiti (sığır kolajeni, kan ürünleri, gliserin), tekrarlanan içerik metni düzeltmesi, uzun içerik listelerinin artık kırpılmaması, ve yeni "Nasıl Çalışıyor?" sayfası.
