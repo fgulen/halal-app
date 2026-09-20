@@ -89,6 +89,30 @@ class OpenFoodFactsApi(
         // "OFF genuinely has nothing for this barcode" in the final response below.
         var reachedServerAtLeastOnce = false
 
+        // A response with SOME data (name/brand/image) but no ingredients is what produces the
+        // "image found, content not found" result in the UI. urlsToTry deliberately queries the
+        // same barcode across multiple endpoints (v2, the older/less complete v0, openbeautyfacts)
+        // and multiple digit-padding variants, precisely because different ones can have different
+        // completeness for the same product. Returning on the FIRST endpoint with any usable field
+        // let an early partial hit (e.g. v0 or a timed-out-then-retried v2) shadow a fuller record
+        // one of the later URLs would have had. Keep the first partial match in reserve instead of
+        // returning it immediately, so every remaining URL still gets a chance to find a response
+        // that actually has ingredients - only fall back to the partial one once nothing fuller
+        // turned up anywhere.
+        var bestPartialMatch: OffResponse? = null
+
+        fun hasIngredientData(product: OffProduct?): Boolean {
+            if (product == null) return false
+            return !product.ingredientsText.isNullOrBlank() ||
+                !product.ingredientsTextEn.isNullOrBlank() ||
+                !product.ingredientsTextDe.isNullOrBlank() ||
+                !product.ingredientsTextFr.isNullOrBlank() ||
+                !product.ingredientsTextEs.isNullOrBlank() ||
+                !product.ingredientsTextTr.isNullOrBlank() ||
+                !product.ingredientsTextAr.isNullOrBlank() ||
+                !product.additivesTags.isNullOrEmpty()
+        }
+
         for (url in urlsToTry) {
             try {
                 val request = Request.Builder()
@@ -118,8 +142,14 @@ class OpenFoodFactsApi(
                                 !product.imageUrl.isNullOrBlank()
                             )
                             if (parsed != null && hasUsableData) {
-                                Log.d(TAG, "Matched barcode=$primaryCandidate name=${product?.productName} image=${product?.imageUrl}")
-                                return@withContext parsed
+                                if (hasIngredientData(product)) {
+                                    Log.d(TAG, "Matched barcode=$primaryCandidate name=${product?.productName} image=${product?.imageUrl}")
+                                    return@withContext parsed
+                                }
+                                if (bestPartialMatch == null) {
+                                    Log.d(TAG, "Partial match (no ingredients yet) barcode=$primaryCandidate name=${product?.productName} - still checking remaining endpoints")
+                                    bestPartialMatch = parsed
+                                }
                             }
                         }
                     }
@@ -135,13 +165,20 @@ class OpenFoodFactsApi(
             try {
                 val searchResults = searchProductsByName(targetBarcode)
                 val exactMatch = searchResults.firstOrNull { it.first == targetBarcode || it.first == primaryCandidate }
-                if (exactMatch != null) {
+                if (exactMatch != null && hasIngredientData(exactMatch.second)) {
                     return@withContext OffResponse(status = 1, statusVerbose = "found via search", code = exactMatch.first, product = exactMatch.second)
+                }
+                if (exactMatch != null && bestPartialMatch == null) {
+                    bestPartialMatch = OffResponse(status = 1, statusVerbose = "found via search", code = exactMatch.first, product = exactMatch.second)
                 }
             } catch (e: Exception) {
                 Log.w(TAG, "Search fallback failed: ${e.message}")
             }
         }
+
+        // No endpoint/candidate had ingredients, but one had name/brand/image data - better to
+        // show that (with the "photo analysis" fallback CTA) than a bare "not found" screen.
+        bestPartialMatch?.let { return@withContext it }
 
         val verbose = if (reachedServerAtLeastOnce) "product not found" else "network error"
         Log.w(TAG, "Barcode $targetBarcode not found on Open Food Facts after ${urlsToTry.size} attempts ($verbose)")

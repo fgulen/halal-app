@@ -44,6 +44,13 @@ val SuspiciousAmberBg = Color(0xFFFFFBEB)
 val SuspiciousAmberBorder = Color(0xFFFEF3C7)
 val SuspiciousAmberBadge = Color(0xFFFDE68A)
 
+// Neutral slate - for counts that aren't a verdict (e.g. "Total Scans"). Deliberately NOT
+// Emerald/Halal green: that tile used the exact same hex as the Halal stat next to it, making
+// "every scan I've ever done" visually read as "everything I scanned is halal."
+val NeutralSlate = Color(0xFF475569)
+val NeutralSlateBg = Color(0xFFF1F5F9)
+val NeutralSlateBorder = Color(0xFFE2E8F0)
+
 // Backward compatibility alias
 val EmeraldGreenPrimary = EmeraldPrimary
 val LightBackground = NaturalWarmBg

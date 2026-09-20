@@ -117,6 +117,9 @@ import com.example.ui.theme.NaturalTextMuted
 import com.example.ui.theme.NaturalWarmBg
 import com.example.ui.theme.NaturalWarmBorder
 import com.example.ui.theme.NaturalWarmSurface
+import com.example.ui.theme.NeutralSlate
+import com.example.ui.theme.NeutralSlateBg
+import com.example.ui.theme.NeutralSlateBorder
 import com.example.ui.theme.SuspiciousAmber
 import com.example.ui.theme.SuspiciousAmberBadge
 import com.example.ui.theme.SuspiciousAmberBg
@@ -898,9 +901,9 @@ fun NaturalStatsCard(
             modifier = Modifier.weight(1f),
             label = AppStrings.getTotalScans(language),
             count = scanHistory.size.toString(),
-            color = EmeraldPrimaryDeep,
-            bgColor = EmeraldGreenBg,
-            borderColor = EmeraldGreenBorder
+            color = NeutralSlate,
+            bgColor = NeutralSlateBg,
+            borderColor = NeutralSlateBorder
         )
         NaturalStatItem(
             modifier = Modifier.weight(1f),
