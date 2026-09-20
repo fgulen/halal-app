@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 11 / versionName 1.9 (2026-09-20)
+
+Barkod taramasında, içindekiler bulunmadan erken pes edilmesi düzeltildi (tüm veri kaynakları denenmeden "içerik bulunamadı" gösterilmiyor artık); ana ekrandaki "Toplam Tarama" sayacı artık Helal rengiyle karıştırılmayacak şekilde nötr renkte.
+
+<tr-TR>
+Bu sürümde: Barkod taraması artık bir ürünün içindekiler bilgisini bulmadan önce tüm veri kaynaklarını deniyor - önceden ilk bulunan eksik kayıt (sadece isim/fotoğraf, içindekiler yok) erken kabul edilip "içerik bulunamadı" gösterilebiliyordu. Ayrıca ana ekrandaki "Toplam Tarama" sayacı, Helal ürün sayısıyla aynı yeşil renkte gösterildiği için kafa karıştırıyordu - artık nötr bir renkte.
+</tr-TR>
+
+<en-US>
+This update: barcode scanning now checks every available data source before giving up on a product's ingredients - previously the first incomplete match (name/photo only, no ingredients) could be accepted too early, showing "ingredients not found." Also fixed: the "Total Scans" counter on the home screen used the same green as the Halal count, which was misleading - it's now a neutral color.
+</en-US>
+
+<de-DE>
+Update: Die Barcode-Suche prüft jetzt alle verfügbaren Datenquellen, bevor sie bei den Zutaten eines Produkts aufgibt - zuvor konnte ein unvollständiger erster Treffer (nur Name/Foto, keine Zutaten) zu früh akzeptiert werden und "Zutaten nicht gefunden" anzeigen. Außerdem behoben: Der Zähler "Gesamt gescannt" auf dem Startbildschirm hatte dasselbe Grün wie die Halal-Anzahl, was irreführend war - jetzt in einer neutralen Farbe.
+</de-DE>
+
+<fr-FR>
+Mise à jour : la recherche par code-barres vérifie désormais toutes les sources de données disponibles avant d'abandonner la recherche des ingrédients - auparavant, une première correspondance incomplète (nom/photo seulement, sans ingrédients) pouvait être acceptée trop tôt, affichant « ingrédients non trouvés ». Également corrigé : le compteur « Total des scans » de l'écran d'accueil utilisait le même vert que le nombre de produits Halal, ce qui prêtait à confusion - il est désormais d'une couleur neutre.
+</fr-FR>
+
+<ar>
+في هذا الإصدار: يتحقق البحث بالباركود الآن من جميع مصادر البيانات المتاحة قبل التوقف عن البحث عن مكونات المنتج - سابقاً كان يمكن قبول أول نتيجة غير مكتملة (اسم/صورة فقط، بلا مكونات) مبكراً جداً وعرض "المكونات غير موجودة". كما تم إصلاح: عداد "إجمالي المسح" في الشاشة الرئيسية كان يستخدم نفس اللون الأخضر لعدد المنتجات الحلال، مما كان مضللاً - أصبح الآن بلون محايد.
+</ar>
+
+---
+
 ## versionCode 10 / versionName 1.8 (2026-09-13)
 
 Barkodu bulunamayan ürünler için fotoğrafla içindekiler analizi, ağ hatalarında ayrı "tekrar dene" ekranı, ve uygulamayı paylaşma butonu.
