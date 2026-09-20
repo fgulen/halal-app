@@ -96,7 +96,11 @@ object HalalAnalyzer {
             // Bourbon/Réunion) is a completely alcohol-free, extremely common ingredient term
             // in German product listings, and would collide with a plain "bourbon" keyword.
             // Real bourbon-whiskey mentions are still caught by "whiskey"/"whisky" below.
-            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake", "wine vinegar", "red wine vinegar", "white wine vinegar"),
+            // Wine/sherry VINEGAR deliberately excluded here (was previously listed as its own
+            // "wine vinegar" trigger phrase) - see the wine-vinegar block in NEGATION_PHRASES
+            // below for the fiqh rationale (istihala: the alcohol has fully converted to acetic
+            // acid, so majority fiqh treats it as halal, not as wine).
+            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake"),
             nameEn = "Alcohol / Liqueur / Wine Additive",
             nameTr = "Alkol / Likör / Şarap Bileşeni",
             reasonEn = "Intoxicating alcoholic beverages or flavourings. Non-permissible in foods.",
@@ -565,8 +569,36 @@ object HalalAnalyzer {
     // matching rather than special-cased in containsKeyword, since new negated phrases are far
     // easier to add to this list than to a boundary algorithm.
     private val NEGATION_PHRASES = listOf(
-        "alcohol-free", "alcohol free", "non-alcoholic", "alkoholfrei", "alkoholfreie", "alkoholfreies",
+        // Compound "modifier + alcoholic-beverage noun" phrases MUST be listed (and stripped)
+        // before the bare modifier phrases further down: "beer"/"bier"/"bière"/"wine"/"wein"/
+        // "vin" are themselves bare Haram keywords, so a declared "non-alcoholic beer" or
+        // "alkoholfreies Bier" previously had only its modifier ("non-alcoholic"/"alkoholfrei")
+        // stripped, leaving the bare noun ("beer"/"bier") behind to still trip the alcohol rule -
+        // i.e. a 0.0% product was flagged Haram for containing "beer". Stripping the whole
+        // compound phrase first removes the noun along with its modifier.
+        "alcohol-free beer", "alcohol free beer", "non-alcoholic beer", "non alcoholic beer",
+        "alcohol-free wine", "alcohol free wine", "non-alcoholic wine", "non alcoholic wine",
+        "alkoholfreies bier", "alkoholfreie bier", "alkoholfreier wein",
+        "bière sans alcool", "vin sans alcool",
+        "cerveza sin alcohol", "vino sin alcohol",
+        "alkolsüz bira", "alkolsüz şarap",
+        "alcohol-free", "alcohol free", "non-alcoholic", "non alcoholic",
+        "alkoholfrei", "alkoholfreie", "alkoholfreies", "alkolsüz",
         "ohne alkohol", "sans alcool", "sin alcohol",
+        // Wine/sherry VINEGAR is excluded from the bare "wine"/"wein"/"vin"/"sherry" keywords.
+        // Fiqh basis (istihala - complete substance transformation): once wine ferments into
+        // vinegar its intoxicating alcohol has fully converted to acetic acid, and the majority
+        // position across all four Sunni madhabs treats the resulting vinegar as halal, citing
+        // the Prophet's saying "What a good food vinegar is" (Sahih Muslim). The narrower fiqh
+        // dispute (Shafi'i/Hanbali) concerns deliberately converting wine into vinegar oneself,
+        // not consuming vinegar already sold as such - and per IslamQA 2283, a consumer buying
+        // commercial vinegar without knowledge of its production method is not obligated to
+        // treat it as impermissible. So this is a deliberate exclusion, not an oversight.
+        "wine vinegar", "red wine vinegar", "white wine vinegar", "rice wine vinegar", "sherry vinegar",
+        "weinessig", "rotweinessig", "weißweinessig",
+        "vinaigre de vin", "vinaigre de vin rouge", "vinaigre de vin blanc",
+        "vinagre de vino", "vinagre de vino tinto", "vinagre de vino blanco",
+        "şarap sirkesi",
         // Explicit plant-based gelatin claims - stripping the whole phrase (not just "gelatin")
         // means the bare "gelatin" keyword below no longer matches this specific mention, while
         // a separate, unrelated "gelatin" elsewhere in the same ingredient list still does.

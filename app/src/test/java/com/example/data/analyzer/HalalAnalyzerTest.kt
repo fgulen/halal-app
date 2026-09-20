@@ -51,6 +51,54 @@ class HalalAnalyzerTest {
     }
 
     @Test
+    fun `non-alcoholic beer is not flagged Haram`() {
+        // Regression: stripping only "non-alcoholic"/"alkoholfrei" left the bare noun
+        // "beer"/"bier" behind, which is itself a Haram keyword - so a declared 0.0% beer
+        // was still flagged Haram for "containing beer".
+        val result = analyze("non-alcoholic beer, water, malt extract")
+        assertFalse(
+            "non-alcoholic beer must not be flagged as containing alcohol",
+            result.flaggedDetails.any { it.name.contains("Alcohol", ignoreCase = true) }
+        )
+        assertEquals(HalalStatus.HELAL, result.status)
+    }
+
+    @Test
+    fun `alkoholfreies Bier is not flagged Haram`() {
+        val result = analyze("alkoholfreies Bier, Wasser, Malzextrakt")
+        assertFalse(
+            "alkoholfreies Bier must not be flagged as containing alcohol",
+            result.flaggedDetails.any { it.name.contains("Alcohol", ignoreCase = true) }
+        )
+        assertEquals(HalalStatus.HELAL, result.status)
+    }
+
+    @Test
+    fun `wine vinegar is not flagged Haram`() {
+        // Fiqh basis (istihala): fermented wine's alcohol has fully converted to acetic acid,
+        // and majority fiqh across all four Sunni madhabs treats the resulting vinegar as halal.
+        // See the wine-vinegar block in HalalAnalyzer.NEGATION_PHRASES for sources.
+        val result = analyze("water, wine vinegar, salt, spices")
+        assertFalse(
+            "wine vinegar must not be flagged as containing wine/alcohol",
+            result.flaggedDetails.any { it.name.contains("Alcohol", ignoreCase = true) }
+        )
+        assertEquals(HalalStatus.HELAL, result.status)
+    }
+
+    @Test
+    fun `actual wine ingredient is still flagged Haram alongside wine vinegar mention`() {
+        // The vinegar exclusion must only strip the vinegar phrase itself, not silence a
+        // separate, genuine "wine" mention elsewhere in the same ingredient list.
+        val result = analyze("wine vinegar, red wine, sugar")
+        assertEquals(HalalStatus.HARAM, result.status)
+        assertTrue(
+            "a standalone wine mention must still be flagged Haram",
+            result.flaggedDetails.any { it.name.contains("Alcohol", ignoreCase = true) }
+        )
+    }
+
+    @Test
     fun `E1200 additive tag is not confused with E120 carmine`() {
         // Regression: additive-tag matching used tag.contains(keyword), so tag "e1200"
         // (polydextrose) matched keyword "e120" (carmine) as a plain substring.
