@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 12 / versionName 2.0 (2026-10-06)
+
+İlk üretim (Production) sürümü. Uygulama ikonu Play Store ikonuyla aynı hale getirildi (önceden telefonda eski kalkan ikonu görünüyordu); alkolsüz bira/şarap ve şarap sirkesi artık yanlışlıkla Haram işaretlenmiyor.
+
+<tr-TR>
+Bu sürümde: Uygulama ikonu yenilendi - telefonunuzda artık Play Store'daki ikonun aynısı görünüyor. Alkolsüz bira ve alkolsüz şarap gibi %0,0 alkollü ürünler artık yanlışlıkla Haram olarak işaretlenmiyor. Şarap sirkesi, alkolün tamamen sirkeye dönüşmesi (istihale) nedeniyle mezheplerin çoğunluk görüşüne göre artık Haram sayılmıyor; içindekilerde ayrıca şarap geçiyorsa yine uyarı verilir.
+</tr-TR>
+
+<en-US>
+This update: a refreshed app icon - your home screen now shows the same icon as the Play Store. Products labeled alcohol-free, such as non-alcoholic beer or wine, are no longer wrongly marked Haram. Wine vinegar is no longer flagged as Haram, following the majority scholarly view that the alcohol fully turns into vinegar (istihala); a separate mention of wine in the ingredients is still flagged.
+</en-US>
+
+<de-DE>
+Update: Neues App-Symbol - auf Ihrem Startbildschirm erscheint jetzt dasselbe Symbol wie im Play Store. Als alkoholfrei gekennzeichnete Produkte wie alkoholfreies Bier oder alkoholfreier Wein werden nicht mehr fälschlich als Haram markiert. Weinessig gilt nach der Mehrheitsmeinung der Gelehrten (Istihala: der Alkohol wird vollständig zu Essig) nicht mehr als Haram; eine separate Erwähnung von Wein in den Zutaten wird weiterhin markiert.
+</de-DE>
+
+<fr-FR>
+Mise à jour : nouvelle icône - votre écran d'accueil affiche désormais la même icône que le Play Store. Les produits sans alcool, comme la bière ou le vin sans alcool, ne sont plus marqués Haram par erreur. Le vinaigre de vin n'est plus signalé comme Haram, selon l'avis majoritaire des savants (istihala : l'alcool est entièrement transformé en vinaigre) ; une mention distincte de vin dans les ingrédients reste signalée.
+</fr-FR>
+
+<ar>
+في هذا الإصدار: أيقونة جديدة للتطبيق - تظهر الآن على شاشتك نفس أيقونة متجر Play. لم تعد المنتجات الخالية من الكحول، مثل البيرة أو النبيذ الخالي من الكحول، تُصنَّف حرامًا عن طريق الخطأ. ولم يعد خل النبيذ يُصنَّف حرامًا وفق رأي جمهور العلماء (الاستحالة: تحوّل الكحول بالكامل إلى خل)؛ ويظل ذكر النبيذ بشكل منفصل في المكونات مُنبَّهًا عليه.
+</ar>
+
+---
+
 ## versionCode 11 / versionName 1.9 (2026-09-20)
 
 Barkod taramasında, içindekiler bulunmadan erken pes edilmesi düzeltildi (tüm veri kaynakları denenmeden "içerik bulunamadı" gösterilmiyor artık); ana ekrandaki "Toplam Tarama" sayacı artık Helal rengiyle karıştırılmayacak şekilde nötr renkte.
