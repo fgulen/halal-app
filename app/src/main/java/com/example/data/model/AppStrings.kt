@@ -493,19 +493,22 @@ object AppStrings {
     }
 
     fun getNetworkErrorTitle(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "No Connection"
-        AppLanguage.DE -> "Keine Verbindung"
-        AppLanguage.FR -> "Pas de connexion"
-        AppLanguage.TR -> "Bağlantı Yok"
-        AppLanguage.AR -> "لا يوجد اتصال"
+        // Not "No Connection": this also fires when the device is online but Open Food Facts
+        // itself is down or rate-limiting (HTTP 5xx/429), where blaming the user's connection
+        // would be wrong.
+        AppLanguage.EN -> "Couldn't Check Right Now"
+        AppLanguage.DE -> "Prüfung gerade nicht möglich"
+        AppLanguage.FR -> "Vérification impossible pour le moment"
+        AppLanguage.TR -> "Şu An Kontrol Edilemedi"
+        AppLanguage.AR -> "تعذر التحقق الآن"
     }
 
     fun getNetworkErrorMessage(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "Couldn't reach Open Food Facts to check this product. This doesn't mean it's unregistered — check your internet connection and try again."
-        AppLanguage.DE -> "Open Food Facts konnte nicht erreicht werden, um dieses Produkt zu prüfen. Das heißt nicht, dass es nicht registriert ist — bitte Internetverbindung prüfen und erneut versuchen."
-        AppLanguage.FR -> "Impossible de contacter Open Food Facts pour vérifier ce produit. Cela ne signifie pas qu'il n'est pas répertorié — vérifiez votre connexion internet et réessayez."
-        AppLanguage.TR -> "Bu ürünü kontrol etmek için Open Food Facts'e ulaşılamadı. Bu, ürünün sistemde kayıtlı olmadığı anlamına gelmez — internet bağlantınızı kontrol edip tekrar deneyin."
-        AppLanguage.AR -> "تعذر الوصول إلى Open Food Facts للتحقق من هذا المنتج. هذا لا يعني أنه غير مسجل — تحقق من اتصال الإنترنت وحاول مرة أخرى."
+        AppLanguage.EN -> "Couldn't reach Open Food Facts to check this product. This doesn't mean it's unregistered — check your internet connection, or try again in a moment."
+        AppLanguage.DE -> "Open Food Facts konnte nicht erreicht werden, um dieses Produkt zu prüfen. Das heißt nicht, dass es nicht registriert ist — bitte Internetverbindung prüfen oder es gleich noch einmal versuchen."
+        AppLanguage.FR -> "Impossible de contacter Open Food Facts pour vérifier ce produit. Cela ne signifie pas qu'il n'est pas répertorié — vérifiez votre connexion internet ou réessayez dans un instant."
+        AppLanguage.TR -> "Bu ürünü kontrol etmek için Open Food Facts'e ulaşılamadı. Bu, ürünün sistemde kayıtlı olmadığı anlamına gelmez — internet bağlantınızı kontrol edin ya da biraz sonra tekrar deneyin."
+        AppLanguage.AR -> "تعذر الوصول إلى Open Food Facts للتحقق من هذا المنتج. هذا لا يعني أنه غير مسجل — تحقق من اتصال الإنترنت أو حاول مرة أخرى بعد قليل."
     }
 
     fun getRetryLabel(lang: AppLanguage): String = when (lang) {

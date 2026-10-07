@@ -84,10 +84,12 @@ class OpenFoodFactsApi(
             }
         }
 
-        // Tracks whether we ever got a real HTTP response, vs. every attempt throwing
-        // (DNS failure, no connection, timeout). Used to tell "no internet" apart from
-        // "OFF genuinely has nothing for this barcode" in the final response below.
-        var reachedServerAtLeastOnce = false
+        // Whether an Open Food Facts *food* endpoint gave a definite answer (2xx, or 404) - the
+        // only basis for reporting "product not found" below. Any HTTP response used to count,
+        // so on 2026-10-07 an OFF outage (v2 + v0 both HTTP 502) plus openbeautyfacts' routine
+        // 404 was reported as "not found" and recorded into history as an unregistered product.
+        // 5xx/429 (outage, rate limit) and openbeautyfacts responses therefore never count.
+        var offGaveDefiniteAnswer = false
 
         // A response with SOME data (name/brand/image) but no ingredients is what produces the
         // "image found, content not found" result in the UI. urlsToTry deliberately queries the
@@ -123,7 +125,9 @@ class OpenFoodFactsApi(
                     .build()
 
                 client.newCall(request).execute().use { response ->
-                    reachedServerAtLeastOnce = true
+                    if (request.url.host == "world.openfoodfacts.org" && (response.isSuccessful || response.code == 404)) {
+                        offGaveDefiniteAnswer = true
+                    }
                     Log.d(TAG, "GET $url -> HTTP ${response.code}")
                     if (response.isSuccessful) {
                         val bodyString = response.body?.string()
@@ -180,7 +184,7 @@ class OpenFoodFactsApi(
         // show that (with the "photo analysis" fallback CTA) than a bare "not found" screen.
         bestPartialMatch?.let { return@withContext it }
 
-        val verbose = if (reachedServerAtLeastOnce) "product not found" else "network error"
+        val verbose = if (offGaveDefiniteAnswer) "product not found" else "network error"
         Log.w(TAG, "Barcode $targetBarcode not found on Open Food Facts after ${urlsToTry.size} attempts ($verbose)")
         OffResponse(status = 0, statusVerbose = verbose, code = targetBarcode, product = null)
     }
