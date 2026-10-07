@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import com.example.data.model.AppLanguage
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 
 @Entity(tableName = "products")
 data class ProductEntity(
@@ -22,7 +23,10 @@ data class ProductEntity(
     // Language this cached analysis was rendered in. Curated InitialData.kt entries are always
     // English regardless of this value (they're plain hardcoded text, not per-language) - it only
     // drives re-analysis for rows written by the live OFF analyzer, see ProductRepository.
-    val language: AppLanguage = AppLanguage.EN
+    val language: AppLanguage = AppLanguage.EN,
+    // Madhhab this cached verdict was computed under (v5). A hit under a different madhhab is
+    // stale and re-analyzed, the same way a different-language hit is.
+    val madhhab: Madhhab = Madhhab.UNSPECIFIED
 ) {
     fun toDomainModel(): FoodProduct {
         return FoodProduct(
@@ -37,7 +41,8 @@ data class ProductEntity(
             reasonOrDetails = reasonOrDetails,
             alternatives = alternatives,
             imageUrl = imageUrl,
-            language = language
+            language = language,
+            madhhab = madhhab
         )
     }
 
@@ -55,7 +60,8 @@ data class ProductEntity(
                 reasonOrDetails = product.reasonOrDetails,
                 alternatives = product.alternatives,
                 imageUrl = product.imageUrl,
-                language = product.language
+                language = product.language,
+                madhhab = product.madhhab
             )
         }
     }

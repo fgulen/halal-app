@@ -25,5 +25,9 @@ data class FoodProduct(
     // Which language this analysis (reasonOrDetails, flaggedDetails reasons, certificate text)
     // was rendered in. Lets the repository detect a stale-language cache entry and re-analyze
     // instead of silently returning text in a different language than the current UI.
-    val language: AppLanguage = AppLanguage.EN
+    val language: AppLanguage = AppLanguage.EN,
+    // Which madhhab produced this verdict. Stored with cache and history rows so a result is
+    // always re-displayed (e.g. ingredient chip colours) under the madhhab it was analyzed with,
+    // not whatever the user has selected now. Fixed-verdict curated entries stay UNSPECIFIED.
+    val madhhab: Madhhab = Madhhab.UNSPECIFIED
 )

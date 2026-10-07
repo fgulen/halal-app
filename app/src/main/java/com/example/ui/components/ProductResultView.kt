@@ -80,6 +80,7 @@ import com.example.data.model.AppStrings
 import com.example.data.model.FlaggedIngredient
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 import com.example.data.model.ReportEmail
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.EmeraldPrimaryDeep
@@ -537,7 +538,7 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
 
         // All Ingredients list
         if (product.allIngredients.isNotEmpty()) {
-            IngredientsListCard(allIngredients = product.allIngredients, language = language)
+            IngredientsListCard(allIngredients = product.allIngredients, language = language, madhhab = product.madhhab)
         }
     }
 }
@@ -638,7 +639,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
 
         // All Ingredients List
         if (product.allIngredients.isNotEmpty()) {
-            IngredientsListCard(allIngredients = product.allIngredients, language = language)
+            IngredientsListCard(allIngredients = product.allIngredients, language = language, madhhab = product.madhhab)
         }
     }
 }
@@ -738,7 +739,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
 
         // All Ingredients List
         if (product.allIngredients.isNotEmpty()) {
-            IngredientsListCard(allIngredients = product.allIngredients, language = language)
+            IngredientsListCard(allIngredients = product.allIngredients, language = language, madhhab = product.madhhab)
         }
     }
 }
@@ -798,7 +799,9 @@ fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean, lan
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage) {
+// Chips are coloured under the product's OWN madhhab (the one its verdict was computed with), not
+// the currently selected one, so a history item never shows chips that contradict its banner.
+fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage, madhhab: Madhhab) {
     Surface(
         color = NaturalWarmSurface,
         shape = RoundedCornerShape(18.dp),
@@ -830,7 +833,7 @@ fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 allIngredients.forEach { ingredient ->
-                    val (chipBg, chipBorder, chipText) = when (HalalAnalyzer.classifyIngredientToken(ingredient)) {
+                    val (chipBg, chipBorder, chipText) = when (HalalAnalyzer.classifyIngredientToken(ingredient, madhhab)) {
                         HalalStatus.HARAM -> Triple(HaramRedBg, HaramRedBorder, HaramRedDark)
                         HalalStatus.SUPHELI -> Triple(SuspiciousAmberBg, SuspiciousAmberBorder, SuspiciousAmberDark)
                         else -> Triple(HalalGreenBg, HalalGreenBorder, HalalGreenDark)

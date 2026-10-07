@@ -46,6 +46,7 @@ import com.example.data.analyzer.HalalAnalyzer
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.HalalGreenBg
 import com.example.ui.theme.HalalGreenBorder
@@ -73,6 +74,8 @@ import com.example.ui.theme.SuspiciousAmberDark
 @Composable
 fun PhotoIngredientsDialog(
     language: AppLanguage,
+    // Pre-analysis preview: chips follow the madhhab the analysis is about to run under.
+    madhhab: Madhhab,
     initialIngredientsText: String,
     onDismiss: () -> Unit,
     onAnalyze: (productName: String, ingredientsText: String) -> Unit,
@@ -213,7 +216,7 @@ fun PhotoIngredientsDialog(
                         .testTag("photo_analysis_ingredients_preview")
                 ) {
                     previewTokens.forEach { token ->
-                        val (chipBg, chipBorder, chipText) = when (HalalAnalyzer.classifyIngredientToken(token)) {
+                        val (chipBg, chipBorder, chipText) = when (HalalAnalyzer.classifyIngredientToken(token, madhhab)) {
                             HalalStatus.HARAM -> Triple(HaramRedBg, HaramRedBorder, HaramRedDark)
                             HalalStatus.SUPHELI -> Triple(SuspiciousAmberBg, SuspiciousAmberBorder, SuspiciousAmberDark)
                             else -> Triple(HalalGreenBg, HalalGreenBorder, HalalGreenDark)

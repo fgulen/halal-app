@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 
 @Entity(tableName = "scan_history")
 data class ScanHistoryEntity(
@@ -19,7 +20,9 @@ data class ScanHistoryEntity(
     val reasonOrDetails: String,
     val alternatives: List<String>,
     val imageUrl: String?,
-    val scannedAt: Long = System.currentTimeMillis()
+    val scannedAt: Long = System.currentTimeMillis(),
+    // Madhhab the verdict was computed under (v5), so history re-renders consistently.
+    val madhhab: Madhhab = Madhhab.UNSPECIFIED
 ) {
     fun toDomainModel(): FoodProduct {
         return FoodProduct(
@@ -34,7 +37,8 @@ data class ScanHistoryEntity(
             reasonOrDetails = reasonOrDetails,
             alternatives = alternatives,
             imageUrl = imageUrl,
-            scannedAt = scannedAt
+            scannedAt = scannedAt,
+            madhhab = madhhab
         )
     }
 
@@ -52,7 +56,8 @@ data class ScanHistoryEntity(
                 reasonOrDetails = product.reasonOrDetails,
                 alternatives = product.alternatives,
                 imageUrl = product.imageUrl,
-                scannedAt = System.currentTimeMillis()
+                scannedAt = System.currentTimeMillis(),
+                madhhab = product.madhhab
             )
         }
     }

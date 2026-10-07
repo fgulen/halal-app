@@ -14,6 +14,7 @@ import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 import com.example.data.remote.OpenFoodFactsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -45,7 +46,13 @@ class ProductRepository(
             capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
-    suspend fun checkBarcode(input: String, language: AppLanguage = AppLanguage.EN): FoodProduct = withContext(Dispatchers.IO) {
+    // The Nutella shortcut and curated InitialData samples below return fixed verdicts that don't
+    // depend on the madhhab, so they keep their own UNSPECIFIED stamp rather than the requested one.
+    suspend fun checkBarcode(
+        input: String,
+        language: AppLanguage = AppLanguage.EN,
+        madhhab: Madhhab = Madhhab.UNSPECIFIED
+    ): FoodProduct = withContext(Dispatchers.IO) {
         val query = input.trim()
         if (query.isBlank()) {
             return@withContext createNotFoundProduct(query, language)
@@ -84,7 +91,8 @@ class ProductRepository(
                 productName = "Custom Ingredient List",
                 ingredientsText = query,
                 barcode = "CUSTOM",
-                language = language
+                language = language,
+                madhhab = madhhab
             )
             recordScan(analyzed)
             return@withContext analyzed
@@ -110,14 +118,14 @@ class ProductRepository(
             }.distinct()
 
             for (barcodeCandidate in candidates) {
-                // Check local Room cached DB. A cache hit in a *different* language than
-                // requested is stale text, not a valid result - fall through to the live OFF
-                // fetch below instead of returning it, so re-scanning after a language switch
-                // shows the reason/certificate translated correctly instead of frozen in
-                // whatever language the product was first analyzed in.
+                // Check local Room cached DB. A cache hit in a *different* language or madhhab
+                // than requested is stale, not a valid result - fall through to the live OFF
+                // fetch below instead of returning it, so re-scanning after a language or madhhab
+                // switch re-analyzes instead of returning text/verdict frozen under whatever
+                // settings the product was first analyzed with.
                 val localProduct = productDao.getProductByBarcode(barcodeCandidate)
                 if (localProduct != null && localProduct.status != HalalStatus.BULUNAMADI) {
-                    if (localProduct.language == language) {
+                    if (localProduct.language == language && localProduct.madhhab == madhhab) {
                         val domain = localProduct.toDomainModel()
                         recordScan(domain)
                         return@withContext domain
@@ -138,7 +146,8 @@ class ProductRepository(
                         val analyzedProduct = HalalAnalyzer.analyzeOpenFoodFactsProduct(
                             response.code ?: digitsOnly,
                             response.product,
-                            language
+                            language,
+                            madhhab
                         )
                         Log.d(TAG, "Resolved barcode=$digitsOnly name=${analyzedProduct.name} image=${analyzedProduct.imageUrl}")
                         productDao.insertProduct(analyzedProduct.toEntity())
@@ -193,7 +202,8 @@ class ProductRepository(
                     val analyzedProduct = HalalAnalyzer.analyzeOpenFoodFactsProduct(
                         code,
                         offProduct,
-                        language
+                        language,
+                        madhhab
                     )
                     productDao.insertProduct(analyzedProduct.toEntity())
                     recordScan(analyzedProduct)
@@ -274,14 +284,16 @@ class ProductRepository(
     suspend fun analyzeIngredientsPhoto(
         productName: String,
         ingredientsText: String,
-        language: AppLanguage
+        language: AppLanguage,
+        madhhab: Madhhab = Madhhab.UNSPECIFIED
     ): FoodProduct = withContext(Dispatchers.IO) {
         val barcode = "PHOTO-${System.currentTimeMillis()}"
         val analyzed = HalalAnalyzer.analyzeIngredientsText(
             productName = productName.ifBlank { AppStrings.getPhotoAnalysisDefaultName(language) },
             ingredientsText = ingredientsText,
             barcode = barcode,
-            language = language
+            language = language,
+            madhhab = madhhab
         )
         recordScan(analyzed)
         analyzed

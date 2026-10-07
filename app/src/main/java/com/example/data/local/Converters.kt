@@ -3,6 +3,7 @@ package com.example.data.local
 import androidx.room.TypeConverter
 import com.example.data.model.AppLanguage
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 
 class Converters {
     @TypeConverter
@@ -27,6 +28,20 @@ class Converters {
             HalalStatus.valueOf(value)
         } catch (e: Exception) {
             HalalStatus.BULUNAMADI
+        }
+    }
+
+    @TypeConverter
+    fun fromMadhhab(madhhab: Madhhab): String {
+        return madhhab.name
+    }
+
+    @TypeConverter
+    fun toMadhhab(value: String): Madhhab {
+        return try {
+            Madhhab.valueOf(value)
+        } catch (e: Exception) {
+            Madhhab.UNSPECIFIED
         }
     }
 

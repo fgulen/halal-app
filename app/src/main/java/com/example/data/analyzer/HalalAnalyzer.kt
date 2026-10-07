@@ -4,6 +4,7 @@ import com.example.data.model.AppLanguage
 import com.example.data.model.FlaggedIngredient
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 import com.example.data.remote.OffProduct
 import java.util.Locale
 
@@ -274,7 +275,10 @@ object HalalAnalyzer {
     fun analyzeOpenFoodFactsProduct(
         barcode: String,
         offProduct: OffProduct,
-        language: AppLanguage = AppLanguage.EN
+        language: AppLanguage = AppLanguage.EN,
+        // Phase 1: threaded through and stamped on the result only - no rule reads it yet, so
+        // every madhhab reproduces the UNSPECIFIED verdict (see HalalAnalyzerMadhhabTest).
+        madhhab: Madhhab = Madhhab.UNSPECIFIED
     ): FoodProduct {
         val name = when (language) {
             AppLanguage.EN -> offProduct.productNameEn ?: offProduct.productName ?: offProduct.productNameDe ?: offProduct.productNameFr ?: "Global Food Product"
@@ -558,7 +562,8 @@ object HalalAnalyzer {
             reasonOrDetails = reason,
             alternatives = alternatives,
             imageUrl = imageUrl,
-            language = language
+            language = language,
+            madhhab = madhhab
         )
     }
 
@@ -632,7 +637,9 @@ object HalalAnalyzer {
         }
     }
 
-    fun classifyIngredientToken(token: String): HalalStatus {
+    @Suppress("UNUSED_PARAMETER") // Phase 2 overrides will read it; kept in the signature now so
+    // every chip-colouring call site already passes the right madhhab (result's own, or selected).
+    fun classifyIngredientToken(token: String, madhhab: Madhhab = Madhhab.UNSPECIFIED): HalalStatus {
         val lower = stripNegatedPhrases(token.lowercase(Locale.ROOT))
         if (HARAM_RULES.any { rule -> rule.keywords.any { kw -> containsKeyword(lower, kw) } }) {
             return HalalStatus.HARAM
@@ -647,14 +654,15 @@ object HalalAnalyzer {
         productName: String,
         ingredientsText: String,
         barcode: String = "",
-        language: AppLanguage = AppLanguage.EN
+        language: AppLanguage = AppLanguage.EN,
+        madhhab: Madhhab = Madhhab.UNSPECIFIED
     ): FoodProduct {
         val dummyOff = OffProduct(
             productName = productName,
             ingredientsText = ingredientsText,
             categories = "Analyzed Ingredients"
         )
-        val result = analyzeOpenFoodFactsProduct(barcode, dummyOff, language)
+        val result = analyzeOpenFoodFactsProduct(barcode, dummyOff, language, madhhab)
 
         // A photo of the nutrition-facts panel (Energie/Eiweiß/Kohlenhydrate/kcal/...) contains
         // no E-numbers or ingredient names at all, so the rule engine above finds nothing to flag

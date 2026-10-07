@@ -47,7 +47,20 @@
   - Old history rows get `UNSPECIFIED` and keep the verdict they were scanned with.
 - **Only sourced rulings go into code:** every madhhab difference must carry a source. Unsourced items wait on the "awaiting source" list.
 
-## Phase 1 — Preference and threading the parameter
+## Phase 1 — Preference and threading the parameter ✅ IMPLEMENTED (2026-10-07, not committed)
+
+> - `Madhhab` enum; `UserPreferences.selectedMadhhab`; ViewModel state, dialog and setter.
+> - `madhhab` added to `FoodProduct`, `ProductEntity`, `ScanHistoryEntity` (all four mappers) and `Converters`. Unknown values map to `UNSPECIFIED`.
+> - DB **v5** with an explicit `MIGRATION_4_5` (`ALTER TABLE … ADD COLUMN madhhab TEXT NOT NULL DEFAULT 'UNSPECIFIED'`). `AppDatabase.build()` is shared by production and the test.
+>   - `AppDatabaseMigrationTest` builds a real v4 database file. Without the migration the test **failed (history wiped, 0 rows)**; with it, it passes.
+>   - Checked on the emulator: after the update, the existing 6 history rows were kept.
+> - `HalalAnalyzer` (`analyzeOpenFoodFactsProduct`, `analyzeIngredientsText`, `classifyIngredientToken`) takes `madhhab` and stamps the result. **No rule reads it yet.**
+> - Repository: a cache hit counts only if language **and** madhhab match. The photo path and the pasted-ingredients path pass madhhab through. Nutella and curated samples stay `UNSPECIFIED`.
+> - Chip colours: `IngredientsListCard` uses `product.madhhab`; `PhotoIngredientsDialog` uses the selected madhhab.
+> - UI: the picker sits next to the language chip. **The header was split into two rows.** With four controls in one row, the share button was pushed off screen on a 1080px emulator.
+> - Tests: 57/57 (48 + 1 migration + 4 analyzer + 4 repository).
+> - Emulator check: picker, persistence after restart, and Haribo under Hanafi showing the same verdict (Doubtful).
+> - **Known gap (fix in Phase 2):** the madhhab is read from prefs asynchronously in `init`, so a scan in the first instant after launch can run as UNSPECIFIED.
 
 - Add a `Madhhab` enum with values `UNSPECIFIED, HANAFI, SHAFII, MALIKI, HANBALI`.
 - Add a `madhhab` flow plus a setter to `UserPreferences`.

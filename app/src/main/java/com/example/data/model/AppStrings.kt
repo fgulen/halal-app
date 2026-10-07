@@ -782,4 +782,73 @@ object AppStrings {
         AppLanguage.TR -> "Fotoğraftan Analiz"
         AppLanguage.AR -> "تحليل من صورة"
     }
+
+    fun getMadhhabSelection(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Choose Madhhab"
+        AppLanguage.DE -> "Rechtsschule wählen"
+        AppLanguage.FR -> "Choisir l'école juridique"
+        AppLanguage.TR -> "Mezhep Seçimi"
+        AppLanguage.AR -> "اختيار المذهب"
+    }
+
+    fun getMadhhabSelectionHint(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Only changes a result where the schools differ on a sourced point. Not specified = the cautious default."
+        AppLanguage.DE -> "Ändert ein Ergebnis nur dort, wo die Rechtsschulen bei einem belegten Punkt abweichen. Nicht angegeben = vorsichtige Standardeinstellung."
+        AppLanguage.FR -> "Ne modifie un résultat que là où les écoles divergent sur un point sourcé. Non précisé = réglage prudent par défaut."
+        AppLanguage.TR -> "Sonucu yalnızca mezheplerin kaynaklı bir konuda ayrıştığı yerde değiştirir. Belirtme = ihtiyatlı varsayılan."
+        AppLanguage.AR -> "يغيّر النتيجة فقط حيث تختلف المذاهب في مسألة موثّقة. غير محدد = الإعداد الاحتياطي الافتراضي."
+    }
+
+    fun getMadhhabName(madhhab: Madhhab, lang: AppLanguage): String = when (madhhab) {
+        Madhhab.UNSPECIFIED -> when (lang) {
+            AppLanguage.EN -> "Not specified (cautious)"
+            AppLanguage.DE -> "Nicht angegeben (vorsichtig)"
+            AppLanguage.FR -> "Non précisé (prudent)"
+            AppLanguage.TR -> "Belirtme (ihtiyatlı)"
+            AppLanguage.AR -> "غير محدد (احتياطي)"
+        }
+        Madhhab.HANAFI -> when (lang) {
+            AppLanguage.EN -> "Hanafi"
+            AppLanguage.DE -> "Hanafitisch"
+            AppLanguage.FR -> "Hanafite"
+            AppLanguage.TR -> "Hanefi"
+            AppLanguage.AR -> "حنفي"
+        }
+        Madhhab.SHAFII -> when (lang) {
+            AppLanguage.EN -> "Shafi'i"
+            AppLanguage.DE -> "Schafiitisch"
+            AppLanguage.FR -> "Chaféite"
+            AppLanguage.TR -> "Şafii"
+            AppLanguage.AR -> "شافعي"
+        }
+        Madhhab.MALIKI -> when (lang) {
+            AppLanguage.EN -> "Maliki"
+            AppLanguage.DE -> "Malikitisch"
+            AppLanguage.FR -> "Malékite"
+            AppLanguage.TR -> "Maliki"
+            AppLanguage.AR -> "مالكي"
+        }
+        Madhhab.HANBALI -> when (lang) {
+            AppLanguage.EN -> "Hanbali"
+            AppLanguage.DE -> "Hanbalitisch"
+            AppLanguage.FR -> "Hanbalite"
+            AppLanguage.TR -> "Hanbeli"
+            AppLanguage.AR -> "حنبلي"
+        }
+    }
+
+    // Header chip label: the bare word "Madhhab" while nothing is chosen (a "Not specified
+    // (cautious)" label is far too long for the chip), otherwise the school's name.
+    fun getMadhhabChipLabel(madhhab: Madhhab, lang: AppLanguage): String =
+        if (madhhab == Madhhab.UNSPECIFIED) {
+            when (lang) {
+                AppLanguage.EN -> "Madhhab"
+                AppLanguage.DE -> "Madhhab"
+                AppLanguage.FR -> "Madhhab"
+                AppLanguage.TR -> "Mezhep"
+                AppLanguage.AR -> "المذهب"
+            }
+        } else {
+            getMadhhabName(madhhab, lang)
+        }
 }

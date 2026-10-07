@@ -10,6 +10,7 @@ import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 import com.example.data.repository.ProductRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +33,14 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     private val _selectedLanguage = MutableStateFlow(AppLanguage.EN)
     val selectedLanguage: StateFlow<AppLanguage> = _selectedLanguage.asStateFlow()
+
+    // Loaded from prefs asynchronously in init, like language - a scan in the first instant after
+    // launch can still run as UNSPECIFIED (harmless while no override exists; see the plan doc).
+    private val _selectedMadhhab = MutableStateFlow(Madhhab.UNSPECIFIED)
+    val selectedMadhhab: StateFlow<Madhhab> = _selectedMadhhab.asStateFlow()
+
+    private val _isMadhhabDialogOpen = MutableStateFlow(false)
+    val isMadhhabDialogOpen: StateFlow<Boolean> = _isMadhhabDialogOpen.asStateFlow()
 
     private val _isScannerOpen = MutableStateFlow(false)
     val isScannerOpen: StateFlow<Boolean> = _isScannerOpen.asStateFlow()
@@ -69,6 +78,9 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
         viewModelScope.launch {
             _selectedLanguage.value = userPreferences.selectedLanguage.first()
         }
+        viewModelScope.launch {
+            _selectedMadhhab.value = userPreferences.selectedMadhhab.first()
+        }
     }
 
     val scanHistory: StateFlow<List<FoodProduct>> = repository.getScanHistory()
@@ -83,6 +95,21 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
         viewModelScope.launch {
             userPreferences.setSelectedLanguage(language)
         }
+    }
+
+    fun setMadhhab(madhhab: Madhhab) {
+        _selectedMadhhab.value = madhhab
+        viewModelScope.launch {
+            userPreferences.setSelectedMadhhab(madhhab)
+        }
+    }
+
+    fun openMadhhabDialog() {
+        _isMadhhabDialogOpen.value = true
+    }
+
+    fun closeMadhhabDialog() {
+        _isMadhhabDialogOpen.value = false
     }
 
     fun openLanguageDialog() {
@@ -137,7 +164,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             _isScannerOpen.value = false
             _scanError.value = null
             try {
-                val product = repository.checkBarcode(barcode, _selectedLanguage.value)
+                val product = repository.checkBarcode(barcode, _selectedLanguage.value, _selectedMadhhab.value)
                 _activeProduct.value = product
             } catch (e: ProductRepository.NetworkUnavailableException) {
                 Log.w("HalalScannerViewModel", "Network unavailable while checking '$barcode'")
@@ -182,7 +209,8 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             val product = repository.analyzeIngredientsPhoto(
                 productName = productName,
                 ingredientsText = ingredientsText,
-                language = _selectedLanguage.value
+                language = _selectedLanguage.value,
+                madhhab = _selectedMadhhab.value
             )
             _activeProduct.value = product
         }

@@ -86,11 +86,13 @@ import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.Madhhab
 import com.example.ui.camera.CameraScannerView
 import com.example.ui.camera.rememberPhotoIngredientsCaptureLauncher
 import com.example.ui.components.EAdditiveSheet
 import com.example.ui.components.HalalStatusBadge
 import com.example.ui.components.LanguageSelectionDialog
+import com.example.ui.components.MadhhabSelectionDialog
 import com.example.ui.components.ManualBarcodeDialog
 import com.example.ui.components.PhotoIngredientsDialog
 import com.example.ui.components.ProductResultBottomSheet
@@ -143,6 +145,8 @@ fun MainHalalScreen(
     val isManualEntryOpen by viewModel.isManualEntryOpen.collectAsState()
     val isEAdditivesOpen by viewModel.isEAdditivesOpen.collectAsState()
     val isLanguageDialogOpen by viewModel.isLanguageDialogOpen.collectAsState()
+    val madhhab by viewModel.selectedMadhhab.collectAsState()
+    val isMadhhabDialogOpen by viewModel.isMadhhabDialogOpen.collectAsState()
     val scanHistory by viewModel.scanHistory.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -244,6 +248,8 @@ fun MainHalalScreen(
                     NaturalAppHeader(
                         language = language,
                         onLanguageClick = { viewModel.openLanguageDialog() },
+                        madhhab = madhhab,
+                        onMadhhabClick = { viewModel.openMadhhabDialog() },
                         onECodesClick = { viewModel.openEAdditives() },
                         onShareAppClick = {
                             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -485,6 +491,15 @@ fun MainHalalScreen(
         )
     }
 
+    if (isMadhhabDialogOpen) {
+        MadhhabSelectionDialog(
+            currentMadhhab = madhhab,
+            language = language,
+            onSelectMadhhab = { viewModel.setMadhhab(it) },
+            onDismiss = { viewModel.closeMadhhabDialog() }
+        )
+    }
+
     // Camera Scanner Overlay
     if (isScannerOpen) {
         CameraScannerView(
@@ -523,6 +538,7 @@ fun MainHalalScreen(
     photoIngredientsReview?.let { ocrText ->
         PhotoIngredientsDialog(
             language = language,
+            madhhab = madhhab,
             initialIngredientsText = ocrText,
             onDismiss = { viewModel.dismissPhotoReview() },
             onAnalyze = { productName, ingredientsText ->
@@ -725,17 +741,24 @@ fun ScanErrorDialog(
 fun NaturalAppHeader(
     language: AppLanguage,
     onLanguageClick: () -> Unit,
+    madhhab: Madhhab,
+    onMadhhabClick: () -> Unit,
     onECodesClick: () -> Unit,
     onShareAppClick: () -> Unit
 ) {
-    Row(
+    // Two rows so the header never overflows: the title and icon buttons on top, and the
+    // language + madhhab chips side by side underneath. With all four controls in one row the
+    // share button was pushed off-screen (verified on a 1080px emulator, 2026-10-07).
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 18.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 24.dp, vertical = 18.dp)
     ) {
-        Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = AppStrings.getAppName(language),
                 color = NaturalTextDark,
@@ -743,7 +766,49 @@ fun NaturalAppHeader(
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = (-0.5).sp
             )
+
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // E-Codes Info Button
+                Surface(
+                    onClick = onECodesClick,
+                    shape = CircleShape,
+                    color = EmeraldGreenContainer,
+                    modifier = Modifier
+                        .size(42.dp)
+                        .testTag("header_ecodes_button")
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.AutoStories,
+                            contentDescription = AppStrings.getNavECodes(language),
+                            tint = EmeraldPrimaryDeep,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                // Share App Button
+                Surface(
+                    onClick = onShareAppClick,
+                    shape = CircleShape,
+                    color = EmeraldGreenContainer,
+                    modifier = Modifier
+                        .size(42.dp)
+                        .testTag("header_share_app_button")
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = AppStrings.getShareApp(language),
+                            tint = EmeraldPrimaryDeep,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             // Language Selection Chip Button
@@ -772,42 +837,22 @@ fun NaturalAppHeader(
                 }
             }
 
-            // E-Codes Info Button
+            // Madhhab Selection Chip Button - same style as the language chip, next to it
             Surface(
-                onClick = onECodesClick,
+                onClick = onMadhhabClick,
                 shape = CircleShape,
-                color = EmeraldGreenContainer,
-                modifier = Modifier
-                    .size(42.dp)
-                    .testTag("header_ecodes_button")
+                color = NaturalWarmSurface,
+                border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreenBorder),
+                modifier = Modifier.testTag("madhhab_selector_button")
             ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.AutoStories,
-                        contentDescription = AppStrings.getNavECodes(language),
-                        tint = EmeraldPrimaryDeep,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-
-            // Share App Button
-            Surface(
-                onClick = onShareAppClick,
-                shape = CircleShape,
-                color = EmeraldGreenContainer,
-                modifier = Modifier
-                    .size(42.dp)
-                    .testTag("header_share_app_button")
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = AppStrings.getShareApp(language),
-                        tint = EmeraldPrimaryDeep,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+                Text(
+                    text = AppStrings.getMadhhabChipLabel(madhhab, language),
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = EmeraldPrimaryDeep,
+                    maxLines = 1
+                )
             }
         }
     }
