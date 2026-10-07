@@ -716,6 +716,17 @@ object HalalAnalyzer {
         "bière sans alcool", "vin sans alcool",
         "cerveza sin alcohol", "vino sin alcohol",
         "alkolsüz bira", "alkolsüz şarap",
+        // Manufacturer disclaimers (user chose exact claim phrases, 2026-10-07 - deliberately not
+        // sentence-level negation, which could hide a real pork ingredient when OFF text has no
+        // sentence breaks). Phrasings taken from real Turkish OFF products. The "alkol, ..." form
+        // is listed before the shorter one it contains, or its "alkol," would be left behind.
+        "alkol, domuz yağı ve katkıları yoktur", "domuz yağı ve katkıları yoktur",
+        "domuz yağı ve katkılarını içermez", "domuz yağı ve katkıları içermez",
+        "domuz yağı içermez", "domuz yağı içermemektedir",
+        "domuz ürünü içermez", "domuz ürünleri içermez", "domuz eti içermez",
+        "domuz türevi içermez", "domuz türevleri içermez",
+        "domuzdan elde edilen katkı maddesi içermez", "domuz kaynaklı katkı maddesi içermez",
+        "contains no alcohol", "contains no pork", "pork-free", "pork free", "free from pork", "free from alcohol",
         "alcohol-free", "alcohol free", "non-alcoholic", "non alcoholic",
         // Non-beverage "alcohols" and Turkish "contains no alcohol" phrasings. Without these the
         // alcohol keywords above would flag a synthetic polymer, a preservative or a polyol
