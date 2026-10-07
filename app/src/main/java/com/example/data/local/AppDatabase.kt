@@ -22,7 +22,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     // data for every device that had already cached it. Existing cached rows are cleared here so
     // already-installed devices drop any such stale/wrong rows; scan_history is untouched.
     // v5: added `madhhab` to products and scan_history (default UNSPECIFIED) so each verdict
-    // remembers the madhhab it was computed under. Migrated in place - scan_history is kept.
+    // remembers the madhhab it was computed under. scan_history is kept; the products cache is
+    // cleared because v5 also changes verdict logic (see MIGRATION_4_5).
     version = 5,
     exportSchema = false
 )
@@ -40,12 +41,15 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        // Adds the column in place rather than clearing anything: unlike 3->4, existing rows are
-        // all still valid - they were simply computed under the default (UNSPECIFIED) madhhab.
+        // Adds the column to both tables. scan_history rows are kept (a past scan's verdict is a
+        // record of what was shown). The products cache is cleared like every earlier verdict-logic
+        // change: v5 also changes verdicts (madhhab overrides, Turkish rennet keywords, microbial
+        // rennet no longer flagged), and a stale v4 row would otherwise be served indefinitely.
         private val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE products ADD COLUMN madhhab TEXT NOT NULL DEFAULT 'UNSPECIFIED'")
                 db.execSQL("ALTER TABLE scan_history ADD COLUMN madhhab TEXT NOT NULL DEFAULT 'UNSPECIFIED'")
+                db.execSQL("DELETE FROM products")
             }
         }
 

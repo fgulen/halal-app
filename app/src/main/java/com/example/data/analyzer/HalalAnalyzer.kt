@@ -49,6 +49,112 @@ object HalalAnalyzer {
     // identity rather than by a fragile rule.keywords.contains("gelatin") literal-list check.
     private const val GELATIN_UNSPECIFIED_RULE_ID = "Gelatin (Unspecified Source)"
 
+    private const val RENNET_RULE_ID = "Animal Rennet / Cheese Enzymes"
+    private const val WHEY_RULE_ID = "Whey Powder / Whey Byproduct"
+
+    // Each link backs exactly the sentence it is attached to, and each was verified 2026-10-07 by
+    // downloading the page and finding the quoted ruling verbatim (source table in
+    // docs/superpowers/plans/2026-10-07-madhhab-setting-and-off-5xx-fix.md):
+    // - Diyanet DİYK fatwa (15.09.2020): Diyanet's own ruling only - no slaughter condition, pork excluded.
+    internal const val DIYANET_RENNET_FATWA_URL =
+        "https://kurul.diyanet.gov.tr/tr/fetva/peynir-yapiminda-kullanilan-mayalarin-dini-hukmu-nedir/0193c42d-aa60-7126-92d8-9c538f6b513b"
+    // - The Hanafi split: Abu Hanifa (pure) vs. his students Abu Yusuf and Muhammad (consumption haram).
+    internal const val HANAFI_RENNET_SOURCE_URL = "https://thehalallife.co.uk/animal-rennet/"
+    // - The other schools: "majority of scholars among the Malikis, Shafi'is and Hanbalis... impure (najis)".
+    internal const val OTHER_MADHHABS_RENNET_SOURCE_URL = "https://islamqa.info/en/answers/2841"
+    // - Arabic UI (user decision): the Arabic edition of the same IslamQA answer, which states both
+    //   "قول أبي حنيفة وهو إحدى الروايتين عن أحمد بطهارة الإنفحة من الميتة" and the majority (najis) view.
+    internal const val ARABIC_RENNET_SOURCE_URL = "https://islamqa.info/ar/answers/2841"
+
+    /**
+     * A sourced, user-approved madhhab difference. It applies only when EVERY keyword of [ruleId]
+     * that matched is in [keywords] - so e.g. the rennet override never clears "pepsin" (mostly
+     * porcine) or "animal enzymes", which share the rennet rule. Overrides only exist for
+     * Suspicious rules, so they can never downgrade a Haram match.
+     */
+    private data class MadhhabOverride(
+        val ruleId: String,
+        val madhhab: Madhhab,
+        val keywords: List<String>,
+        val status: HalalStatus,
+        // Shown when this override changed the verdict (madhhab selected).
+        val appliedNote: (AppLanguage) -> String,
+        // Shown under any other madhhab when a covered keyword matched, so the difference is visible.
+        val differenceNote: (AppLanguage) -> String
+    )
+
+    private val MADHHAB_OVERRIDES = listOf(
+        MadhhabOverride(
+            ruleId = RENNET_RULE_ID,
+            madhhab = Madhhab.HANAFI,
+            keywords = listOf("rennet", "animal rennet", "kälberlab", "kalbslab", "présure",
+                "peynir mayası", "hayvansal peynir mayası", "hayvansal maya", "şirden"),
+            status = HalalStatus.HELAL,
+            appliedNote = { lang ->
+                when (lang) {
+                    AppLanguage.EN -> "Madhhab note (Hanafi): the rennet in this product was treated as permissible per Abu Hanifa, who held that rennet from a halal-species animal is pure even if the animal was not Islamically slaughtered; his students Abu Yusuf and Muhammad held that its consumption is not permissible. Pepsin and other enzymes are not covered. Source: $HANAFI_RENNET_SOURCE_URL\nTurkey's Diyanet also sees no objection to animal rennet unless it is known to be from pork. Source: $DIYANET_RENNET_FATWA_URL"
+                    AppLanguage.DE -> "Hinweis zur Rechtsschule (hanafitisch): Das Lab in diesem Produkt wurde nach Abu Hanifa als zulässig gewertet - nach ihm ist Lab von einem erlaubten Tier rein, auch wenn das Tier nicht islamisch geschlachtet wurde; seine Schüler Abu Yusuf und Muhammad hielten den Verzehr für unzulässig. Pepsin und andere Enzyme sind nicht erfasst. Quelle: $HANAFI_RENNET_SOURCE_URL\nAuch die türkische Diyanet sieht bei tierischem Lab keinen Einwand, solange nicht bekannt ist, dass es vom Schwein stammt. Quelle: $DIYANET_RENNET_FATWA_URL"
+                    AppLanguage.FR -> "Note sur l'école (hanafite) : la présure de ce produit a été considérée comme permise selon Abu Hanifa, pour qui la présure d'un animal d'espèce licite est pure même si l'animal n'a pas été abattu rituellement ; ses disciples Abu Yusuf et Muhammad jugeaient sa consommation non permise. La pepsine et les autres enzymes ne sont pas concernées. Source : $HANAFI_RENNET_SOURCE_URL\nLa Diyanet turque ne voit pas non plus d'objection à la présure animale tant qu'il n'est pas établi qu'elle provient du porc. Source : $DIYANET_RENNET_FATWA_URL"
+                    AppLanguage.TR -> "Mezhep notu (Hanefi): Bu üründeki peynir mayası Ebû Hanîfe'nin görüşüne göre caiz sayıldı; ona göre eti yenen türden bir hayvandan alınan maya, hayvan usulüne göre kesilmemiş olsa da temizdir. Talebeleri Ebû Yûsuf ve İmam Muhammed ise yenmesinin caiz olmadığı görüşündedir. Pepsin ve diğer enzimler bu kapsamda değildir. Kaynak: $HANAFI_RENNET_SOURCE_URL\nDiyanet de domuzdan elde edildiği bilinmedikçe hayvansal mayada sakınca görmüyor. Kaynak: $DIYANET_RENNET_FATWA_URL"
+                    AppLanguage.AR -> "ملاحظة مذهبية (حنفي): اعتُبرت الإنفحة في هذا المنتج جائزة وفق قول أبي حنيفة، وهو إحدى الروايتين عن أحمد: إنفحة الميتة أو ما ذُكّي ذكاة غير شرعية طاهرة. لا يشمل ذلك البيبسين والإنزيمات الأخرى. المصدر: $ARABIC_RENNET_SOURCE_URL"
+                }
+            },
+            differenceNote = { lang ->
+                when (lang) {
+                    AppLanguage.EN -> "Madhhab note: per Abu Hanifa, rennet from a halal-species animal is permissible even without Islamic slaughter, so this rennet counts as permissible when 'Hanafi' is selected (not pepsin or other enzymes). Source: $HANAFI_RENNET_SOURCE_URL\nThe majority of Maliki, Shafi'i and Hanbali scholars consider it impure. Source: $OTHER_MADHHABS_RENNET_SOURCE_URL"
+                    AppLanguage.DE -> "Hinweis zur Rechtsschule: Nach Abu Hanifa ist Lab von einem erlaubten Tier auch ohne islamische Schlachtung zulässig; bei Auswahl 'Hanafitisch' gilt dieses Lab daher als zulässig (nicht Pepsin oder andere Enzyme). Quelle: $HANAFI_RENNET_SOURCE_URL\nDie Mehrheit der malikitischen, schafiitischen und hanbalitischen Gelehrten hält es für unrein. Quelle: $OTHER_MADHHABS_RENNET_SOURCE_URL"
+                    AppLanguage.FR -> "Note sur l'école : selon Abu Hanifa, la présure d'un animal d'espèce licite est permise même sans abattage rituel ; elle est donc considérée comme permise si « Hanafite » est sélectionné (pas la pepsine ni les autres enzymes). Source : $HANAFI_RENNET_SOURCE_URL\nLa majorité des savants malikites, chaféites et hanbalites la jugent impure. Source : $OTHER_MADHHABS_RENNET_SOURCE_URL"
+                    AppLanguage.TR -> "Mezhep notu: Ebû Hanîfe'ye göre eti yenen türden bir hayvanın mayası, hayvan usulüne göre kesilmemiş olsa da caizdir; 'Hanefi' seçiliyken bu peynir mayası caiz sayılır (pepsin ve diğer enzimler hariç). Kaynak: $HANAFI_RENNET_SOURCE_URL\nMaliki, Şafii ve Hanbelî âlimlerin çoğunluğu ise necis kabul eder. Kaynak: $OTHER_MADHHABS_RENNET_SOURCE_URL"
+                    AppLanguage.AR -> "ملاحظة مذهبية: عند أبي حنيفة، وهو إحدى الروايتين عن أحمد، إنفحة الميتة أو ما ذُكّي ذكاة غير شرعية طاهرة، لذا تُعدّ هذه الإنفحة جائزة عند اختيار \"حنفي\" (دون البيبسين والإنزيمات الأخرى). وذهب الجمهور من المالكية والشافعية والحنابلة إلى أنها نجسة. المصدر: $ARABIC_RENNET_SOURCE_URL"
+                }
+            }
+        ),
+        MadhhabOverride(
+            ruleId = WHEY_RULE_ID,
+            madhhab = Madhhab.HANAFI,
+            keywords = listOf("whey", "whey powder", "molke", "lactosérum", "peynir altı suyu tozu"),
+            status = HalalStatus.HELAL,
+            // No direct source for whey exists - this is an inference from the rennet ruling and
+            // the note says so. Deliberately no fatwa link here: it doesn't cover whey directly.
+            appliedNote = { lang ->
+                when (lang) {
+                    AppLanguage.EN -> "Madhhab note (Hanafi): the whey in this product was treated as permissible because it follows the Hanafi ruling on rennet. This is an inference from that ruling, not a ruling found directly about whey."
+                    AppLanguage.DE -> "Hinweis zur Rechtsschule (hanafitisch): Die Molke in diesem Produkt wurde als zulässig gewertet, weil sie der hanafitischen Regel zum Lab folgt. Das ist eine Ableitung aus dieser Regel, keine direkt zu Molke gefundene Regel."
+                    AppLanguage.FR -> "Note sur l'école (hanafite) : le lactosérum de ce produit a été considéré comme permis car il suit le statut hanafite de la présure. Il s'agit d'une déduction à partir de ce statut, et non d'un avis trouvé directement sur le lactosérum."
+                    AppLanguage.TR -> "Mezhep notu (Hanefi): Bu üründeki peyniraltı suyu, Hanefi mezhebinin peynir mayası hükmünü takip ettiği için caiz sayıldı. Bu, doğrudan peyniraltı suyu hakkında bulunmuş bir hüküm değil, o hükümden yapılmış bir çıkarımdır."
+                    AppLanguage.AR -> "ملاحظة مذهبية (حنفي): اعتُبر مصل اللبن في هذا المنتج جائزاً لأنه يتبع الحكم الحنفي في الإنفحة. وهذا استنتاج من ذلك الحكم، وليس حكماً وُجد مباشرة في مصل اللبن."
+                }
+            },
+            differenceNote = { lang ->
+                when (lang) {
+                    AppLanguage.EN -> "Madhhab note: when 'Hanafi' is selected, whey counts as permissible because it follows the Hanafi ruling on rennet - an inference, not a ruling found directly about whey."
+                    AppLanguage.DE -> "Hinweis zur Rechtsschule: Bei Auswahl 'Hanafitisch' gilt Molke als zulässig, weil sie der hanafitischen Regel zum Lab folgt - eine Ableitung, keine direkt zu Molke gefundene Regel."
+                    AppLanguage.FR -> "Note sur l'école : si « Hanafite » est sélectionné, le lactosérum est considéré comme permis car il suit le statut hanafite de la présure - une déduction, et non un avis trouvé directement sur le lactosérum."
+                    AppLanguage.TR -> "Mezhep notu: 'Hanefi' seçiliyken peyniraltı suyu, peynir mayası hükmünü takip ettiği için caiz sayılır - bu doğrudan bir hüküm değil, bir çıkarımdır."
+                    AppLanguage.AR -> "ملاحظة مذهبية: عند اختيار \"حنفي\" يُعدّ مصل اللبن جائزاً لأنه يتبع الحكم الحنفي في الإنفحة - وهذا استنتاج، وليس حكماً وُجد مباشرة في مصل اللبن."
+                }
+            }
+        )
+    )
+
+    // Keywords of a rule that actually match, in the text or in OFF's additive tags.
+    private fun matchedKeywords(keywords: List<String>, text: String, additiveTags: List<String>): List<String> =
+        keywords.filter { kw -> containsKeyword(text, kw) || additiveTags.any { tag -> containsKeyword(tag, kw) } }
+
+    // The override (if any) a madhhab-specific ruling applies to this match. Shared by the product
+    // verdict and the chip colouring so the two can never disagree.
+    private fun applicableOverride(ruleId: String, matched: List<String>, madhhab: Madhhab): MadhhabOverride? =
+        MADHHAB_OVERRIDES.firstOrNull { o ->
+            o.ruleId == ruleId && o.madhhab == madhhab && matched.isNotEmpty() && matched.all { it in o.keywords }
+        }
+
+    // Overrides for this rule whose keywords matched but which don't apply under [madhhab] - used
+    // to tell the user the result would differ under another school.
+    private fun differingOverrides(ruleId: String, matched: List<String>, madhhab: Madhhab): List<MadhhabOverride> =
+        MADHHAB_OVERRIDES.filter { o ->
+            o.ruleId == ruleId && o.madhhab != madhhab && matched.any { it in o.keywords }
+        }
+
     private val MEAT_KEYWORDS = listOf(
         "beef", "veal", "lamb", "mutton", "goat meat", "chicken", "poultry", "turkey meat",
         "duck meat", "goose meat", "chicken broth", "beef broth", "chicken stock", "beef stock",
@@ -101,7 +207,13 @@ object HalalAnalyzer {
             // "wine vinegar" trigger phrase) - see the wine-vinegar block in NEGATION_PHRASES
             // below for the fiqh rationale (istihala: the alcohol has fully converted to acetic
             // acid, so majority fiqh treats it as halal, not as wine).
-            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake"),
+            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake",
+                // Turkish (added 2026-10-07; before this a Turkish label saying "ALKOL"/"ŞARAP"
+                // came out Halal). Suffixes defeat the word-boundary check, so the inflected
+                // forms are listed - never prefix matching, or "bira" would hit "biraz".
+                // Deliberately no "rom"/"romlu": rum flavouring in cakes is a separate policy call.
+                "alkol", "alkollü", "alkolü", "etil alkol", "etanol",
+                "şarap", "şarabı", "şaraplı", "bira", "birası", "biralı"),
             nameEn = "Alcohol / Liqueur / Wine Additive",
             nameTr = "Alkol / Likör / Şarap Bileşeni",
             reasonEn = "Intoxicating alcoholic beverages or flavourings. Non-permissible in foods.",
@@ -243,7 +355,10 @@ object HalalAnalyzer {
             // also fires on "lab-grown", "lab-tested", etc. in English ingredient text. Products
             // without a halal claim already default to Şüpheli via the generic no-claim branch,
             // so this rule missing an unqualified German "Lab" mention isn't a coverage gap.
-            keywords = listOf("rennet", "pepsin", "animal rennet", "kälberlab", "kalbslab", "présure", "animal enzymes", "cheese cultures"),
+            // Turkish terms added 2026-10-07 - Turkish-labelled cheese wasn't caught at all before.
+            // Never bare "maya": on its own that is bread/baker's yeast.
+            keywords = listOf("rennet", "pepsin", "animal rennet", "kälberlab", "kalbslab", "présure", "animal enzymes", "cheese cultures",
+                "peynir mayası", "hayvansal peynir mayası", "hayvansal maya", "şirden"),
             nameEn = "Animal Rennet / Cheese Enzymes",
             nameTr = "Hayvansal Peynir Mayası / Enzim",
             reasonEn = "Curdling enzyme from calf stomach. Permissible only if from Halal slaughtered animals or microbial.",
@@ -325,8 +440,8 @@ object HalalAnalyzer {
         // Strip negated compounds ("alcohol-free", "non-alcoholic") before matching, so a
         // hyphen boundary doesn't let e.g. "alcohol-free" trip the "alcohol" keyword - the
         // word-boundary check in containsKeyword treats '-' as a boundary, not as glue.
-        val ingredientsLower = stripNegatedPhrases(ingredientsRaw.lowercase(Locale.ROOT))
-        val additiveTags = offProduct.additivesTags?.map { it.lowercase(Locale.ROOT).replace("en:", "") } ?: emptyList()
+        val ingredientsLower = stripNegatedPhrases(normalizeForMatching(ingredientsRaw))
+        val additiveTags = offProduct.additivesTags?.map { normalizeForMatching(it).replace("en:", "") } ?: emptyList()
         val labelsTags = offProduct.labelsTags?.map { it.lowercase(Locale.ROOT).replace("en:", "") } ?: emptyList()
         val analysisTags = offProduct.ingredientsAnalysisTags?.map { it.lowercase(Locale.ROOT) } ?: emptyList()
 
@@ -376,11 +491,25 @@ object HalalAnalyzer {
         }
 
         // 2. Check for Suspicious rules (Doubtful / Mushbooh)
+        // Madhhab notes, appended after the verdict sentence (history cards truncate the reason, so
+        // the main verdict must stay first). Deduplicated: a rule can't add the same note twice.
+        val madhhabNotes = mutableListOf<String>()
         for (rule in SUSPICIOUS_RULES) {
             if (rule.suppressIfHalalClaim && hasHalalClaim) continue
-            val matchedInText = rule.keywords.any { kw -> containsKeyword(ingredientsLower, kw) }
-            val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> containsKeyword(tag, kw) } }
-            if (matchedInText || matchedInAdditives) {
+            val matched = matchedKeywords(rule.keywords, ingredientsLower, additiveTags)
+            if (matched.isNotEmpty()) {
+                val override = applicableOverride(rule.nameEn, matched, madhhab)
+                // A rennet/whey difference can't change a Haram verdict (e.g. "pork rennet"), and a
+                // note calling that same rennet permissible would contradict the Haram banner.
+                val notesRelevant = harmfulLabels.isEmpty()
+                if (override != null) {
+                    if (notesRelevant) override.appliedNote(language).let { if (it !in madhhabNotes) madhhabNotes.add(it) }
+                    // Only HELAL overrides exist today: the match simply isn't flagged.
+                    if (override.status == HalalStatus.HELAL) continue
+                }
+                if (notesRelevant) differingOverrides(rule.nameEn, matched, madhhab).forEach { o ->
+                    o.differenceNote(language).let { if (it !in madhhabNotes) madhhabNotes.add(it) }
+                }
                 // Any gelatin-family suspicious rule (generic-unspecified OR the more specific
                 // beef/fish rule) must be skipped once a pork/gelatin Haram flag already fired -
                 // otherwise a "not pork" Suspicious card renders directly under the Haram
@@ -559,7 +688,7 @@ object HalalAnalyzer {
             harmfulOrSuspiciousIngredients = if (harmfulLabels.isNotEmpty()) harmfulLabels else suspiciousLabels,
             flaggedDetails = flaggedItems,
             allIngredients = allIngredientsList,
-            reasonOrDetails = reason,
+            reasonOrDetails = (listOf(reason) + madhhabNotes).joinToString("\n\n"),
             alternatives = alternatives,
             imageUrl = imageUrl,
             language = language,
@@ -588,6 +717,16 @@ object HalalAnalyzer {
         "cerveza sin alcohol", "vino sin alcohol",
         "alkolsüz bira", "alkolsüz şarap",
         "alcohol-free", "alcohol free", "non-alcoholic", "non alcoholic",
+        // Non-beverage "alcohols" and Turkish "contains no alcohol" phrasings. Without these the
+        // alcohol keywords above would flag a synthetic polymer, a preservative or a polyol
+        // sweetener as Haram. "polivinil"/"benzil" can't stand alone as an ingredient, so those are
+        // stems ("polivinil alkol" also strips "polivinil alkolü"). "şeker" and "bira" CAN stand
+        // alone, so those phrases are written in full: a bare "şeker alkol" stem would swallow
+        // "şeker, alkol (%3)" when OCR drops the comma and turn a Haram product green.
+        "polyvinyl alcohol", "benzyl alcohol", "sugar alcohol",
+        "polivinil alkol", "benzil alkol",
+        "şeker alkolü", "şeker alkolleri", "bira mayası", "bira mayalı",
+        "alkol içermez", "alkol içermemektedir", "alkol ihtiva etmez",
         "alkoholfrei", "alkoholfreie", "alkoholfreies", "alkolsüz",
         "ohne alkohol", "sans alcool", "sin alcohol",
         // Wine/sherry VINEGAR is excluded from the bare "wine"/"wein"/"vin"/"sherry" keywords.
@@ -608,43 +747,84 @@ object HalalAnalyzer {
         // means the bare "gelatin" keyword below no longer matches this specific mention, while
         // a separate, unrelated "gelatin" elsewhere in the same ingredient list still does.
         "vegetable gelatin", "gélatine végétale", "pflanzliche gelatine", "bitkisel jelatin",
-        "gelatina vegetal"
+        "gelatina vegetal",
+        // Microbial / vegetable rennet: non-animal, permissible per Diyanet's rennet fatwa ("Bitkisel
+        // ve mikrobiyal mayaların ... kullanılmasında ... sakınca bulunmamaktadır"). Stripped as a
+        // whole so the bare "rennet"/"peynir mayası" keywords don't fire on them, while a separate
+        // animal rennet elsewhere in the same list still does.
+        "microbial rennet", "vegetable rennet", "non-animal rennet", "vegetarian rennet",
+        "présure microbienne", "présure végétale", "mikrobielles lab", "cuajo microbiano", "cuajo vegetal",
+        "mikrobiyal peynir mayası", "bitkisel peynir mayası", "mikrobiyal maya", "bitkisel maya",
+        // ...and the same written with the qualifier in brackets after the noun.
+        "rennet (microbial)", "rennet (vegetable)", "rennet (non-animal)",
+        "peynir mayası (mikrobiyal)", "peynir mayası (bitkisel)", "maya (mikrobiyal)", "maya (bitkisel)"
     )
 
+    // Rule keywords and phrases are static, but classifyIngredientToken runs per chip on every
+    // recomposition, so their normalized forms are computed once. Thread-safe: the analyzer runs on
+    // IO while chips render on the main thread. Raw keywords stay the identities used elsewhere.
+    private val normalizedKeywordCache = java.util.concurrent.ConcurrentHashMap<String, String>()
+    private fun normalizedKeyword(keyword: String): String =
+        normalizedKeywordCache.getOrPut(keyword) { normalizeForMatching(keyword) }
+    private val NORMALIZED_NEGATION_PHRASES by lazy { NEGATION_PHRASES.map(::normalizeForMatching) }
+    private val NORMALIZED_NUTRITION_MARKERS by lazy { NUTRITION_TABLE_MARKERS.map(::normalizeForMatching) }
+    private val NORMALIZED_INGREDIENT_MARKERS by lazy { INGREDIENT_SECTION_MARKERS.map(::normalizeForMatching) }
+
+    // [text] must already be normalizeForMatching()'d; phrases are normalized the same way, or
+    // e.g. "mikrobiyal peynir mayası" would stop being stripped from folded text.
     private fun stripNegatedPhrases(text: String): String {
         var result = text
-        for (phrase in NEGATION_PHRASES) {
+        for (phrase in NORMALIZED_NEGATION_PHRASES) {
             result = result.replace(phrase, " ")
         }
         return result
     }
+
+    /**
+     * The one text normalization every matching path uses (rule keywords, negation phrases,
+     * ingredient text, chip tokens, section markers). lowercase(Locale.ROOT) alone maps Turkish
+     * "İ" to "i" + U+0307 and "I" to "i" (never "ı"), so capitalised Turkish labels - very common
+     * on packaging - matched no Turkish keyword at all ("JELATİN" came out Halal). Dropping the
+     * combining dot and folding "ı" to "i" makes "PEYNİR MAYASI", "peynir mayası" and the keyword
+     * all compare equal. Not Locale("tr"): that lowercases "I" to "ı" and breaks caps English.
+     */
+    internal fun normalizeForMatching(text: String): String =
+        text.lowercase(Locale.ROOT).replace("\u0307", "").replace('ı', 'i')
 
     // Word-boundary match instead of plain substring: a short keyword like "rum" or "vin"
     // must not fire on "sérum" (whey) or "vinegar" just because it appears inside the word.
     // Checked manually via Char.isLetterOrDigit (Unicode-aware on both JVM and Android) rather
     // than a regex "(?U)\b" flag, which Android's ICU-based regex engine doesn't support and
     // throws PatternSyntaxException on at runtime.
+    //
+    // [text] must already be normalizeForMatching()'d; the keyword is normalized here so every
+    // rule list can stay written in natural spelling (e.g. "peynir mayası", "şirden").
     private fun containsKeyword(text: String, keyword: String): Boolean {
+        val kw = normalizedKeyword(keyword)
         var fromIndex = 0
         while (true) {
-            val idx = text.indexOf(keyword, fromIndex)
+            val idx = text.indexOf(kw, fromIndex)
             if (idx == -1) return false
             val beforeIsBoundary = idx == 0 || !text[idx - 1].isLetterOrDigit()
-            val afterIndex = idx + keyword.length
+            val afterIndex = idx + kw.length
             val afterIsBoundary = afterIndex >= text.length || !text[afterIndex].isLetterOrDigit()
             if (beforeIsBoundary && afterIsBoundary) return true
             fromIndex = idx + 1
         }
     }
 
-    @Suppress("UNUSED_PARAMETER") // Phase 2 overrides will read it; kept in the signature now so
-    // every chip-colouring call site already passes the right madhhab (result's own, or selected).
+    // Chip colour for one ingredient token. Applies the same madhhab overrides as the product verdict
+    // (via applicableOverride) so a chip never contradicts its banner.
     fun classifyIngredientToken(token: String, madhhab: Madhhab = Madhhab.UNSPECIFIED): HalalStatus {
-        val lower = stripNegatedPhrases(token.lowercase(Locale.ROOT))
+        val lower = stripNegatedPhrases(normalizeForMatching(token))
         if (HARAM_RULES.any { rule -> rule.keywords.any { kw -> containsKeyword(lower, kw) } }) {
             return HalalStatus.HARAM
         }
-        if (SUSPICIOUS_RULES.any { rule -> rule.keywords.any { kw -> containsKeyword(lower, kw) } }) {
+        val stillSuspicious = SUSPICIOUS_RULES.any { rule ->
+            val matched = matchedKeywords(rule.keywords, lower, emptyList())
+            matched.isNotEmpty() && applicableOverride(rule.nameEn, matched, madhhab)?.status != HalalStatus.HELAL
+        }
+        if (stillSuspicious) {
             return HalalStatus.SUPHELI
         }
         return HalalStatus.HELAL
@@ -709,9 +889,9 @@ object HalalAnalyzer {
     )
 
     fun looksLikeNutritionTableText(text: String): Boolean {
-        val lower = text.lowercase(Locale.ROOT)
-        if (INGREDIENT_SECTION_MARKERS.any { lower.contains(it) }) return false
-        return NUTRITION_TABLE_MARKERS.count { lower.contains(it) } >= 2
+        val lower = normalizeForMatching(text)
+        if (NORMALIZED_INGREDIENT_MARKERS.any { lower.contains(it) }) return false
+        return NORMALIZED_NUTRITION_MARKERS.count { lower.contains(it) } >= 2
     }
 
     fun resolveProductImageUrl(offProduct: OffProduct, barcode: String): String? {

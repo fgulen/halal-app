@@ -92,9 +92,10 @@ private val SECTION_END_MARKERS = listOf(
  * percentage-heavy one like "49,5 % (Zucker, Palmöl" - is still letter-dominant.
  */
 private fun isSectionBoundary(text: String): Boolean {
-    val lower = text.lowercase(Locale.ROOT)
-    if (SECTION_END_MARKERS.any { lower.contains(it) }) return true
-    if (HalalAnalyzer.NUTRITION_TABLE_MARKERS.any { lower.contains(it) }) return true
+    // Same normalization as HalalAnalyzer, so caps Turkish labels ("BESİN DEĞERLERİ") match too.
+    val lower = HalalAnalyzer.normalizeForMatching(text)
+    if (SECTION_END_MARKERS.any { lower.contains(HalalAnalyzer.normalizeForMatching(it)) }) return true
+    if (HalalAnalyzer.NUTRITION_TABLE_MARKERS.any { lower.contains(HalalAnalyzer.normalizeForMatching(it)) }) return true
     val letters = text.count { it.isLetter() }
     val digits = text.count { it.isDigit() }
     return digits > 0 && letters < 3
@@ -116,8 +117,8 @@ private fun isSectionBoundary(text: String): Boolean {
 private fun extractIngredientsSection(visionText: Text): String {
     val blocks = visionText.textBlocks
     val startIndex = blocks.indexOfFirst { block ->
-        val lower = block.text.lowercase(Locale.ROOT)
-        HalalAnalyzer.INGREDIENT_SECTION_MARKERS.any { lower.contains(it) }
+        val lower = HalalAnalyzer.normalizeForMatching(block.text)
+        HalalAnalyzer.INGREDIENT_SECTION_MARKERS.any { lower.contains(HalalAnalyzer.normalizeForMatching(it)) }
     }
     if (startIndex == -1) return visionText.text
 

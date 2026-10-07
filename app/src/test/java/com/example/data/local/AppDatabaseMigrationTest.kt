@@ -53,8 +53,27 @@ class AppDatabaseMigrationTest {
                 "harmfulOrSuspiciousIngredients, allIngredients, reasonOrDetails, alternatives, imageUrl, scannedAt) " +
                 "VALUES ('3017620422003', 'Nutella', 'Ferrero', 'Spreads', 'SUPHELI', NULL, 'Whey', 'sugar|||whey', 'reason', '', NULL, 1000)"
         )
+        db.execSQL(
+            "INSERT INTO products (barcode, name, brand, category, status, halalCertificate, " +
+                "harmfulOrSuspiciousIngredients, allIngredients, reasonOrDetails, alternatives, imageUrl, language) " +
+                "VALUES ('8690000000001', 'Beyaz Peynir', 'Test', 'Cheese', 'HELAL', NULL, '', 'süt|||tuz|||peynir mayası', 'old v4 verdict', '', NULL, 'TR')"
+        )
         db.version = 4
         db.close()
+    }
+
+    // v5 also changes verdicts (madhhab overrides, Turkish rennet keywords, microbial rennet no
+    // longer flagged), so - like every earlier verdict-logic change - the resolved-answer cache is
+    // cleared. Otherwise a v4 "Halal" for a Turkish cheese whose rennet was never caught would be
+    // served forever under the default madhhab.
+    @Test
+    fun `upgrading v4 to current clears the products cache but keeps history`() = runTest {
+        createVersion4Database()
+
+        database = AppDatabase.build(context, dbName)
+
+        assertEquals(null, database!!.productDao().getProductByBarcode("8690000000001"))
+        assertEquals(1, database!!.productDao().getScanHistory().first().size)
     }
 
     @Test

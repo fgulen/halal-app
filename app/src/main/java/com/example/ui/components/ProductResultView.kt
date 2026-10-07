@@ -1,5 +1,12 @@
 package com.example.ui.components
 
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.AnnotatedString
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -527,7 +534,7 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = product.reasonOrDetails,
+                        text = linkifyUrls(product.reasonOrDetails),
                         fontSize = 13.sp,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
@@ -628,7 +635,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = product.reasonOrDetails,
+                        text = linkifyUrls(product.reasonOrDetails),
                         fontSize = 13.sp,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
@@ -728,7 +735,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = product.reasonOrDetails,
+                        text = linkifyUrls(product.reasonOrDetails),
                         fontSize = 13.sp,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
@@ -953,7 +960,7 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto:
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = product.reasonOrDetails,
+                        text = linkifyUrls(product.reasonOrDetails),
                         fontSize = 13.sp,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
@@ -1179,4 +1186,25 @@ fun ProductShowcaseImageCard(
             }
         }
     }
+}
+
+// Makes the source links in a verdict's reason text (the madhhab notes' "Source: https://...")
+// tappable, so users can open the cited fatwa themselves. Plain text otherwise.
+private val URL_PATTERN = Regex("""https?://\S+""")
+
+private fun linkifyUrls(text: String): AnnotatedString = buildAnnotatedString {
+    var last = 0
+    for (match in URL_PATTERN.findAll(text)) {
+        append(text.substring(last, match.range.first))
+        withLink(
+            LinkAnnotation.Url(
+                match.value,
+                TextLinkStyles(style = SpanStyle(color = EmeraldPrimaryDeep, textDecoration = TextDecoration.Underline))
+            )
+        ) {
+            append(match.value)
+        }
+        last = match.range.last + 1
+    }
+    append(text.substring(last))
 }

@@ -12,6 +12,7 @@ import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.data.model.Madhhab
 import com.example.data.repository.ProductRepository
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,9 +35,13 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
     private val _selectedLanguage = MutableStateFlow(AppLanguage.EN)
     val selectedLanguage: StateFlow<AppLanguage> = _selectedLanguage.asStateFlow()
 
-    // Loaded from prefs asynchronously in init, like language - a scan in the first instant after
-    // launch can still run as UNSPECIFIED (harmless while no override exists; see the plan doc).
+    // Loaded from prefs asynchronously in init. Since madhhab now changes verdicts, every scan
+    // entry point awaits madhhabLoaded first - otherwise a scan in the first instant after launch
+    // would silently run as UNSPECIFIED (and be cached/stamped that way) for a Hanafi user.
     private val _selectedMadhhab = MutableStateFlow(Madhhab.UNSPECIFIED)
+    private val madhhabLoaded = CompletableDeferred<Unit>()
+    // Set when the user picks a madhhab, so a late initial prefs load can't overwrite that choice.
+    private var madhhabChosenThisSession = false
     val selectedMadhhab: StateFlow<Madhhab> = _selectedMadhhab.asStateFlow()
 
     private val _isMadhhabDialogOpen = MutableStateFlow(false)
@@ -79,7 +84,16 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             _selectedLanguage.value = userPreferences.selectedLanguage.first()
         }
         viewModelScope.launch {
-            _selectedMadhhab.value = userPreferences.selectedMadhhab.first()
+            // finally: if DataStore throws (IO/corruption), scans must not wait on this forever -
+            // they fall back to the UNSPECIFIED default instead.
+            try {
+                val stored = userPreferences.selectedMadhhab.first()
+                if (!madhhabChosenThisSession) _selectedMadhhab.value = stored
+            } catch (e: Exception) {
+                Log.w("HalalScannerViewModel", "Couldn't load madhhab preference, using default", e)
+            } finally {
+                madhhabLoaded.complete(Unit)
+            }
         }
     }
 
@@ -98,6 +112,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun setMadhhab(madhhab: Madhhab) {
+        madhhabChosenThisSession = true
         _selectedMadhhab.value = madhhab
         viewModelScope.launch {
             userPreferences.setSelectedMadhhab(madhhab)
@@ -164,6 +179,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             _isScannerOpen.value = false
             _scanError.value = null
             try {
+                madhhabLoaded.await()
                 val product = repository.checkBarcode(barcode, _selectedLanguage.value, _selectedMadhhab.value)
                 _activeProduct.value = product
             } catch (e: ProductRepository.NetworkUnavailableException) {
@@ -206,6 +222,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
     fun analyzeIngredientsPhoto(productName: String, ingredientsText: String) {
         _photoIngredientsReview.value = null
         viewModelScope.launch {
+            madhhabLoaded.await()
             val product = repository.analyzeIngredientsPhoto(
                 productName = productName,
                 ingredientsText = ingredientsText,

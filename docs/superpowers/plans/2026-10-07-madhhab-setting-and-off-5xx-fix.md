@@ -74,7 +74,71 @@
   - A barcode scan of Nutella goes to OFF, whose current ingredients contain no whey.
   - **Decision:** curated samples get no hand-written verdict. Their ingredient text is run through `HalalAnalyzer.analyzeIngredientsText(…, madhhab)`. If that turns out to be too large a change, write this exact case down as a known gap.
 
-## Phase 2 — Override table
+## Phase 2 — Override table ✅ IMPLEMENTED (2026-10-07, not committed)
+
+> - `MADHHAB_OVERRIDES` in `HalalAnalyzer`, with shared helpers (`applicableOverride`, `differingOverrides`) used by both the product verdict and `classifyIngredientToken`.
+>   - Applies only when **every** keyword of the rule that matched is in the subset, so pepsin, animal enzymes and cheese cultures stay Doubtful.
+>   - An override can never downgrade a Haram match ("pork rennet" → Haram).
+> - HANAFI: rennet (subset) → Halal; whey → Halal (the note says it is an inference and carries no fatwa link).
+> - Notes are appended to the end of `reasonOrDetails` in all 5 languages:
+>   - when the override applies, an "applied" note;
+>   - under the other settings, a "madhhab difference" note.
+>   Diyanet is cited separately as an institution.
+> - Every URL in the reason text is a tappable link (`LinkAnnotation.Url`, Compose BOM 2024.09). The madhhab sources were added to the `HowItWorksDialog` sources list (Diyanet fatwa, IslamQA 2841, IslamOnline).
+> - Async load fix: `onBarcodeScanned` (and so retry) and the photo path await `madhhabLoaded`. **Verified by code review only**; there is no ViewModel unit test.
+> - Curated samples measured: all 22 `InitialData` samples' hand-written verdicts **match** the analyzer exactly. The curated Nutella entry contains no whey (`InitialData.kt:86` is Doritos), so the "Nutella by name" gap does not exist. Curated entries were left as they are.
+> - Tests: 69/69. New: `HalalAnalyzerMadhhabOverrideTest` (12 tests). `HalalAnalyzerMadhhabTest` was narrowed to exclude only (HANAFI, rennet) and (HANAFI, whey).
+> - Emulator: under Hanafi, "milk, sugar, salt, animal rennet, cheese starter" → "no flagged ingredients", note shown, chip green, link opens the Diyanet page. Under Not specified → Doubtful, chip orange, difference note shown.
+>
+> **Review fixes (2026-10-07):**
+> - On a **Haram** product no madhhab note is added. Example: "pork rennet" previously got a note calling the rennet permissible.
+> - Each sentence is now backed by its own link:
+>   - Hanafi split (Abu Hanifa vs. Abu Yusuf/Muhammad) → [thehalallife](https://thehalallife.co.uk/animal-rennet/), quote confirmed verbatim. The same Imameyn wording also appears on [muftisays](https://www.muftisays.com/forums/82-the-food-section/9402-rennet.html). This was the last unconfirmed row; now confirmed.
+>   - Other madhhabs → IslamQA 2841.
+>   - Diyanet → the Diyanet fatwa.
+> - `madhhabLoaded` completes in a `finally`, so scans can't hang if DataStore throws.
+> - 70/70 tests. On the emulator, "milk, sugar, pork rennet, whey powder" gives Haram with no note.
+> - **Phase 3 (note line + source links) was delivered inside Phase 2.**
+>
+> **Rennet keyword fix (user approved 2026-10-07, not committed):**
+> - Added Turkish `peynir mayası`, `hayvansal peynir mayası`, `hayvansal maya`, `şirden` to the rule and to the Hanafi subset. Bare `maya` (bread yeast) is deliberately **not** added.
+> - Microbial/vegetable rennet phrases (TR/EN/FR/DE/ES) were added to `NEGATION_PHRASES`, so they are no longer flagged. Diyanet permits them explicitly.
+> - `HalalAnalyzerRennetKeywordsTest` (7 tests).
+>
+> **Arabic sources (user decision 2026-10-07):**
+> - In the Arabic UI the rennet notes carry a single link, the Arabic edition of IslamQA 2841: [islamqa.info/ar/answers/2841](https://islamqa.info/ar/answers/2841). Its text was checked with curl; both "قول أبي حنيفة وهو إحدى الروايتين عن أحمد بطهارة الإنفحة من الميتة" and the majority view "ذهب الجمهور من المالكية والشافعية والحنابلة ... أنها نجسة" appear in it.
+> - Arabic notes drop the Diyanet sentence and the Imameyn sentence, which have no Arabic source. The HowItWorks list shows only the Arabic source in Arabic.
+> - Tests: 78/78. Emulator: Arabic UI, rennet → Doubtful, Arabic note with the Arabic link renders correctly.
+>
+> **Language review status:** the TR/EN texts were written carefully. **The DE/FR/AR texts were written by Claude and have not been reviewed by a native speaker.** Get a native review before release.
+>
+> **Pre-existing language gap (found 2026-10-07, not fixed):** `HaramRule`/`SuspiciousRule` have only `nameEn`/`nameTr` and `reasonEn`/`reasonTr`. In DE/FR/AR, flagged ingredient names and reasons, including the names embedded in the verdict sentence, appear **in English**.
+>
+> **Backlog status:**
+> - ✅ Turkish rennet keywords — added (see above).
+> - ✅ Microbial/vegetable rennet false Doubtful — fixed, including the bracketed forms ("rennet (microbial)", "peynir mayası (mikrobiyal)").
+> - ✅ **Cache:** `MIGRATION_4_5` now also runs `DELETE FROM products`, because v5 changes verdicts. Otherwise a stale v4 "Halal" would be served forever. History is kept. Test: `upgrading v4 to current clears the products cache but keeps history`. Note: the emulator had already migrated 4→5 earlier, so its cached rows are stale.
+> - ✅ **All-caps Turkish (user approved 2026-10-07):** added `HalalAnalyzer.normalizeForMatching()` (lowercase(ROOT) + drop U+0307 + fold `ı`→`i`). Every matching path goes through it:
+>   - keywords inside `containsKeyword`, `NEGATION_PHRASES`, ingredient text, additive tags and chip tokens;
+>   - nutrition/ingredient section markers in `looksLikeNutritionTableText` and `PhotoIngredientCapture`.
+>   - Not `Locale("tr")`: that would turn "I" into "ı" and break all-caps English.
+>   - Tests: `HalalAnalyzerTurkishCaseTest` (8: SIĞIR JELATİNİ, KARMİN, MİKROBİYAL PEYNİR MAYASI, caps chip and Hanafi, caps nutrition table / İÇİNDEKİLER, English caps guard). The 2 ignored tests are back on. **90/90, 0 skipped.**
+>   - **Real-data impact:** 160 Turkish OFF products + 22 curated samples were run before and after. **Only 1 of 182 changed:** 8695077051820, "Peynir Alti Suyu Tozu" (written with "i" instead of "ı"), went Helal → Doubtful (whey). It is a real whey ingredient, not a new false alarm.
+>   - **Case-invariance check on real data:** each of the 182 texts was run three ways (original, `uppercase(tr)`, `uppercase(ROOT)`) → **0 mismatches**. This is the real-data proof that capitalised labels work.
+>   - Scope, stated precisely: this covers the analyzer and OCR section detection. `ProductRepository`'s paste-detection heuristic and its "nutella" name matcher still use plain `lowercase()` and were not changed. The `PhotoIngredientCapture` change is **verified by compile and code review only**, because OCR doesn't run on this emulator.
+>   - Performance: normalized keywords are cached once (`ConcurrentHashMap`), and negation phrases and markers are `lazy` lists, so chips don't repeat the work on every recomposition.
+> - ✅ **Alcohol rule (user approved 2026-10-07):**
+>   - Added Turkish keywords: `alkol`, `alkollü`, `alkolü`, `etil alkol`, `etanol`, `şarap`, `şarabı`, `şaraplı`, `bira`, `birası`, `biralı`. Inflected forms are listed explicitly; there is no prefix matching, so "biraz" doesn't match.
+>   - Negation stems added: `polyvinyl alcohol`, `benzyl alcohol`, `sugar alcohol`, `polivinil alkol`, `benzil alkol`, `şeker alkol`, `bira maya`, `alkol içermez`, `alkol içermemektedir`, `alkol ihtiva etmez`.
+>   - `HalalAnalyzerAlcoholKeywordsTest` (4 tests, 30+ cases). **94/94, 0 skipped.**
+>   - Real-data diff: 162 TR products + 22 curated samples, **only 1 of 188** changed. That product (86926249, an Eti biscuit) was **already Haram**; now "Alcohol" is flagged too. Its label says *"Mamullerimizin Hiçbir Çeşidinde Alkol, Domuz Yağı ve Katkıları Yoktur"*, a NEGATION sentence. So it is a **pre-existing false positive** (the "Domuz" keyword), and the new alcohol keyword joins the same false alarm. The verdict did not change.
+>   - Real-data limitation: OFF has very few Turkish products that contain alcohol (6 hits + 2 extra products; the other searches returned 503), so the impact was not measured broadly.
+>   - Negations tightened: "şeker alkol" → `şeker alkolü` / `şeker alkolleri`, and "bira maya" → `bira mayası` / `bira mayalı`. As bare stems, "şeker, alkol (%3)" would have gone green when OCR dropped the comma (tested). A capitals test was added for the negations. **96/96.**
+>   - ⚠️ **Conflict with Diyanet:** the test pins `aroma verici (etil alkolü)` → Haram. Diyanet's verified fatwa (`Cevap-Ara/1373`) permits synthetic alcohol used as a flavouring solvent. So the default is now **stricter than Diyanet** on solvent alcohol, consistent with the existing English "ethyl alcohol" behaviour. Measured impact ≈ 0 because the data is thin. A Diyanet-aligned option could come later.
+> - ⚠️ **OPEN — Turkish "…yoktur / içermez" list negations:** sentences like "Alkol, domuz yağı ve katkıları yoktur" or "domuz ürünü içermez" make the product **falsely Haram**. Handling this needs negation at sentence/list level, which is beyond phrase lists. Ask the user.
+> - Report-only (not fixed): English "contains no alcohol" → Haram; "ginger beer" / "zencefil birası" → Haram (consistent with the English behaviour); "cetyl/stearyl alcohol" (fatty alcohols, cosmetics) → Haram; "rom aroması" / "romlu" were deliberately not added (rum flavouring in cakes is a separate policy call).
+> - ~~OPEN — "polyvinyl alcohol" / "benzyl alcohol" come out HARAM in our app too~~ ✅ fixed above. Original note: (checked 2026-10-07). The English `alcohol` keyword fires on its own word. So the earlier comparison claim to the user ("we don't count E999/E1203 as haram") was **wrong** whenever the name is written out; this is the same bug as TagHalal's. Not fixed; awaiting the user.
+> - ⚠️ **OPEN — the alcohol rule has no Turkish keywords** (`alkol`, `şarap`, `bira`, `etil alkol`; only `likör` exists). A Turkish label saying "ALKOL" or "ŞARAP" comes out Halal regardless of letter case. This is pre-existing and safety-relevant, and outside what was approved, so the user is being asked.
 
 - A small table keyed by the rule's stable ID (`nameEn`, e.g. `"Animal Rennet / Cheese Enzymes"`). Each entry holds:
   `madhhab → (status, note TR/EN/…, source citation)`

@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.data.analyzer.HalalAnalyzer
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.ui.theme.EmeraldPrimaryDeep
@@ -207,6 +208,33 @@ private fun HowItWorksSourcesSection(language: AppLanguage) {
             HowItWorksLinkRow("EFSA — efsa.europa.eu", "https://www.efsa.europa.eu/en")
             HowItWorksLinkRow("FDA — fda.gov", "https://www.fda.gov/")
             HowItWorksLinkRow("Australian Legislation — legislation.gov.au", "https://www.legislation.gov.au/")
+
+            // Only the sources behind the madhhab differences the app actually applies (Hanafi
+            // rennet; whey follows it by inference). Each was checked verbatim on 2026-10-07.
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = when (language) {
+                    AppLanguage.EN -> "Madhhab setting: the only difference applied so far is rennet under the Hanafi view (Abu Hanifa); whey follows it by inference. Sources:"
+                    AppLanguage.DE -> "Rechtsschul-Einstellung: Bisher wird nur ein Unterschied angewendet - Lab nach hanafitischer Sicht (Abu Hanifa); Molke folgt ihm als Ableitung. Quellen:"
+                    AppLanguage.FR -> "Réglage de l'école : la seule différence appliquée pour l'instant est la présure selon l'avis hanafite (Abu Hanifa) ; le lactosérum la suit par déduction. Sources :"
+                    AppLanguage.TR -> "Mezhep ayarı: Şimdilik uygulanan tek fark, Hanefi görüşüne (Ebû Hanîfe) göre peynir mayasıdır; peyniraltı suyu çıkarımla onu takip eder. Kaynaklar:"
+                    AppLanguage.AR -> "إعداد المذهب: الاختلاف الوحيد المطبّق حتى الآن هو الإنفحة وفق الرأي الحنفي (أبو حنيفة)؛ ومصل اللبن يتبعها استنتاجاً. المصادر:"
+                },
+                fontSize = 13.sp,
+                color = NaturalTextMuted,
+                lineHeight = 19.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            // Arabic readers get the Arabic edition of IslamQA 2841, the same source the Arabic
+            // verdict notes cite (user decision 2026-10-07); the other pages are English/Turkish.
+            if (language == AppLanguage.AR) {
+                HowItWorksLinkRow("الإسلام سؤال وجواب 2841 — حكم الإنفحة", HalalAnalyzer.ARABIC_RENNET_SOURCE_URL)
+            } else {
+                HowItWorksLinkRow("The Halal Life — Animal Rennet (Hanafi: Abu Hanifa / Abu Yusuf & Muhammad)", HalalAnalyzer.HANAFI_RENNET_SOURCE_URL)
+                HowItWorksLinkRow("IslamQA 2841 — Is animal rennet halal? (Maliki, Shafi'i, Hanbali)", HalalAnalyzer.OTHER_MADHHABS_RENNET_SOURCE_URL)
+                HowItWorksLinkRow("Diyanet Din İşleri Yüksek Kurulu — Peynir mayası fetvası (15.09.2020)", HalalAnalyzer.DIYANET_RENNET_FATWA_URL)
+                HowItWorksLinkRow("IslamOnline — Ruling on Parmesan cheese", "https://fiqh.islamonline.net/en/islamic-ruling-on-parmesan-cheese/")
+            }
         }
     }
 }
