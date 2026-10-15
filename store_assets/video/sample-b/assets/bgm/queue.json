@@ -1,0 +1,50 @@
+[
+ {
+  "model_type": "ace_step_v1_5_turbo_lm_1_7b",
+  "prompt": "[Instrumental]",
+  "alt_prompt": "instrumental, no vocals, energetic modern pop electronic, punchy four-on-the-floor kick, crisp claps, bright synth plucks, warm bass, uplifting major key, confident and optimistic, clean modern advertising production, clear build and drop, 118 bpm",
+  "duration_seconds": 32,
+  "num_inference_steps": 8,
+  "seed": 11,
+  "custom_settings": {
+   "bpm": 118
+  },
+  "output_filename": "bgm_s11"
+ },
+ {
+  "model_type": "ace_step_v1_5_turbo_lm_1_7b",
+  "prompt": "[Instrumental]",
+  "alt_prompt": "instrumental, no vocals, energetic modern pop electronic, punchy four-on-the-floor kick, crisp claps, bright synth plucks, warm bass, uplifting major key, confident and optimistic, clean modern advertising production, clear build and drop, 118 bpm",
+  "duration_seconds": 32,
+  "num_inference_steps": 8,
+  "seed": 23,
+  "custom_settings": {
+   "bpm": 118
+  },
+  "output_filename": "bgm_s23"
+ },
+ {
+  "model_type": "ace_step_v1_5_turbo_lm_1_7b",
+  "prompt": "[Instrumental]",
+  "alt_prompt": "instrumental, no vocals, energetic modern pop electronic, punchy four-on-the-floor kick, crisp claps, bright synth plucks, warm bass, uplifting major key, confident and optimistic, clean modern advertising production, clear build and drop, 118 bpm",
+  "duration_seconds": 32,
+  "num_inference_steps": 8,
+  "seed": 37,
+  "custom_settings": {
+   "bpm": 118
+  },
+  "output_filename": "bgm_s37"
+ },
+ {
+  "model_type": "ace_step_v1_5_turbo_lm_1_7b",
+  "prompt": "[Instrumental]",
+  "alt_prompt": "instrumental, no vocals, energetic modern pop electronic, punchy four-on-the-floor kick, crisp claps, bright synth plucks, warm bass, uplifting major key, confident and optimistic, clean modern advertising production, clear build and drop, 118 bpm",
+  "duration_seconds": 32,
+  "num_inference_steps": 8,
+  "seed": 52,
+  "custom_settings": {
+   "bpm": 118
+  },
+  "output_filename": "bgm_s52"
+ }
+]

@@ -1,0 +1,5 @@
+.hyperframes/
+.thumbnails/
+node_modules/
+assets/bgm/*.wav
+assets/bgm/gen*.log
