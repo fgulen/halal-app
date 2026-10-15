@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Fraunces"; font-weight: 600; src: url("assets/fonts/fraunces-600.woff2") format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-weight: 800; src: url("assets/fonts/fraunces-800.woff2") format("woff2"); }
+      @font-face { font-family: "Manrope"; font-weight: 500; src: url("assets/fonts/manrope-500.woff2") format("woff2"); }
+      @font-face { font-family: "Manrope"; font-weight: 700; src: url("assets/fonts/manrope-700.woff2") format("woff2"); }
+      @font-face { font-family: "Naskh"; font-weight: 700; src: url("assets/fonts/naskh-700.woff2") format("woff2"); }
+
+      :root {
+        --linen: #f3ece2;
+        --paper: #fffaf3;
+        --ink: #1f1a17;
+        --muted: #5b524a;
+        --emerald: #047857;
+        --emerald-soft: #d1fae5;
+        --haram: #be123c;
+        --amber: #b45309;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--linen); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--linen);
+              font-family: "Manrope", sans-serif; color: var(--ink); }
+
+      /* ---------- background layer ---------- */
+      .bg { position: absolute; inset: 0; }
+      .glow { position: absolute; width: 1300px; height: 1300px; right: -260px; top: -380px; border-radius: 50%;
+              background: radial-gradient(circle, rgba(4,120,87,0.22) 0%, rgba(4,120,87,0) 62%); }
+      .glow-2 { position: absolute; width: 900px; height: 900px; left: -320px; bottom: -420px; border-radius: 50%;
+                background: radial-gradient(circle, rgba(180,83,9,0.12) 0%, rgba(180,83,9,0) 65%); }
+      .ring { position: absolute; border-radius: 50%; border: 3px solid rgba(4,120,87,0.16); }
+      .ring.r1 { width: 760px; height: 760px; left: -260px; top: 520px; }
+      .ring.r2 { width: 520px; height: 520px; left: -140px; top: 640px; border-style: dashed; border-color: rgba(4,120,87,0.20); }
+      .rule { position: absolute; left: 150px; top: 132px; width: 760px; height: 3px; background: rgba(31,26,23,0.16);
+              transform-origin: 0 50%; }
+      .meta { position: absolute; left: 150px; top: 86px; font-weight: 700; font-size: 22px; letter-spacing: 0.28em;
+              text-transform: uppercase; color: var(--emerald); }
+
+      /* ---------- left copy column ---------- */
+      .copy { position: absolute; left: 150px; top: 250px; width: 1010px; }
+      .headline { font-family: "Fraunces"; font-weight: 800; font-size: 98px; line-height: 1.04; letter-spacing: -0.02em; }
+      .headline .line { display: block; }
+      .headline em { font-style: normal; color: var(--emerald); }
+      .sub { margin-top: 36px; font-size: 38px; font-weight: 500; color: var(--muted); max-width: 720px; line-height: 1.3; }
+
+      .chips { margin-top: 48px; display: flex; gap: 18px; }
+      .chip { display: flex; align-items: center; gap: 12px; padding: 16px 28px; border-radius: 999px; font-weight: 700;
+              font-size: 30px; letter-spacing: 0.04em; border: 3px solid currentColor; background: var(--paper); }
+      .chip .dot { width: 16px; height: 16px; border-radius: 50%; background: currentColor; }
+      .chip.halal { color: var(--emerald); }
+      .chip.doubt { color: var(--amber); }
+      .chip.haram { color: var(--haram); }
+
+      .langs { margin-top: 48px; display: flex; gap: 16px; }
+      .lang { position: relative; padding: 16px 30px; border-radius: 999px; font-weight: 700; font-size: 30px;
+              color: var(--ink); background: var(--paper); border: 3px solid rgba(31,26,23,0.14); }
+      .lang.ar { font-family: "Naskh"; font-size: 32px; }
+      .lang .fill { position: absolute; inset: -3px; border-radius: 999px; background: var(--emerald); opacity: 0; }
+      .lang span { position: relative; }
+
+      /* ---------- scene 1 label ---------- */
+      .label-wrap { position: absolute; right: 170px; top: 280px; width: 720px; height: 470px; }
+      .label { width: 100%; height: 100%; background: var(--paper); border-radius: 28px; padding: 56px 58px;
+               box-shadow: 0 40px 90px rgba(60,40,20,0.20); border: 3px solid rgba(31,26,23,0.08); }
+      .label h3 { font-weight: 700; font-size: 24px; letter-spacing: 0.24em; color: var(--muted); margin-bottom: 26px; }
+      .label p { font-size: 29px; line-height: 1.55; color: #6f655c; }
+      .mark { position: relative; display: inline-block; font-weight: 700; color: var(--ink); }
+      .mark .hl { position: absolute; left: -6px; right: -6px; top: 6px; bottom: 2px; border-radius: 8px;
+                  background: rgba(4,120,87,0.20); transform-origin: 0 50%; }
+      .mark span { position: relative; }
+
+      /* ---------- phone ---------- */
+      .phone-slot { position: absolute; right: 250px; top: 76px; width: 456px; height: 928px; }
+      .phone { position: relative; width: 456px; height: 928px; border-radius: 66px; background: #15191a; padding: 14px;
+               box-shadow: 0 50px 110px rgba(40,30,20,0.32), inset 0 0 0 3px #2a3032; }
+      .screen { position: relative; width: 428px; height: 900px; border-radius: 52px; overflow: hidden; background: var(--linen); }
+      .scr { position: absolute; left: 0; top: 0; width: 428px; height: 900px; object-fit: cover; }
+      .dim { position: absolute; inset: 0; background: #0b0f0e; opacity: 0; }
+      .scan { position: absolute; left: 0; right: 0; top: 0; height: 90px;
+              background: linear-gradient(180deg, rgba(16,185,129,0) 0%, rgba(16,185,129,0.35) 85%, rgba(16,185,129,0.95) 100%); opacity: 0; }
+
+      /* ---------- scene 5 lockup ---------- */
+      .lockup { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .icon { width: 230px; height: 230px; border-radius: 54px; overflow: hidden; box-shadow: 0 30px 70px rgba(4,60,40,0.30); }
+      .icon img { width: 100%; height: 100%; display: block; }
+      .wordmark { margin-top: 46px; font-family: "Fraunces"; font-weight: 800; font-size: 112px; letter-spacing: -0.02em; }
+      .tagline { margin-top: 18px; font-size: 38px; font-weight: 500; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-kbh8" id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1920" data-height="1080">
+
+      <!-- background, whole film -->
+      <div data-hf-id="hf-k7iy" class="bg clip" id="bg" data-start="0" data-duration="15" data-track-index="0">
+        <div data-hf-id="hf-35j2" class="glow" id="glow"></div>
+        <div data-hf-id="hf-6qbz" class="glow-2" id="glow2"></div>
+        <div data-hf-id="hf-9h49" class="ring r1" id="ring1" data-layout-allow-overflow></div>
+        <div data-hf-id="hf-l0gb" class="ring r2" id="ring2" data-layout-allow-overflow></div>
+      </div>
+
+      <!-- scene 1: the unreadable label -->
+      <div data-hf-id="hf-m5b0" class="clip" id="s1" data-start="0" data-duration="3.4" data-track-index="1">
+        <div data-hf-id="hf-x9zg" class="meta" id="s1-meta">Halal Checker</div>
+        <div data-hf-id="hf-dgpv" class="rule" id="s1-rule"></div>
+        <div data-hf-id="hf-bdx3" class="copy">
+          <div data-hf-id="hf-sodk" class="headline">
+            <span data-hf-id="hf-fxzr" class="line" id="s1-l1">Can you tell</span>
+            <span data-hf-id="hf-3142" class="line" id="s1-l2">if it's <em data-hf-id="hf-9hq6">halal?</em></span>
+          </div>
+        </div>
+        <div data-hf-id="hf-r6wk" class="label-wrap" id="s1-label">
+          <div data-hf-id="hf-x0aa" class="label">
+            <h3 data-hf-id="hf-lv2g">INGREDIENTS</h3>
+            <p data-hf-id="hf-bgxk">Glucose syrup, sugar, <span data-hf-id="hf-zeo6" class="mark"><i data-hf-id="hf-jq3r" class="hl" id="hl1"></i><span data-hf-id="hf-idss">gelatine</span></span>, dextrose,
+              emulsifier (<span data-hf-id="hf-b4zu" class="mark"><i data-hf-id="hf-8um4" class="hl" id="hl2"></i><span data-hf-id="hf-p09g">E471</span></span>), fruit juice from concentrate,
+              acidity regulator (E330), <span data-hf-id="hf-bjav" class="mark"><i data-hf-id="hf-9m9x" class="hl" id="hl3"></i><span data-hf-id="hf-w3rl">whey powder</span></span>, flavouring,
+              colour (E120), glazing agent (beeswax, carnauba wax).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- scene 2: scan -> answer -->
+      <div data-hf-id="hf-2af6" class="clip" id="s2" data-start="3.0" data-duration="4.6" data-track-index="2">
+        <div data-hf-id="hf-r8s7" class="copy">
+          <div data-hf-id="hf-ywrk" class="headline">
+            <span data-hf-id="hf-316e" class="line" id="s2-l1">Scan it.</span>
+            <span data-hf-id="hf-9g4c" class="line" id="s2-l2">Get a <em data-hf-id="hf-8ctw">clear answer.</em></span>
+          </div>
+          <div data-hf-id="hf-icv9" class="sub" id="s2-sub">See exactly which ingredient is the problem.</div>
+        </div>
+      </div>
+
+      <!-- scene 3: three verdicts -->
+      <div data-hf-id="hf-jc3g" class="clip" id="s3" data-start="7.2" data-duration="2.4" data-track-index="3">
+        <div data-hf-id="hf-quh6" class="copy">
+          <div data-hf-id="hf-xpuh" class="headline">
+            <span data-hf-id="hf-fno6" class="line" id="s3-l1">Halal, doubtful</span>
+            <span data-hf-id="hf-kkze" class="line" id="s3-l2">or haram <em data-hf-id="hf-socb">at a glance.</em></span>
+          </div>
+          <div data-hf-id="hf-exrd" class="chips">
+            <div data-hf-id="hf-fdzg" class="chip halal" id="c1"><i data-hf-id="hf-6bgx" class="dot"></i>HALAL</div>
+            <div data-hf-id="hf-ocpc" class="chip doubt" id="c2"><i data-hf-id="hf-0j5x" class="dot"></i>DOUBTFUL</div>
+            <div data-hf-id="hf-h2au" class="chip haram" id="c3"><i data-hf-id="hf-1q30" class="dot"></i>HARAM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- scene 4: languages -->
+      <div data-hf-id="hf-ofyo" class="clip" id="s4" data-start="9.2" data-duration="3.7" data-track-index="4">
+        <div data-hf-id="hf-qg65" class="copy">
+          <div data-hf-id="hf-y45i" class="headline">
+            <span data-hf-id="hf-gcts" class="line" id="s4-l1">Reads labels</span>
+            <span data-hf-id="hf-b4m4" class="line" id="s4-l2">in <em data-hf-id="hf-fqiw">your language.</em></span>
+          </div>
+          <div data-hf-id="hf-u70v" class="langs">
+            <div data-hf-id="hf-3chf" class="lang" id="g-en"><i data-hf-id="hf-0b3z" class="fill" id="f-en"></i><span data-hf-id="hf-ow2n">English</span></div>
+            <div data-hf-id="hf-yghj" class="lang" id="g-de"><i data-hf-id="hf-46cj" class="fill" id="f-de"></i><span data-hf-id="hf-vghz">Deutsch</span></div>
+            <div data-hf-id="hf-y40m" class="lang" id="g-fr"><i data-hf-id="hf-zl2i" class="fill" id="f-fr"></i><span data-hf-id="hf-a59m">Français</span></div>
+            <div data-hf-id="hf-6ekq" class="lang ar" id="g-ar"><i data-hf-id="hf-bq0f" class="fill" id="f-ar"></i><span data-hf-id="hf-2del">العربية</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- phone, persistent through scenes 2-4 -->
+      <div data-hf-id="hf-49kc" class="clip" id="phone-clip" data-start="3.0" data-duration="10.0" data-track-index="5">
+        <div data-hf-id="hf-66wl" class="phone-slot" id="phone">
+          <div data-hf-id="hf-kda4" class="phone">
+            <div data-hf-id="hf-cdmk" class="screen">
+              <img data-hf-id="hf-izjt" class="scr" data-layout-allow-overflow id="sc-home" src="assets/screens/home_en_typed.png" alt="" />
+              <div data-hf-id="hf-7dh7" class="scan" id="scan" data-layout-allow-overflow></div>
+              <div data-hf-id="hf-1ftu" class="dim" id="dim"></div>
+              <img data-hf-id="hf-kh1b" class="scr" data-layout-allow-overflow id="sc-g1" src="assets/screens/gummies_en_top.png" alt="" />
+              <img data-hf-id="hf-8b1n" class="scr" data-layout-allow-overflow id="sc-g2" src="assets/screens/gummies_en_mid.png" alt="" />
+              <img data-hf-id="hf-6mpb" class="scr" data-layout-allow-overflow id="sc-cr" src="assets/screens/crackers_en_top.png" alt="" />
+              <img data-hf-id="hf-6xye" class="scr" data-layout-allow-overflow id="sc-de" src="assets/screens/gummies_de_top.png" alt="" />
+              <img data-hf-id="hf-lhbq" class="scr" data-layout-allow-overflow id="sc-fr" src="assets/screens/gummies_fr_top.png" alt="" />
+              <img data-hf-id="hf-3e1e" class="scr" data-layout-allow-overflow id="sc-ar" src="assets/screens/gummies_ar_top.png" alt="" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- scene 5: lockup -->
+      <div data-hf-id="hf-yort" class="clip" id="s5" data-start="12.4" data-duration="2.6" data-track-index="6">
+        <div data-hf-id="hf-6jvi" class="lockup">
+          <div data-hf-id="hf-f2ol" class="icon" id="s5-icon"><img data-hf-id="hf-u2oa" src="assets/logo/play_store_icon_512.png" alt="" /></div>
+          <div data-hf-id="hf-7tbh" class="wordmark" id="s5-word">Halal Checker</div>
+          <div data-hf-id="hf-9x08" class="tagline" id="s5-tag">Scan. Check. Shop with confidence.</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const W = 428, H = 900;
+
+      // ---- ambient: one shared slow drift on the decoratives (sine, low amplitude) ----
+      const phase = { p: 0 };
+      tl.to(phase, {
+        p: Math.PI * 2 * 1.5, duration: 15, ease: "none",
+        onUpdate: () => {
+          const s = Math.sin(phase.p);
+          document.getElementById("glow").style.transform = `translate(${s * 40}px, ${s * 24}px)`;
+          document.getElementById("glow2").style.transform = `translate(${Math.sin(phase.p + Math.PI / 2) * 30}px, 0)`;
+        },
+      }, 0);
+      tl.fromTo("#ring1", { x: 0, y: 0 }, { x: 60, y: -40, duration: 15, ease: "none" }, 0);
+      tl.fromTo("#ring2", { rotation: 0 }, { rotation: 40, duration: 15, ease: "none" }, 0);
+
+      // ---- scene 1 (0-3.0): statement build over the label ----
+      tl.fromTo("#s1-meta", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.15);
+      tl.fromTo("#s1-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power3.inOut" }, 0.2);
+      tl.fromTo("#s1-label", { opacity: 0, y: 70, rotation: -9 }, { opacity: 1, y: 0, rotation: -4, duration: 1.0, ease: "power3.out" }, 0.25);
+      tl.fromTo("#s1-l1", { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 0.45);
+      tl.fromTo("#s1-l2", { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 0.95);
+      ["#hl1", "#hl2", "#hl3"].forEach((h, i) => {
+        tl.fromTo(h, { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out" }, 1.6 + i * 0.22);
+      });
+      // exit
+      tl.to("#s1-label", { opacity: 0, y: -40, scale: 0.92, duration: 0.45, ease: "power2.in" }, 2.95);
+      tl.to(["#s1-l1", "#s1-l2"], { opacity: 0, y: -30, duration: 0.35, ease: "power2.in", stagger: 0.06 }, 2.9);
+      tl.to(["#s1-meta", "#s1-rule"], { opacity: 0, duration: 0.3 }, 2.9);
+
+      // ---- scene 2 (3.0-7.2): phone establishes, scan, result rises, then "why" ----
+      tl.fromTo("#phone", { opacity: 0, x: 620 }, { opacity: 1, x: 0, duration: 1.0, ease: "power3.out" }, 3.2);
+      // all result screens start below / hidden
+      gsap.set(["#sc-g1"], { y: H });
+      gsap.set(["#sc-g2", "#sc-cr", "#sc-de", "#sc-fr", "#sc-ar"], { opacity: 0 });
+      tl.fromTo("#s2-l1", { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 3.55);
+      tl.fromTo("#scan", { opacity: 0, y: -90 }, { opacity: 1, duration: 0.15 }, 4.0);
+      tl.to("#scan", { y: H, duration: 0.8, ease: "power1.inOut" }, 4.15);
+      tl.to("#scan", { opacity: 0, duration: 0.2 }, 4.85);
+      tl.to("#dim", { opacity: 0.35, duration: 0.5, ease: "power2.out" }, 4.95);
+      tl.to("#sc-g1", { y: 0, duration: 0.75, ease: "power3.out" }, 4.95);
+      tl.fromTo("#s2-l2", { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 5.15);
+      // in-screen state change to the flagged-ingredients view
+      tl.to("#sc-g1", { y: -120, opacity: 0, duration: 0.6, ease: "power2.inOut" }, 6.15);
+      tl.fromTo("#sc-g2", { opacity: 0, y: 120 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.inOut" }, 6.15);
+      tl.fromTo("#s2-sub", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 6.25);
+      // exit copy
+      tl.to(["#s2-l1", "#s2-l2", "#s2-sub"], { opacity: 0, y: -30, duration: 0.35, ease: "power2.in", stagger: 0.05 }, 7.05);
+
+      // ---- scene 3 (7.2-9.2): scale-swap to HALAL + three verdict chips ----
+      tl.to("#sc-g2", { scale: 0.9, opacity: 0, duration: 0.3, ease: "power2.in" }, 7.25);
+      tl.fromTo("#sc-cr", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(1.4)" }, 7.45);
+      tl.fromTo("#s3-l1", { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 7.45);
+      tl.fromTo("#s3-l2", { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 7.7);
+      ["#c1", "#c2", "#c3"].forEach((c, i) => {
+        tl.fromTo(c, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.8)" }, 8.0 + i * 0.14);
+      });
+      tl.to(["#s3-l1", "#s3-l2", "#c1", "#c2", "#c3"], { opacity: 0, y: -26, duration: 0.35, ease: "power2.in", stagger: 0.04 }, 9.0);
+
+      // ---- scene 4 (9.2-12.4): language carousel, chips in sync ----
+      tl.fromTo("#s4-l1", { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 9.35);
+      tl.fromTo("#s4-l2", { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 9.6);
+      ["#g-en", "#g-de", "#g-fr", "#g-ar"].forEach((g, i) => {
+        tl.fromTo(g, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 9.75 + i * 0.08);
+      });
+      // EN chip active first (the screen showing is English)
+      tl.fromTo("#f-en", { opacity: 0 }, { opacity: 1, duration: 0.25 }, 9.9);
+      tl.to("#g-en span", { color: "#ffffff", duration: 0.25 }, 9.9);
+      const LANGS = [["#sc-cr", "#sc-de", "en", "de", 10.4], ["#sc-de", "#sc-fr", "de", "fr", 11.2], ["#sc-fr", "#sc-ar", "fr", "ar", 12.0]];
+      LANGS.forEach(([out, inn, a, b, t]) => {
+        tl.to(out, { x: -W, duration: 0.55, ease: "power3.inOut" }, t);
+        tl.fromTo(inn, { x: W, opacity: 1 }, { x: 0, opacity: 1, duration: 0.55, ease: "power3.inOut" }, t);
+        tl.to(`#f-${a}`, { opacity: 0, duration: 0.25 }, t + 0.15);
+        tl.to(`#g-${a} span`, { color: "#1f1a17", duration: 0.25 }, t + 0.15);
+        tl.to(`#f-${b}`, { opacity: 1, duration: 0.25 }, t + 0.2);
+        tl.to(`#g-${b} span`, { color: "#ffffff", duration: 0.25 }, t + 0.2);
+      });
+      tl.to(["#s4-l1", "#s4-l2", "#g-en", "#g-de", "#g-fr", "#g-ar"], { opacity: 0, y: -26, duration: 0.35, ease: "power2.in", stagger: 0.03 }, 12.75);
+
+      // ---- scene 5 (12.4-15): phone clears, logo blooms ----
+      tl.to("#phone", { opacity: 0, x: 140, scale: 0.95, duration: 0.5, ease: "power2.in" }, 12.75);
+      tl.fromTo("#s5-icon", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.75, ease: "back.out(1.7)" }, 13.15);
+      tl.fromTo("#s5-word", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, 13.45);
+      tl.fromTo("#s5-tag", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 13.75);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

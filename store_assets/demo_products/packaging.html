@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- Source for the fictional "Vellmark" demo product images (app/src/debug/assets/demo/*.png).
+     Render one product per screenshot: packaging.html?p=crackers (see render_packaging.sh). -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@500;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 800px; height: 800px; background: #ffffff; overflow: hidden; }
+  .stage { width: 800px; height: 800px; display: flex; align-items: center; justify-content: center;
+           background: radial-gradient(circle at 50% 58%, #f6f1ea 0%, #ffffff 62%); }
+  .shadow { position: absolute; bottom: 120px; width: 420px; height: 46px; border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(60,40,20,.22), rgba(60,40,20,0) 70%); }
+  .brand { font-family: Inter, sans-serif; font-weight: 700; letter-spacing: .32em; font-size: 22px; text-transform: uppercase; }
+  .name { font-family: Fraunces, Georgia, serif; font-weight: 800; line-height: .95; letter-spacing: -.01em; }
+  .sub { font-family: Inter, sans-serif; font-weight: 500; font-size: 20px; letter-spacing: .04em; opacity: .85; }
+
+  /* box (crackers, biscuits, cake) */
+  .box { position: relative; width: 400px; height: 500px; border-radius: 22px; padding: 44px 38px;
+         display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+         box-shadow: inset -26px 0 0 rgba(0,0,0,.08), 0 30px 60px rgba(60,40,20,.18); }
+  .box::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 16px; background: rgba(0,0,0,.10); }
+  /* pouch (gummies) */
+  .pouch { position: relative; width: 410px; height: 520px; border-radius: 34px 34px 60px 60px; padding: 70px 40px 54px;
+           display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+           box-shadow: inset -24px 0 0 rgba(0,0,0,.08), 0 30px 60px rgba(60,40,20,.18); }
+  .pouch::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 30px;
+                   background: repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 10px, transparent 10px 20px); }
+  /* bar (chocolate) */
+  .bar { position: relative; width: 560px; height: 300px; border-radius: 20px; padding: 40px 44px;
+         display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+         box-shadow: inset 0 -20px 0 rgba(0,0,0,.10), 0 30px 60px rgba(60,40,20,.18); transform: rotate(-6deg); }
+  /* can (soda) */
+  .can { position: relative; width: 300px; height: 540px; border-radius: 40px / 26px; padding: 70px 34px 60px;
+         display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+         box-shadow: inset -30px 0 0 rgba(0,0,0,.10), inset 26px 0 0 rgba(255,255,255,.14), 0 30px 60px rgba(60,40,20,.2); }
+  .can::before, .can::after { content: ""; position: absolute; left: 0; right: 0; height: 30px; background: #c9ccd1; }
+  .can::before { top: 0; } .can::after { bottom: 0; }
+
+  .art { position: absolute; border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="stage"><div class="shadow"></div><div id="pack"></div></div>
+<script>
+const P = {
+  crackers:  { cls: "box",   bg: "linear-gradient(160deg,#f3b23c,#e2902a)", ink: "#4a2a06", name: "Sunflower<br>Crackers", sub: "Baked with seeds",
+               art: [["#fbe7b0",180,190,230],["#7a4b16",42,250,330],["#7a4b16",34,300,380],["#7a4b16",30,210,400]] },
+  gummies:   { cls: "pouch", bg: "linear-gradient(160deg,#ff6f91,#e83e6c)", ink: "#ffffff", name: "Fruit<br>Gummies", sub: "Mixed fruit flavour",
+               art: [["#ffd166",90,90,250],["#06d6a0",80,220,300],["#ffffff",70,150,360],["#ffb3c6",86,250,230]] },
+  chocolate: { cls: "bar",   bg: "linear-gradient(135deg,#6b3fa0,#4b2a7a)", ink: "#f7e9d2", name: "Milk Chocolate", sub: "Smooth & creamy",
+               art: [["#8a5a3c",160,380,40],["#a0704f",110,430,140]] },
+  soda:      { cls: "can",   bg: "linear-gradient(180deg,#d7263d,#a4161a)", ink: "#ffffff", name: "Cherry<br>Soda", sub: "Sparkling",
+               art: [["#ffccd5",70,60,260],["#ffffff",40,170,320],["#ffccd5",50,110,370]] },
+  biscuits:  { cls: "box",   bg: "linear-gradient(160deg,#d9b382,#b98b52)", ink: "#3d2410", name: "Whole Wheat<br>Biscuits", sub: "Oat & wheat",
+               art: [["#f2dfc0",170,200,250],["#c89b63",120,225,275]] },
+  cake:      { cls: "box",   bg: "linear-gradient(160deg,#3a2418,#24150e)", ink: "#f3d9b1", name: "Rum Truffle<br>Cake", sub: "Rich cocoa sponge",
+               art: [["#6b4428",190,180,240],["#f3d9b1",50,250,250]] },
+};
+const p = P[new URLSearchParams(location.search).get("p") || "crackers"];
+const el = document.getElementById("pack");
+el.className = p.cls;
+el.style.background = p.bg;
+el.style.color = p.ink;
+el.innerHTML = `<div class="brand">Vellmark</div><div><div class="name" style="font-size:${p.cls === "bar" ? 62 : p.cls === "can" ? 58 : 66}px">${p.name}</div><div class="sub" style="margin-top:14px">${p.sub}</div></div>`;
+for (const [c, s, x, y] of p.art) {
+  const d = document.createElement("div");
+  d.className = "art";
+  Object.assign(d.style, { background: c, width: s + "px", height: s + "px", left: x + "px", top: y + "px", opacity: .55, zIndex: 0 });
+  el.prepend(d);
+}
+[...el.children].forEach(c => { if (!c.classList.contains("art")) c.style.position = "relative"; });
+</script>
+</body>
+</html>
