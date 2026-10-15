@@ -355,42 +355,42 @@
   ]
  },
  {
-  "text": "Halal Checker. Scan, check, shop with confidence.",
+  "text": "Halal Checker. Scan. Check. Shop with confidence.",
   "words": [
    {
     "w": "Halal",
-    "t": 0.093,
-    "d": 0.347
+    "t": 0.104,
+    "d": 0.289
    },
    {
     "w": "Checker",
-    "t": 0.451,
-    "d": 0.451
+    "t": 0.394,
+    "d": 0.44
    },
    {
     "w": "Scan",
-    "t": 1.285,
-    "d": 0.405
+    "t": 1.215,
+    "d": 0.394
    },
    {
-    "w": "check",
-    "t": 1.933,
-    "d": 0.347
+    "w": "Check",
+    "t": 1.979,
+    "d": 0.336
    },
    {
-    "w": "shop",
-    "t": 2.488,
+    "w": "Shop",
+    "t": 2.697,
     "d": 0.232
    },
    {
     "w": "with",
-    "t": 2.72,
-    "d": 0.093
+    "t": 2.928,
+    "d": 0.104
    },
    {
     "w": "confidence",
-    "t": 2.812,
-    "d": 0.637
+    "t": 3.032,
+    "d": 0.66
    }
   ]
  }

@@ -10,7 +10,7 @@ LINES = [
     "Follow a madhhab? Choose yours, and the results adapt, with sources.",
     "It reads labels in English, German, French, and Arabic.",
     "Plus your scan history, and a full E-number guide.",
-    "Halal Checker. Scan, check, shop with confidence.",
+    "Halal Checker. Scan. Check. Shop with confidence.",
 ]
 async def main(out):
     timings = []
