@@ -1,5 +1,7 @@
 package com.example.ui.components
 
+import com.example.ui.theme.PopupBorder
+import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -141,6 +143,7 @@ fun MadhhabSelectionDialog(
             }
         },
         containerColor = NaturalWarmBg,
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(24.dp))
     )
 }

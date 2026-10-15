@@ -1,5 +1,8 @@
 package com.example.ui.components
 
+import com.example.ui.theme.PopupBorder
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.foundation.border
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.buildAnnotatedString
@@ -130,7 +133,9 @@ fun ProductResultBottomSheet(
         sheetState = sheetState,
         containerColor = NaturalWarmBg,
         dragHandle = null,
-        modifier = modifier.testTag("product_result_bottom_sheet")
+        modifier = modifier
+            .border(1.dp, PopupBorder, BottomSheetDefaults.ExpandedShape)
+            .testTag("product_result_bottom_sheet")
     ) {
         Column(
             modifier = Modifier

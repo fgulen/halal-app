@@ -1,5 +1,8 @@
 package com.example.ui.components
 
+import com.example.ui.theme.PopupBorder
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -105,7 +108,9 @@ fun PhotoIngredientsDialog(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = NaturalWarmBg,
-        modifier = modifier.testTag("photo_ingredients_bottom_sheet")
+        modifier = modifier
+            .border(1.dp, PopupBorder, BottomSheetDefaults.ExpandedShape)
+            .testTag("photo_ingredients_bottom_sheet")
     ) {
         Column(
             modifier = Modifier

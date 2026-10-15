@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import com.example.ui.theme.PopupBorder
+import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -175,7 +177,8 @@ fun ScanHistoryScreen(
                 }
             },
             containerColor = NaturalWarmSurface,
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(20.dp))
         )
     }
 

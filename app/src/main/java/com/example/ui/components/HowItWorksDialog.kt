@@ -1,5 +1,8 @@
 package com.example.ui.components
 
+import com.example.ui.theme.PopupBorder
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.foundation.border
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,7 +53,9 @@ fun HowItWorksDialog(language: AppLanguage, onDismiss: () -> Unit) {
         sheetState = sheetState,
         containerColor = NaturalWarmBg,
         dragHandle = null,
-        modifier = Modifier.testTag("how_it_works_sheet")
+        modifier = Modifier
+            .border(1.dp, PopupBorder, BottomSheetDefaults.ExpandedShape)
+            .testTag("how_it_works_sheet")
     ) {
         Column(
             modifier = Modifier

@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 13 / versionName 2.1 (2026-10-15)
+
+Mezhep seçimi (Hanefi'de peynir mayası/peynir altı suyu kaynaklı notla helal), Türk ambalajlarındaki "domuz yağı içermez" uyarılarının yanlış Haram vermesi düzeltildi, büyük harfli Türkçe etiket eşleşmesi düzeltildi, Open Food Facts sunucu hatası artık "ürün bulunamadı" gibi gösterilmiyor. Teknik: Compose BOM 2026.06.01 (Samsung/Android 15'te arama kutusu çökmesi giderildi), R8 küçültme açıldı (Play vitals DEX uyarısı), açılır pencerelere kenarlık eklendi.
+
+<tr-TR>
+Yeni: Mezhep seçimi! Ana ekrandaki "Mezhep" düğmesinden mezhebinizi seçebilirsiniz; Hanefi seçildiğinde peynir mayası ve peynir altı suyu içeren ürünler kaynaklı açıklamayla değerlendirilir. "Ürünlerimizde domuz yağı yoktur" gibi üretici uyarıları artık ürünü yanlışlıkla Haram yapmıyor. Büyük harfli Türkçe etiketler (ör. JELATİN) artık doğru tanınıyor. Açılır pencereler daha belirgin, arama kutusundaki bir çökme giderildi.
+</tr-TR>
+
+<en-US>
+New: choose your madhhab! Use the "Madhhab" button on the home screen; with Hanafi selected, products with rennet or whey are assessed with a sourced explanation. Manufacturer statements such as "contains no pork fat" no longer make a product Haram by mistake. All-caps Turkish labels are now recognized correctly. Pop-up windows stand out more clearly, and a crash in the search box has been fixed.
+</en-US>
+
+<de-DE>
+Neu: Wählen Sie Ihre Rechtsschule (Madhhab)! Über die Schaltfläche auf dem Startbildschirm; mit Hanafi werden Produkte mit Lab oder Molke mit belegter Erklärung bewertet. Herstellerhinweise wie "enthält kein Schweinefett" machen ein Produkt nicht mehr fälschlich Haram. Türkische Etiketten in Großbuchstaben werden jetzt korrekt erkannt. Pop-up-Fenster heben sich deutlicher ab, und ein Absturz im Suchfeld wurde behoben.
+</de-DE>
+
+<fr-FR>
+Nouveau : choisissez votre madhhab ! Via le bouton sur l'écran d'accueil ; avec Hanafi, les produits contenant de la présure ou du lactosérum sont évalués avec une explication sourcée. Les mentions du fabricant comme « ne contient pas de graisse de porc » ne rendent plus un produit Haram par erreur. Les étiquettes turques en majuscules sont désormais bien reconnues. Les fenêtres contextuelles sont plus visibles et un plantage du champ de recherche a été corrigé.
+</fr-FR>
+
+<ar>
+جديد: اختر مذهبك! من زر "المذهب" في الشاشة الرئيسية؛ عند اختيار المذهب الحنفي تُقيَّم المنتجات التي تحتوي على الإنفحة أو مصل اللبن مع شرح موثَّق بالمصادر. لم تعد عبارات الشركات المصنِّعة مثل "لا يحتوي على دهن الخنزير" تجعل المنتج حرامًا عن طريق الخطأ. أصبحت الملصقات التركية المكتوبة بأحرف كبيرة تُقرأ بشكل صحيح. النوافذ المنبثقة أصبحت أوضح، وتم إصلاح عطل في مربع البحث.
+</ar>
+
+---
+
 ## versionCode 12 / versionName 2.0 (2026-10-06)
 
 İlk üretim (Production) sürümü. Uygulama ikonu Play Store ikonuyla aynı hale getirildi (önceden telefonda eski kalkan ikonu görünüyordu); alkolsüz bira/şarap ve şarap sirkesi artık yanlışlıkla Haram işaretlenmiyor.

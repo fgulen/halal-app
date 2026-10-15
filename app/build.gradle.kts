@@ -17,8 +17,8 @@ android {
     applicationId = "com.fatihgulen.helalrehberi"
     minSdk = 24
     targetSdk = 36
-    versionCode = 12
-    versionName = "2.0"
+    versionCode = 13
+    versionName = "2.1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -39,7 +39,10 @@ android {
   buildTypes {
     release {
       isCrunchPngs = false
-      isMinifyEnabled = false
+      // R8 on: Play vitals flagged DEX obfuscation at 1% (threshold 25%, deadline Feb 2027).
+      // JSON is parsed by hand with org.json (no reflection), and Room/Firebase/ML Kit ship their own
+      // consumer rules, so no app-level keeps are needed beyond preserving line numbers.
+      isMinifyEnabled = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       val keystoreFile = file(System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks")
       if (keystoreFile.exists()) {

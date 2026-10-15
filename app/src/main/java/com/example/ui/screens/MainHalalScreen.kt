@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.theme.PopupBorder
 import android.Manifest
 import android.content.Intent
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -585,7 +586,7 @@ fun MainHalalScreen(
                 shape = RoundedCornerShape(20.dp),
                 color = NaturalWarmSurface,
                 shadowElevation = 10.dp,
-                border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
+                border = androidx.compose.foundation.BorderStroke(1.dp, PopupBorder)
             ) {
                 Column {
                     Row(
@@ -666,7 +667,7 @@ fun ScanErrorDialog(
             shape = RoundedCornerShape(20.dp),
             color = NaturalWarmSurface,
             shadowElevation = 10.dp,
-            border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder)
+            border = androidx.compose.foundation.BorderStroke(1.dp, PopupBorder)
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
