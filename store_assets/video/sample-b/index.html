@@ -211,6 +211,7 @@
 
       // hidden phone screens start state
       gsap.set(["#p-gum"], { y: H });
+      gsap.set("#tablet", { x: 900, y: 60, scale: 0.86, opacity: 0 });
       gsap.set(["#p-choc", "#p-dlg", "#p-han", "#p-han2", "#p-en", "#p-de", "#p-fr", "#p-ar", "#p-eco", "#t-home"], { opacity: 0 });
 
       // ---------- scene 1 (0 - 5.2): ingredient noise + four questions on every 2nd beat ----------
@@ -229,10 +230,10 @@
       tl.to("#field", { opacity: 0, duration: 0.3 }, B(-6) - 0.2);
 
       // ---------- scene 2 (5.2 - 10.3): phone rises, scan beam builds, drop = verdict ----------
-      tl.fromTo("#phone", { y: 1000, opacity: 1 }, { y: 0, duration: 0.55, ease: "expo.out" }, B(-6));
-      tl.fromTo("#tablet", { x: 1100, opacity: 0 }, { x: 1100, opacity: 0, duration: 0.01 }, B(-6));
+      tl.fromTo("#phone", { y: 1000, opacity: 1 }, { y: 0, opacity: 1, duration: 0.55, ease: "expo.out" }, B(-6));
+      // tablet starts parked off-stage and hidden; set once at build, deterministic for every worker
       slamIn("#s2-a", B(-5), 1.2);
-      tl.fromTo("#beam", { opacity: 0, y: -110 }, { opacity: 1, duration: 0.1 }, B(-4));
+      tl.fromTo("#beam", { opacity: 0, y: -110 }, { opacity: 1, y: -110, duration: 0.1 }, B(-4));
       tl.to("#beam", { y: H, duration: BEAT * 2, ease: "power1.inOut" }, B(-4) + 0.05);
       tl.set("#beam", { y: -110 }, B(-2));
       tl.to("#beam", { y: H, duration: BEAT * 1.6, ease: "power2.in" }, B(-2) + 0.02);
@@ -251,7 +252,7 @@
       // ---------- scene 3 (10.3 - 14.4): phone + tablet, verdict band one per beat ----------
       tl.to("#phone", { x: -120, y: 60, scale: 0.86, duration: 0.45, ease: "power3.inOut" }, B(4) - 0.25);
       slamIn("#v-haram", B(4), 1.25);
-      tl.fromTo("#tablet", { x: 900, opacity: 1, y: 60, scale: 0.86 }, { x: 0, duration: 0.5, ease: "expo.out" }, B(5));
+      tl.fromTo("#tablet", { x: 900, opacity: 1, y: 60, scale: 0.86 }, { x: 0, opacity: 1, y: 60, scale: 0.86, duration: 0.5, ease: "expo.out", immediateRender: false }, B(5));
       slamIn("#v-halal", B(5), 1.25);
       pulse("#flash-green", B(5));
       tl.fromTo("#p-choc", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)" }, B(6));
@@ -280,7 +281,7 @@
         const t = B(24 + i);
         slamIn(w, t, 1.35);
         if (i < 3) slamOut(w, B(25 + i) - 0.1);
-        tl.fromTo(s, { opacity: 1, x: 428 }, { x: 0, duration: 0.22, ease: "power3.out" }, t);
+        tl.fromTo(s, { opacity: 1, x: 428 }, { x: 0, opacity: 1, duration: 0.22, ease: "power3.out", immediateRender: false }, t);
       });
       slamOut("#l-ar", B(28) - 0.1);
       slamIn("#s5-a", B(28), 1.2);
@@ -292,7 +293,7 @@
       tl.to("#phone", { x: -120, y: 60, scale: 0.86, duration: 0.45, ease: "power3.inOut" }, B(32) - 0.25);
       tl.fromTo("#p-eco", { opacity: 0 }, { opacity: 1, duration: 0.2 }, B(32));
       tl.set("#t-home", { opacity: 1 }, B(32) - 0.3);
-      tl.fromTo("#tablet", { x: 900, opacity: 1, y: 60, scale: 0.86 }, { x: 0, duration: 0.5, ease: "expo.out" }, B(32));
+      tl.fromTo("#tablet", { x: 900, opacity: 1, y: 60, scale: 0.86 }, { x: 0, opacity: 1, y: 60, scale: 0.86, duration: 0.5, ease: "expo.out", immediateRender: false }, B(32));
       slamIn("#b6-a", B(32), 1.25);
       slamIn("#b6-b", B(33), 1.25);
       tl.to(["#b6-a", "#b6-b"], { opacity: 0, y: -40, duration: 0.18, ease: "power2.in" }, B(36) - 0.25);

@@ -197,6 +197,7 @@
       tl.fromTo("#grid", { y: 0 }, { y: -120, duration: 32.5, ease: "none" }, 0);
       tl.fromTo("#glow", { scale: 1 }, { scale: 1.12, duration: 32.5, ease: "none" }, 0);
       gsap.set("#p-gum", { y: H });
+      gsap.set("#tablet", { x: 900, y: 60, scale: 0.86, opacity: 0 });
       gsap.set(["#p-choc", "#p-gmid", "#p-dlg", "#p-han", "#p-han2", "#p-en", "#p-de", "#p-fr", "#p-ar", "#p-hist", "#p-eco", "#t-home"], { opacity: 0 });
 
       // L1 "Standing in the aisle, wondering if it's halal?"
@@ -213,10 +214,10 @@
 
       // L2 "Just scan the barcode."
       tl.fromTo("#phone", { y: 1000 }, { y: 0, duration: 0.55, ease: "expo.out" }, 3.3);
-      tl.fromTo("#tablet", { x: 1100, opacity: 0 }, { x: 1100, opacity: 0, duration: 0.01 }, 3.3);
+      // tablet starts parked off-stage and hidden; set once at build, deterministic for every worker
       slamIn("#s2-a", W(2, 0.243), 1.2);
       slamIn("#s2-b", W(2, 0.556), 1.2);
-      tl.fromTo("#beam", { opacity: 0, y: -110 }, { opacity: 1, duration: 0.1 }, 3.95);
+      tl.fromTo("#beam", { opacity: 0, y: -110 }, { opacity: 1, y: -110, duration: 0.1 }, 3.95);
       tl.to("#beam", { y: H, duration: 1.2, ease: "power1.inOut" }, 4.0);
       tl.to("#beam", { opacity: 0, duration: 0.08 }, 5.2);
       tl.to("#dim", { opacity: 0.4, duration: 0.2 }, 5.2);
@@ -229,7 +230,7 @@
       exitR(["#s2-a", "#s2-b", "#s2-c"], W(3, 3.05));
       tl.to("#phone", { x: -120, y: 60, scale: 0.86, duration: 0.45, ease: "power3.inOut" }, W(3, 2.95));
       slamIn("#v-halal", W(3, 3.357));
-      tl.fromTo("#tablet", { x: 900, opacity: 1, y: 60, scale: 0.86 }, { x: 0, duration: 0.5, ease: "expo.out" }, W(3, 3.3));
+      tl.fromTo("#tablet", { x: 900, opacity: 1, y: 60, scale: 0.86 }, { x: 0, opacity: 1, y: 60, scale: 0.86, duration: 0.5, ease: "expo.out", immediateRender: false }, W(3, 3.3));
       pulse("#flash-green", W(3, 3.357));
       slamIn("#v-doubt", W(3, 4.155));
       swapIn("#p-choc", W(3, 4.155));
@@ -267,7 +268,7 @@
         const t = W(6, off);
         slamIn(w, t, 1.3);
         if (i < 3) slamOut(w, W(6, LANG[i + 1][2]) - 0.1);
-        tl.fromTo(s, { opacity: 1, x: 428 }, { x: 0, duration: 0.25, ease: "power3.out" }, t);
+        tl.fromTo(s, { opacity: 1, x: 428 }, { x: 0, opacity: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, t);
       });
       slamOut("#l-ar", 24.1);
 
@@ -275,7 +276,7 @@
       tl.to("#phone", { x: -120, y: 60, scale: 0.86, duration: 0.45, ease: "power3.inOut" }, 24.15);
       swapIn("#p-hist", W(7, 0.2));
       tl.set("#t-home", { opacity: 1 }, 24.2);
-      tl.fromTo("#tablet", { x: 900, opacity: 1, y: 60, scale: 0.86 }, { x: 0, duration: 0.5, ease: "expo.out" }, W(7, 0.25));
+      tl.fromTo("#tablet", { x: 900, opacity: 1, y: 60, scale: 0.86 }, { x: 0, opacity: 1, y: 60, scale: 0.86, duration: 0.5, ease: "expo.out", immediateRender: false }, W(7, 0.25));
       slamIn("#b7-a", W(7, 0.347));
       slamIn("#b7-b", W(7, 2.037));
       swapIn("#p-eco", W(7, 2.037));
