@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 14 / versionName 2.1 (2026-10-15)
+
+versionCode 13 incelemeye gönderildi ama YAYINLANMADI: yerine 14 yüklendi (v13'te Almanca bileşik kelimelerdeki peynir altı suyu yanlış HELAL çıkıyordu; v13 yayınlansaydı bu sonuçlar önbellekte kalırdı). Notlar bu yüzden v13'ün içeriğini de kapsar. Ek olarak: Almanca bileşik kelimeler (Süßmolkenpulver, Schweineschmalz, Rindergelatine, Eierlikör) ve Arapça içerik metni artık eşleşiyor.
+
+<tr-TR>
+Yeni: Ana ekrandaki "Mezhep" düğmesinden mezhebinizi seçin; Hanefi seçildiğinde peynir mayası veya peynir altı suyu içeren ürünler kaynaklı açıklamayla değerlendirilir. Almanca ve Arapça içerik listeleri artık daha doğru okunuyor. "Domuz yağı içermez" gibi üretici uyarıları artık yanlışlıkla Haram sonucu vermiyor. Büyük harfli Türkçe etiketler doğru tanınıyor; açılır pencereler daha belirgin, yazarken oluşabilen bir çökme giderildi.
+</tr-TR>
+
+<en-US>
+New: choose your madhhab with the "Madhhab" button on the home screen; with Hanafi selected, products with rennet or whey get a sourced explanation. German and Arabic ingredient lists are now read more accurately (e.g. whey in German compound words). Manufacturer statements like "contains no pork fat" no longer cause a false Haram. Clearer pop-ups, and a crash that could occur while typing has been fixed.
+</en-US>
+
+<de-DE>
+Neu: Wählen Sie Ihre Rechtsschule über die Schaltfläche "Madhhab" auf dem Startbildschirm; mit Hanafi erhalten Produkte mit Lab oder Molke eine belegte Erklärung. Deutsche und arabische Zutatenlisten werden jetzt genauer erkannt (z. B. Molke in Wörtern wie Süßmolkenpulver). Herstellerhinweise wie "enthält kein Schweinefett" führen nicht mehr fälschlich zu Haram. Klarere Pop-ups, und ein Absturz beim Tippen wurde behoben.
+</de-DE>
+
+<fr-FR>
+Nouveau : choisissez votre madhhab via le bouton « Madhhab » de l'écran d'accueil ; avec Hanafi, les produits contenant de la présure ou du lactosérum reçoivent une explication sourcée. Les listes d'ingrédients en allemand et en arabe sont mieux reconnues. Les mentions comme « sans graisse de porc » ne donnent plus un faux Haram. Fenêtres plus lisibles et un plantage lors de la saisie corrigé.
+</fr-FR>
+
+<ar>
+جديد: اختر مذهبك من زر "المذهب" في الشاشة الرئيسية؛ عند اختيار المذهب الحنفي تحصل المنتجات التي تحتوي على الإنفحة أو مصل اللبن على شرح موثّق. أصبحت قوائم المكونات بالألمانية والعربية تُقرأ بدقة أكبر. لم تعد عبارات مثل "لا يحتوي على دهن الخنزير" تؤدي إلى حكم حرام خاطئ. نوافذ منبثقة أوضح، وتم إصلاح عطل كان قد يحدث أثناء الكتابة.
+</ar>
+
+---
+
 ## versionCode 13 / versionName 2.1 (2026-10-15)
 
 Mezhep seçimi (Hanefi'de peynir mayası/peynir altı suyu kaynaklı notla helal), Türk ambalajlarındaki "domuz yağı içermez" uyarılarının yanlış Haram vermesi düzeltildi, büyük harfli Türkçe etiket eşleşmesi düzeltildi, Open Food Facts sunucu hatası artık "ürün bulunamadı" gibi gösterilmiyor. Teknik: Compose BOM 2026.06.01 (Samsung/Android 15'te yazı alanı çökmesi giderildi), R8 küçültme açıldı (Play vitals DEX uyarısı), açılır pencerelere kenarlık eklendi.
