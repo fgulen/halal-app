@@ -88,7 +88,7 @@ object HalalAnalyzer {
             ruleId = RENNET_RULE_ID,
             madhhab = Madhhab.HANAFI,
             keywords = listOf("rennet", "animal rennet", "kälberlab", "kalbslab", "présure",
-                "peynir mayası", "hayvansal peynir mayası", "hayvansal maya", "şirden"),
+                "peynir mayası", "hayvansal peynir mayası", "hayvansal maya", "şirden", "إنفحة", "منفحة"),
             status = HalalStatus.HELAL,
             appliedNote = { lang ->
                 when (lang) {
@@ -112,7 +112,7 @@ object HalalAnalyzer {
         MadhhabOverride(
             ruleId = WHEY_RULE_ID,
             madhhab = Madhhab.HANAFI,
-            keywords = listOf("whey", "whey powder", "molke", "lactosérum", "peynir altı suyu tozu"),
+            keywords = listOf("whey", "whey powder", "~molke", "lactosérum", "peynir altı suyu tozu", "مصل اللبن", "مصل الحليب"),
             status = HalalStatus.HELAL,
             // No direct source for whey exists - this is an inference from the rennet ruling and
             // the note says so. Deliberately no fatwa link here: it doesn't cover whey directly.
@@ -168,7 +168,8 @@ object HalalAnalyzer {
 
     private val HARAM_RULES = listOf(
         HaramRule(
-            keywords = listOf("e441", "pork gelatin", "porcine gelatin", "schweinegelatine", "gelatine de porc", "porc gelatine", "varkensgelatine", "domuz jelatini"),
+            keywords = listOf("e441", "pork gelatin", "porcine gelatin", "schweinegelatine", "gelatine de porc", "porc gelatine", "varkensgelatine", "domuz jelatini",
+                "جيلاتين خنزير", "جيلاتين الخنزير", "جلاتين خنزير"),
             nameEn = "E441 Pork Gelatin",
             nameTr = "E441 Domuz Jelatini",
             reasonEn = "Porcine collagen derived from pig skin and bones. Prohibited in Islamic law.",
@@ -181,7 +182,10 @@ object HalalAnalyzer {
             // "porcine collagen", "porcine enzymes", "porcine fat" etc. don't slip through -
             // containsKeyword's word-boundary check means only the E441 rule's exact phrase
             // "porcine gelatin" matched before, not "porcine" followed by any other word.
-            keywords = listOf("pork", "pig", "swine", "porc", "porcine", "cochon", "jambon", "schwein", "schweinefleisch", "speck", "lard", "bacon", "ham", "pork fat", "carne de cerdo", "manteca de cerdo", "domuz", "domuz eti", "domuz yağı"),
+            keywords = listOf("pork", "pig", "swine", "porc", "porcine", "cochon", "jambon", "~schwein", "schweinefleisch", "speck", "lard", "bacon", "ham", "pork fat", "carne de cerdo", "manteca de cerdo", "domuz", "domuz eti", "domuz yağı",
+                // Arabic: the article/conjunction prefix ("الخنزير", "دهن الخنزير") is handled in
+                // containsKeyword, so the bare noun covers them.
+                "خنزير"),
             nameEn = "Pork / Lard / Swine Derivatives",
             nameTr = "Domuz Eti / Domuz Yağı (Lard)",
             reasonEn = "Direct pig meat or lard fats. Explicitly forbidden in the Quran.",
@@ -190,7 +194,8 @@ object HalalAnalyzer {
             origin = "Pork / Swine"
         ),
         HaramRule(
-            keywords = listOf("e120", "cochineal", "carmines", "karmin", "carmine", "acide carminique", "karminsäure", "cochineal extract", "crimson lake", "natural red 4", "dactylopius coccus"),
+            keywords = listOf("e120", "cochineal", "carmines", "karmin", "carmine", "acide carminique", "karminsäure", "cochineal extract", "crimson lake", "natural red 4", "dactylopius coccus",
+                "كارمين", "قرمز", "دودة القرمز"),
             nameEn = "E120 Carmine (Cochineal Red)",
             nameTr = "E120 Karmin (Koşnil Kırmızısı)",
             reasonEn = "Red pigment obtained from crushed female scale insects. Prohibited across major Islamic fiqh councils.",
@@ -207,13 +212,20 @@ object HalalAnalyzer {
             // "wine vinegar" trigger phrase) - see the wine-vinegar block in NEGATION_PHRASES
             // below for the fiqh rationale (istihala: the alcohol has fully converted to acetic
             // acid, so majority fiqh treats it as halal, not as wine).
-            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake",
+            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "~likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake",
                 // Turkish (added 2026-10-07; before this a Turkish label saying "ALKOL"/"ŞARAP"
                 // came out Halal). Suffixes defeat the word-boundary check, so the inflected
                 // forms are listed - never prefix matching, or "bira" would hit "biraz".
                 // Deliberately no "rom"/"romlu": rum flavouring in cakes is a separate policy call.
                 "alkol", "alkollü", "alkolü", "etil alkol", "etanol",
-                "şarap", "şarabı", "şaraplı", "bira", "birası", "biralı"),
+                "şarap", "şarabı", "şaraplı", "bira", "birası", "biralı",
+                // German wine compounds, listed in full: "wein" can't be a stem because of
+                // Weinsäure (tartaric acid), Weinstein (cream of tartar) and Weinessig.
+                "rotwein", "weißwein", "weisswein", "roséwein", "dessertwein", "glühwein", "portwein",
+                "schaumwein", "sekt", "weinbrand", "branntwein", "obstbrand",
+                // Arabic. "كحولي/كحولية" listed because suffixes defeat the end boundary.
+                "كحول", "كحولي", "كحولية", "إيثانول", "نبيذ", "خمر", "بيرة", "روم", "ويسكي", "فودكا",
+                "براندي", "كونياك", "ليكيور"),
             nameEn = "Alcohol / Liqueur / Wine Additive",
             nameTr = "Alkol / Likör / Şarap Bileşeni",
             reasonEn = "Intoxicating alcoholic beverages or flavourings. Non-permissible in foods.",
@@ -342,7 +354,7 @@ object HalalAnalyzer {
             suppressIfHalalClaim = true
         ),
         SuspiciousRule(
-            keywords = listOf("gelatin", "gélatine", "gelatine", "gelatina", "jelatin"),
+            keywords = listOf("gelatin", "gélatine", "~gelatine", "gelatina", "jelatin", "جيلاتين", "جلاتين"),
             nameEn = GELATIN_UNSPECIFIED_RULE_ID,
             nameTr = "Jelatin (Kaynağı Belirtilmemiş)",
             reasonEn = "Packaging does not specify whether fish, halal bovine, or non-halal porcine source is used.",
@@ -352,13 +364,14 @@ object HalalAnalyzer {
         ),
         SuspiciousRule(
             // Bare "lab" (German for rennet) dropped: as a standalone word-boundary match it
-            // also fires on "lab-grown", "lab-tested", etc. in English ingredient text. Products
-            // without a halal claim already default to Şüpheli via the generic no-claim branch,
-            // so this rule missing an unqualified German "Lab" mention isn't a coverage gap.
+            // also fires on "lab-grown", "lab-tested", etc. in English ingredient text. Known gap
+            // (2026-10-15): an unqualified German "Lab" is therefore NOT flagged - "Milch, Salz,
+            // Lab" comes out Halal. (An earlier note here claimed a no-claim fallback makes such
+            // products Şüpheli; tests show it doesn't.)
             // Turkish terms added 2026-10-07 - Turkish-labelled cheese wasn't caught at all before.
             // Never bare "maya": on its own that is bread/baker's yeast.
             keywords = listOf("rennet", "pepsin", "animal rennet", "kälberlab", "kalbslab", "présure", "animal enzymes", "cheese cultures",
-                "peynir mayası", "hayvansal peynir mayası", "hayvansal maya", "şirden"),
+                "peynir mayası", "hayvansal peynir mayası", "hayvansal maya", "şirden", "إنفحة", "منفحة"),
             nameEn = "Animal Rennet / Cheese Enzymes",
             nameTr = "Hayvansal Peynir Mayası / Enzim",
             reasonEn = "Curdling enzyme from calf stomach. Permissible only if from Halal slaughtered animals or microbial.",
@@ -367,7 +380,7 @@ object HalalAnalyzer {
             origin = "Animal (Calf / Swine)"
         ),
         SuspiciousRule(
-            keywords = listOf("whey", "whey powder", "molke", "lactosérum", "peynir altı suyu tozu"),
+            keywords = listOf("whey", "whey powder", "~molke", "lactosérum", "peynir altı suyu tozu", "مصل اللبن", "مصل الحليب"),
             nameEn = "Whey Powder / Whey Byproduct",
             nameTr = "Peynir Altı Suyu Tozu",
             reasonEn = "Cheese byproduct that may involve animal rennet enzymes during milk curdling.",
@@ -713,6 +726,8 @@ object HalalAnalyzer {
         "alcohol-free beer", "alcohol free beer", "non-alcoholic beer", "non alcoholic beer",
         "alcohol-free wine", "alcohol free wine", "non-alcoholic wine", "non alcoholic wine",
         "alkoholfreies bier", "alkoholfreie bier", "alkoholfreier wein",
+        "alkoholfreier rotwein", "alkoholfreier weißwein", "alkoholfreier sekt", "alkoholfreier glühwein",
+        "بيرة خالية من الكحول", "بيرة بدون كحول", "نبيذ خال من الكحول",
         "bière sans alcool", "vin sans alcool",
         "cerveza sin alcohol", "vino sin alcohol",
         "alkolsüz bira", "alkolsüz şarap",
@@ -768,7 +783,19 @@ object HalalAnalyzer {
         "mikrobiyal peynir mayası", "bitkisel peynir mayası", "mikrobiyal maya", "bitkisel maya",
         // ...and the same written with the qualifier in brackets after the noun.
         "rennet (microbial)", "rennet (vegetable)", "rennet (non-animal)",
-        "peynir mayası (mikrobiyal)", "peynir mayası (bitkisel)", "maya (mikrobiyal)", "maya (bitkisel)"
+        "peynir mayası (mikrobiyal)", "peynir mayası (bitkisel)", "maya (mikrobiyal)", "maya (bitkisel)",
+        // German compounds that contain a stem (~molke, ~schwein) but not the ingredient:
+        // "Molkereibutter"/"Molkereiprodukte" (dairy), "Schweineohren" (puff-pastry palmiers),
+        // marzipan/lucky pigs. Ingredient texts sometimes repeat the product name.
+        "molkerei", "schweineohr", "schweinsohr", "marzipanschwein", "glücksschwein", "glücksschweinchen",
+        // Arabic: alcohol-free / non-alcoholic claims, wine vinegar, pork-free disclaimers,
+        // plant gelatine and microbial rennet - same reasoning as the blocks above.
+        "خالي من الكحول", "خالية من الكحول", "خال من الكحول", "بدون كحول", "بدون الكحول",
+        "لا يحتوي على الكحول", "لا يحتوي على كحول", "غير كحولي", "غير كحولية",
+        "خل النبيذ", "خل العنب",
+        "خالي من لحم الخنزير", "خالي من الخنزير", "خال من الخنزير", "خالية من الخنزير",
+        "لا يحتوي على لحم الخنزير", "لا يحتوي على الخنزير", "لا يحتوي على مشتقات الخنزير",
+        "جيلاتين نباتي", "إنفحة ميكروبية", "إنفحة نباتية", "منفحة ميكروبية"
     )
 
     // Rule keywords and phrases are static, but classifyIngredientToken runs per chip on every
@@ -801,6 +828,21 @@ object HalalAnalyzer {
      */
     internal fun normalizeForMatching(text: String): String =
         text.lowercase(Locale.ROOT).replace("\u0307", "").replace('ı', 'i')
+            // Arabic: labels mix hamza-alif spellings ("إنفحة"/"انفحة"), alif maqsura/ya ("خالى"/
+            // "خالي") and optional vowel marks/tatweel, all of which are the same word.
+            .replace(ARABIC_MARKS, "")
+            .replace('أ', 'ا').replace('إ', 'ا').replace('آ', 'ا').replace('ى', 'ي')
+
+    private val ARABIC_MARKS = Regex("[\u064B-\u0652\u0640]")
+
+    // German writes ingredients as compounds ("Süßmolkenpulver", "Schweineschmalz"), so a few
+    // unambiguous stems are marked with this prefix and also match INSIDE a word. Never used for
+    // short or ambiguous stems ("wein" -> Weinsäure, "lab" -> lab-grown).
+    private const val STEM_MARKER = "~"
+
+    // Arabic attaches the article and some conjunctions/prepositions to the noun ("الخنزير",
+    // "والكحول", "بالجيلاتين"). "ك"/"ف" are left out on purpose: "كروم" (vines) would read as rum.
+    private val ARABIC_CLITIC_PREFIXES = setOf("ال", "و", "ب", "ل", "وال", "بال", "لل", "ولل")
 
     // Word-boundary match instead of plain substring: a short keyword like "rum" or "vin"
     // must not fire on "sérum" (whey) or "vinegar" just because it appears inside the word.
@@ -811,17 +853,39 @@ object HalalAnalyzer {
     // [text] must already be normalizeForMatching()'d; the keyword is normalized here so every
     // rule list can stay written in natural spelling (e.g. "peynir mayası", "şirden").
     private fun containsKeyword(text: String, keyword: String): Boolean {
+        if (keyword.startsWith(STEM_MARKER)) return containsStem(text, normalizedKeyword(keyword).removePrefix(STEM_MARKER))
         val kw = normalizedKeyword(keyword)
         var fromIndex = 0
         while (true) {
             val idx = text.indexOf(kw, fromIndex)
             if (idx == -1) return false
-            val beforeIsBoundary = idx == 0 || !text[idx - 1].isLetterOrDigit()
+            val beforeIsBoundary = idx == 0 || !text[idx - 1].isLetterOrDigit() || hasArabicCliticPrefix(text, idx)
             val afterIndex = idx + kw.length
             val afterIsBoundary = afterIndex >= text.length || !text[afterIndex].isLetterOrDigit()
             if (beforeIsBoundary && afterIsBoundary) return true
             fromIndex = idx + 1
         }
+    }
+
+    // A stem anywhere inside a word, unless the rest of that word declares its absence
+    // ("gelatinefrei", "schweinefleischfreie Wurst").
+    private fun containsStem(text: String, stem: String): Boolean {
+        var fromIndex = 0
+        while (true) {
+            val idx = text.indexOf(stem, fromIndex)
+            if (idx == -1) return false
+            var wordEnd = idx + stem.length
+            while (wordEnd < text.length && text[wordEnd].isLetterOrDigit()) wordEnd++
+            if (!text.substring(idx + stem.length, wordEnd).contains("frei")) return true
+            fromIndex = idx + 1
+        }
+    }
+
+    private fun hasArabicCliticPrefix(text: String, idx: Int): Boolean {
+        if (text[idx] !in '\u0600'..'\u06FF') return false
+        var wordStart = idx
+        while (wordStart > 0 && text[wordStart - 1].isLetterOrDigit()) wordStart--
+        return text.substring(wordStart, idx) in ARABIC_CLITIC_PREFIXES
     }
 
     // Chip colour for one ingredient token. Applies the same madhhab overrides as the product verdict
