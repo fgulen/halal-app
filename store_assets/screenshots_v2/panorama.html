@@ -1,0 +1,189 @@
+<!doctype html>
+<!-- Play Store phone screenshots as one 8640x1920 panorama, sliced into 8 frames of 1080x1920
+     by slice.py. Every headline and phone stays inside its own 1080px frame; only the
+     ingredient ribbon (background decoration) crosses the seams. Strings live in STRINGS so a
+     language = one more entry + its screen PNGs. Open with ?lang=en -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Fraunces"; font-weight: 800; src: url("fonts/fraunces-800.woff2") format("woff2"); }
+  @font-face { font-family: "Fraunces"; font-weight: 600; src: url("fonts/fraunces-600.woff2") format("woff2"); }
+  @font-face { font-family: "Manrope"; font-weight: 500; src: url("fonts/manrope-500.woff2") format("woff2"); }
+  @font-face { font-family: "Manrope"; font-weight: 700; src: url("fonts/manrope-700.woff2") format("woff2"); }
+  @font-face { font-family: "Naskh"; font-weight: 700; src: url("fonts/naskh-700.woff2") format("woff2"); }
+  :root { --bg: #052e22; --bg2: #0a4a35; --mint: #6ee7b7; --cream: #f4efe6; --paper: #f3ece2;
+          --halal: #34d399; --doubt: #fbbf24; --haram: #fb7185; --ink: #0d1210; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 8640px; height: 1920px; overflow: hidden; background: var(--bg); }
+  #pano { position: relative; width: 8640px; height: 1920px; overflow: hidden; color: var(--cream);
+          font-family: "Manrope", sans-serif;
+          background:
+            radial-gradient(1400px 900px at 540px 1500px, rgba(110,231,183,0.16), transparent 70%),
+            radial-gradient(1400px 900px at 3780px 1300px, rgba(110,231,183,0.12), transparent 70%),
+            radial-gradient(1400px 900px at 7020px 1400px, rgba(110,231,183,0.14), transparent 70%),
+            linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
+  [dir="rtl"] .copy { direction: rtl; text-align: right; }
+  .frame { position: absolute; top: 0; width: 1080px; height: 1920px; }
+  .copy { position: absolute; left: 84px; right: 84px; top: 132px; }
+  .eyebrow { font-weight: 700; font-size: 34px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mint); }
+  .head { margin-top: 26px; font-family: "Fraunces", serif; font-weight: 800; font-size: 104px; line-height: 1.0;
+          letter-spacing: -0.015em; color: var(--cream); }
+  .head em { font-style: normal; color: var(--mint); }
+  .head { white-space: nowrap; }   /* one line per <br>; fitHeads() shrinks long languages instead of orphaning a word */
+  .sub { margin-top: 30px; font-weight: 500; font-size: 40px; line-height: 1.35; color: rgba(244,239,230,0.82); }
+  [lang="ar"] .head, [lang="ar"] .sub, [lang="ar"] .eyebrow, [lang="ar"] .chip, [lang="ar"] .pill { font-family: "Naskh", serif; letter-spacing: 0; }
+
+  /* phone, cropped by the bottom edge of the frame */
+  .phone { position: absolute; left: 160px; top: 760px; width: 760px; height: 1620px; border-radius: 96px;
+           background: var(--ink); padding: 20px; box-shadow: 0 60px 140px rgba(0,0,0,0.5), inset 0 0 0 4px #2b3431; }
+  .screen { width: 100%; height: 100%; border-radius: 78px; overflow: hidden; background: var(--paper); }
+  .screen img { width: 100%; display: block; }
+
+  /* floating callout chip that overlaps the phone edge */
+  .chip { position: absolute; display: flex; align-items: center; gap: 18px; padding: 24px 34px; border-radius: 28px;
+          background: #fff; color: var(--ink); font-weight: 700; font-size: 36px; box-shadow: 0 30px 70px rgba(0,0,0,0.35); }
+  .dot { width: 26px; height: 26px; border-radius: 50%; flex: none; }
+  .tag { padding: 8px 18px; border-radius: 14px; font-size: 28px; letter-spacing: 0.06em; color: #fff; }
+
+  /* frame 3: three verdict cards */
+  .vcard { position: absolute; left: 110px; width: 860px; border-radius: 48px; overflow: hidden;
+           box-shadow: 0 40px 100px rgba(0,0,0,0.45); background: var(--paper); }
+  .vcard img { width: 100%; display: block; }
+  .vlabel { position: absolute; right: 30px; bottom: 26px; }
+
+  /* frame 8: closing */
+  .lockup { position: absolute; left: 0; right: 0; top: 520px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .icon { width: 300px; height: 300px; border-radius: 70px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.45); }
+  .icon img { width: 100%; height: 100%; display: block; }
+  .word { margin-top: 56px; font-family: "Fraunces", serif; font-weight: 800; font-size: 120px; line-height: 1; }
+  .pills { margin-top: 64px; display: flex; flex-direction: column; gap: 26px; align-items: center; }
+  .pill { padding: 26px 46px; border-radius: 999px; border: 3px solid rgba(110,231,183,0.55); font-weight: 700; font-size: 42px; color: var(--cream); }
+  .fine { position: absolute; left: 90px; right: 90px; bottom: 120px; text-align: center; font-weight: 500; font-size: 30px; color: rgba(244,239,230,0.6); }
+
+  /* ingredient ribbon: background decoration across all frames */
+  #ribbon { position: absolute; left: 0; top: 0; }
+</style>
+</head>
+<body>
+<div id="pano"></div>
+<script>
+const STRINGS = {
+  en: {
+    dir: "ltr",
+    ribbon: ["Ingredients:", "glucose syrup", "sugar", "!pork gelatine", "dextrose", "citric acid", "?whey powder", "cocoa butter",
+             "!E120 carmine", "beeswax", "?emulsifier E471", "salt", "wheat flour", "!wine extract", "vanilla", "sunflower oil",
+             "?flavouring", "milk powder", "!E441", "starch", "?rennet", "glycerol", "fruit juice", "soy lecithin"],
+    f1: { eyebrow: "Halal Checker", head: "Halal or haram?<br><em>Know why.</em>", sub: "Scan a barcode. Get a clear answer with the reason, in seconds." ,
+          chip: "pork gelatine", tag: "HARAM" },
+    f2: { eyebrow: "Every flag explained", head: "See exactly<br><em>what's wrong.</em>", sub: "Each flagged ingredient is named, with where it comes from.",
+          chip: "Pork / Lard / Swine Derivatives" },
+    f3: { eyebrow: "Three clear answers", head: "Halal, doubtful<br><em>or haram.</em>", sub: "Doubtful means the source isn't stated, and we tell you so.",
+          labels: ["HALAL", "DOUBTFUL", "HARAM"] },
+    f4: { eyebrow: "Madhhab aware", head: "Your school,<br><em>your answer.</em>", sub: "Hanafi, Shafi'i, Maliki or Hanbali. Differences come with sources.",
+          chip: "Hanafi: whey chocolate is halal" },
+    f5: { eyebrow: "Made for European shelves", head: "Reads real<br><em>EU labels.</em>", sub: "German, French and English ingredient lists, plus Turkish and Arabic.",
+          words: ["Schweinegelatine", "Molkenpulver", "Gélatine de porc"] },
+    f6: { eyebrow: "E-number guide", head: "Look up any<br><em>E-number.</em>", sub: "E120, E441, E471 and more, with their sources explained." },
+    f7: { eyebrow: "No account needed", head: "History stays<br><em>on your phone.</em>", sub: "No account. Scans are saved only on your device." },
+    f8: { word: "Halal Checker", pills: ["Free", "No ads", "No account"],
+          fine: "Product data from Open Food Facts. An automated check, not a religious ruling." }
+  },
+  de: {"dir": "ltr", "ribbon": ["Zutaten:", "Glukosesirup", "Zucker", "!Schweinegelatine", "Dextrose", "Zitronensäure", "?Molkenpulver", "Kakaobutter", "!E120 Karmin", "Bienenwachs", "?Emulgator E471", "Salz", "Weizenmehl", "!Weinextrakt", "Vanille", "Sonnenblumenöl", "?Aroma", "Milchpulver", "!E441", "Stärke", "?Lab", "Glycerin", "Fruchtsaft", "Sojalecithin"], "f1": {"eyebrow": "Halal Checker", "head": "Halal oder haram?<br><em>Wisse, warum.</em>", "sub": "Barcode scannen. Eine klare Antwort mit Begründung, in Sekunden.", "chip": "Schweinegelatine", "tag": "HARAM"}, "f2": {"eyebrow": "Jeder Treffer erklärt", "head": "Sieh genau,<br><em>was nicht passt.</em>", "sub": "Jede markierte Zutat wird benannt, mit ihrer Herkunft.", "chip": "Schweinegelatine (E441)"}, "f3": {"eyebrow": "Drei klare Antworten", "head": "Halal, zweifelhaft<br><em>oder haram.</em>", "sub": "Zweifelhaft heißt: Die Herkunft ist nicht angegeben. Das sagen wir dir offen."}, "f4": {"eyebrow": "Mit Rechtsschulen", "head": "Deine Schule,<br><em>deine Antwort.</em>", "sub": "Hanafitisch, schafiitisch, malikitisch oder hanbalitisch. Unterschiede mit Quellen.", "chip": "Hanafitisch: Milchschokolade ist halal"}, "f5": {"eyebrow": "Für Europas Regale", "head": "Liest echte<br><em>EU-Etiketten.</em>", "sub": "Deutsche, französische und englische Zutatenlisten, dazu Türkisch und Arabisch.", "words": ["Schweinegelatine", "Molkenpulver", "Gélatine de porc"]}, "f6": {"eyebrow": "E-Nummern-Ratgeber", "head": "Jede E-Nummer<br><em>nachschlagen.</em>", "sub": "E120, E441, E471 und mehr, mit ihrer Herkunft erklärt."}, "f7": {"eyebrow": "Kein Konto nötig", "head": "Verlauf bleibt<br><em>auf dem Handy.</em>", "sub": "Kein Konto. Scans werden nur auf deinem Gerät gespeichert."}, "f8": {"word": "Halal Checker", "pills": ["Kostenlos", "Keine Werbung", "Kein Konto"], "fine": "Produktdaten von Open Food Facts. Eine automatische Prüfung, kein religiöses Urteil."}},
+  tr: {"dir": "ltr", "ribbon": ["İçindekiler:", "glikoz şurubu", "şeker", "!domuz jelatini", "dekstroz", "sitrik asit", "?peynir altı suyu tozu", "kakao yağı", "!E120 karmin", "balmumu", "?emülgatör E471", "tuz", "buğday unu", "!şarap özütü", "vanilya", "ayçiçek yağı", "?aroma", "süt tozu", "!E441", "nişasta", "?peynir mayası", "gliserol", "meyve suyu", "soya lesitini"], "f1": {"eyebrow": "Halal Checker", "head": "Helal mi, haram mı?<br><em>Nedenini bil.</em>", "sub": "Barkodu okut. Saniyeler içinde, nedeniyle birlikte net bir cevap al.", "chip": "domuz jelatini", "tag": "HARAM"}, "f2": {"eyebrow": "Her uyarı açıklanır", "head": "Sorunu<br><em>tam olarak gör.</em>", "sub": "İşaretlenen her madde, kaynağıyla birlikte adıyla gösterilir.", "chip": "Domuz Eti / Domuz Yağı (Lard)"}, "f3": {"eyebrow": "Üç net cevap", "head": "Helal, şüpheli<br><em>ya da haram.</em>", "sub": "Şüpheli, kaynağın belirtilmediği anlamına gelir. Bunu açıkça söyleriz."}, "f4": {"eyebrow": "Mezhebe duyarlı", "head": "Senin mezhebin,<br><em>senin cevabın.</em>", "sub": "Hanefi, Şafii, Maliki ya da Hanbeli. Farklar kaynaklarıyla gösterilir.", "chip": "Hanefi: sütlü çikolata helal"}, "f5": {"eyebrow": "Avrupa rafları için", "head": "Gerçek AB<br><em>etiketlerini okur.</em>", "sub": "Almanca, Fransızca ve İngilizce içindekiler listeleri; ayrıca Türkçe ve Arapça.", "words": ["Schweinegelatine", "Molkenpulver", "Gélatine de porc"]}, "f6": {"eyebrow": "E kodu rehberi", "head": "Her E kodunu<br><em>öğren.</em>", "sub": "E120, E441, E471 ve dahası, kaynaklarıyla açıklanır."}, "f7": {"eyebrow": "Hesap gerekmez", "head": "Geçmişin<br><em>telefonunda kalır.</em>", "sub": "Hesap yok. Taramalar yalnızca cihazında saklanır."}, "f8": {"word": "Halal Checker", "pills": ["Ücretsiz", "Reklamsız", "Hesap gerekmez"], "fine": "Ürün verileri Open Food Facts'ten. Otomatik bir kontroldür, dini hüküm değildir."}},
+  fr: {"dir": "ltr", "ribbon": ["Ingrédients :", "sirop de glucose", "sucre", "!gélatine de porc", "dextrose", "acide citrique", "?lactosérum en poudre", "beurre de cacao", "!E120 carmin", "cire d'abeille", "?émulsifiant E471", "sel", "farine de blé", "!extrait de vin", "vanille", "huile de tournesol", "?arôme", "lait en poudre", "!E441", "amidon", "?présure", "glycérol", "jus de fruits", "lécithine de soja"], "f1": {"eyebrow": "Halal Checker", "head": "Halal ou haram ?<br><em>Sachez pourquoi.</em>", "sub": "Scannez un code-barres. Une réponse claire, avec la raison, en quelques secondes.", "chip": "gélatine de porc", "tag": "HARAM"}, "f2": {"eyebrow": "Chaque alerte expliquée", "head": "Voyez ce qui<br><em>pose problème.</em>", "sub": "Chaque ingrédient signalé est nommé, avec son origine.", "chip": "Gélatine de porc (E441)"}, "f3": {"eyebrow": "Trois réponses claires", "head": "Halal, douteux<br><em>ou haram.</em>", "sub": "Douteux signifie que l'origine n'est pas indiquée, et nous vous le disons."}, "f4": {"eyebrow": "Selon votre école", "head": "Votre école,<br><em>votre réponse.</em>", "sub": "Hanafite, chaféite, malékite ou hanbalite. Les différences sont sourcées.", "chip": "Hanafite : chocolat au lait halal"}, "f5": {"eyebrow": "Pour les rayons européens", "head": "Lit les vraies<br><em>étiquettes UE.</em>", "sub": "Listes d'ingrédients en français, allemand et anglais, plus turc et arabe.", "words": ["Gélatine de porc", "Lactosérum", "Schweinegelatine"]}, "f6": {"eyebrow": "Guide des additifs E", "head": "Cherchez<br><em>tout additif E.</em>", "sub": "E120, E441, E471 et plus, avec leur origine expliquée."}, "f7": {"eyebrow": "Aucun compte requis", "head": "L'historique reste<br><em>sur votre téléphone.</em>", "sub": "Pas de compte. Les scans restent uniquement sur votre appareil."}, "f8": {"word": "Halal Checker", "pills": ["Gratuit", "Sans pub", "Sans compte"], "fine": "Données produits d'Open Food Facts. Un contrôle automatique, pas un avis religieux."}},
+  ar: {"dir": "rtl", "ribbon": ["المكونات:", "شراب الجلوكوز", "سكر", "!جيلاتين الخنزير", "دكستروز", "حمض الستريك", "?مصل اللبن", "زبدة الكاكاو", "!E120 كارمين", "شمع العسل", "?مستحلب E471", "ملح", "دقيق القمح", "!مستخلص النبيذ", "فانيليا", "زيت دوار الشمس", "?منكهات", "حليب مجفف", "!E441", "نشا", "?منفحة", "جلسرين", "عصير فاكهة", "ليسيثين الصويا"], "f1": {"eyebrow": "Halal Checker", "head": "حلال أم حرام؟<br><em>اعرف السبب.</em>", "sub": "امسح الباركود واحصل على جواب واضح مع السبب خلال ثوانٍ.", "chip": "جيلاتين الخنزير", "tag": "حرام"}, "f2": {"eyebrow": "كل تنبيه مُفسَّر", "head": "اعرف بالضبط<br><em>ما المشكلة.</em>", "sub": "كل مكوّن مُعلَّم يُذكر باسمه مع مصدره.", "chip": "جيلاتين الخنزير (E441)"}, "f3": {"eyebrow": "ثلاث إجابات واضحة", "head": "حلال أو مشبوه<br><em>أو حرام.</em>", "sub": "مشبوه يعني أن المصدر غير مذكور، ونخبرك بذلك بوضوح."}, "f4": {"eyebrow": "يراعي المذاهب", "head": "مذهبك،<br><em>وجوابك.</em>", "sub": "الحنفي أو الشافعي أو المالكي أو الحنبلي، مع ذكر المصادر.", "chip": "الحنفي: شوكولاتة الحليب حلال"}, "f5": {"eyebrow": "لرفوف المتاجر الأوروبية", "head": "يقرأ الملصقات<br><em>الأوروبية.</em>", "sub": "قوائم مكونات بالألمانية والفرنسية والإنجليزية، وكذلك التركية والعربية.", "words": ["Schweinegelatine", "Molkenpulver", "Gélatine de porc"]}, "f6": {"eyebrow": "دليل أرقام E", "head": "ابحث عن أي<br><em>رقم E.</em>", "sub": "E120 وE441 وE471 وغيرها، مع شرح مصادرها."}, "f7": {"eyebrow": "بدون حساب", "head": "سجلّك يبقى<br><em>على هاتفك.</em>", "sub": "لا حساب. تُحفظ عمليات المسح على جهازك فقط."}, "f8": {"word": "Halal Checker", "pills": ["مجاني", "بدون إعلانات", "بدون حساب"], "fine": "بيانات المنتجات من Open Food Facts. فحص آلي وليس فتوى."}}
+};
+const lang = new URLSearchParams(location.search).get("lang") || "en";
+const S = STRINGS[lang];
+// screen captures per language (capture_lang.py); the "EU labels" frame shows another language's label
+const SCR = { gum: `screens/gum_top_${lang}.png`, gumMid: `screens/gum_mid_${lang}.png`, halal: `screens/choc_hanafi_${lang}.png`,
+              doubt: `screens/choc_doubt_${lang}.png`, madhhab: `screens/madhhab_${lang}.png`,
+              eu: `screens/gum_top_${lang === "de" ? "fr" : "de"}.png`, ecodes: `screens/ecodes_${lang}.png`, history: `screens/history_${lang}.png` };
+document.documentElement.lang = lang;
+document.documentElement.dir = S.dir;
+const pano = document.getElementById("pano");
+
+// ---- ribbon: a paper label strip waving through all 8 frames, behind everything ----
+(function ribbon() {
+  const W = 8640, ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("id", "ribbon"); svg.setAttribute("width", W); svg.setAttribute("height", 1920);
+  // gentle wave, crests between phones so it shows at frame edges
+  let d = "M -200 1180";
+  for (let x = -200; x < 6400; x += 1080) d += ` C ${x + 360} 1030, ${x + 720} 1330, ${x + 1080} 1180`;
+  const path = document.createElementNS(ns, "path");
+  path.setAttribute("id", "rp"); path.setAttribute("d", d); path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "#f3ece2"); path.setAttribute("stroke-width", "92"); path.setAttribute("stroke-linecap", "butt");
+  path.setAttribute("opacity", "0.95");
+  svg.appendChild(path);
+  const text = document.createElementNS(ns, "text");
+  text.setAttribute("direction", "ltr");   // decoration reads left to right in every language (RTL text on a path vanished)
+  text.setAttribute("font-family", "Manrope"); text.setAttribute("font-weight", "700"); text.setAttribute("font-size", "38");
+  text.setAttribute("dy", "13");
+  const tp = document.createElementNS(ns, "textPath");
+  tp.setAttribute("href", "#rp"); tp.setAttribute("startOffset", "40");
+  const words = [...S.ribbon, ...S.ribbon, ...S.ribbon];
+  words.forEach((w, i) => {
+    const t = document.createElementNS(ns, "tspan");
+    const flag = w[0] === "!" ? "#e11d48" : w[0] === "?" ? "#d97706" : null;
+    t.textContent = (flag ? w.slice(1).toLocaleUpperCase(lang) : w) + (i < words.length - 1 ? "  ·  " : "");
+    t.setAttribute("fill", flag || "#5b5147");
+    text.appendChild(t);
+  });
+  text.appendChild(tp);
+  // move tspans into the textPath
+  [...text.querySelectorAll("tspan")].forEach(t => tp.appendChild(t));
+  svg.appendChild(text);
+  pano.appendChild(svg);
+})();
+
+function frame(i) { const f = document.createElement("div"); f.className = "frame"; f.style.left = (i * 1080) + "px"; pano.appendChild(f); return f; }
+function copy(f, c) {
+  f.insertAdjacentHTML("beforeend", `<div class="copy"><div class="eyebrow">${c.eyebrow}</div><div class="head">${c.head}</div><div class="sub">${c.sub}</div></div>`);
+}
+function phone(f, src, opts = {}) {
+  const top = opts.top ?? 760, shift = opts.shift ?? 0;
+  f.insertAdjacentHTML("beforeend", `<div class="phone" style="top:${top}px"><div class="screen"><img src="${src}" style="margin-top:${-shift}px"></div></div>`);
+}
+function chip(f, html, style) { f.insertAdjacentHTML("beforeend", `<div class="chip" style="${style}">${html}</div>`); }
+
+// 1 hook
+let f = frame(0); copy(f, S.f1); phone(f, SCR.gum);
+chip(f, `<span class="dot" style="background:#e11d48"></span>${S.f1.chip}<span class="tag" style="background:#e11d48">${S.f1.tag}</span>`, "left:470px; top:1270px;");
+// 2 explained
+f = frame(1); copy(f, S.f2); phone(f, SCR.gumMid);
+chip(f, `<span class="dot" style="background:#e11d48"></span>${S.f2.chip}`, "left:64px; top:1640px;");
+// 3 verdict cards (banner crop of each result screen)
+f = frame(2); copy(f, S.f3);
+[[SCR.halal, "var(--halal)"], [SCR.doubt, "var(--doubt)"], [SCR.gum, "var(--haram)"]].forEach(([src, col], k) => {
+  f.insertAdjacentHTML("beforeend",
+    `<div class="vcard" style="top:${800 + k * 340}px; height:330px; transform: rotate(${[-2, 1.5, -1][k]}deg);">
+       <img src="${src}" style="margin-top:-205px"></div>`);
+});
+// 4 madhhab
+f = frame(3); copy(f, S.f4); phone(f, SCR.madhhab);
+chip(f, `<span class="dot" style="background:#059669"></span>${S.f4.chip}`, "left:250px; top:1600px;");
+// 5 European labels
+f = frame(4); copy(f, S.f5); phone(f, SCR.eu);
+S.f5.words.forEach((w, k) => chip(f, `<span class="dot" style="background:${k === 1 ? "#d97706" : "#e11d48"}"></span>${w}`,
+  `left:${[40, 520, 90][k]}px; top:${[1190, 1390, 1590][k]}px;`));
+// 6 E-numbers
+f = frame(5); copy(f, S.f6); phone(f, SCR.ecodes);
+// 7 history
+f = frame(6); copy(f, S.f7); phone(f, SCR.history);
+// 8 closing
+f = frame(7);
+f.insertAdjacentHTML("beforeend", `<div class="lockup"><div class="icon"><img src="icon_clean.png"></div><div class="word">${S.f8.word}</div>
+  <div class="pills">${S.f8.pills.map(p => `<div class="pill">${p}</div>`).join("")}</div></div><div class="fine">${S.f8.fine}</div>`);
+
+// shrink any headline wider than its frame's copy column (912px), keeping the two-line rhythm
+(function fitHeads() {
+  document.querySelectorAll(".head").forEach(h => {
+    let size = 104;
+    while (h.scrollWidth > 912 && size > 64) { size -= 2; h.style.fontSize = size + "px"; }
+  });
+})();
+</script>
+</body>
+</html>

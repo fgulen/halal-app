@@ -22,3 +22,9 @@ keystore.properties
 RELEASE_KEYSTORE_INFO.txt
 .mcp.json
 /.worktrees
+
+# Store pipeline intermediates (regenerable)
+/store_assets/upload/
+/store_assets/video/renders/yt/
+/store_assets/video/promo-v2-*/
+/store_assets/screenshots_v2/out/pano_*

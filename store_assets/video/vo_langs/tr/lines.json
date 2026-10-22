@@ -1,0 +1,387 @@
+[
+ {
+  "text": "Markette, bu ürün helal mi diye mi düşünüyorsunuz?",
+  "words": [
+   {
+    "w": "Markette",
+    "t": 0.093,
+    "d": 0.696
+   },
+   {
+    "w": "bu",
+    "t": 0.92,
+    "d": 0.152
+   },
+   {
+    "w": "ürün",
+    "t": 1.072,
+    "d": 0.25
+   },
+   {
+    "w": "helal",
+    "t": 1.322,
+    "d": 0.348
+   },
+   {
+    "w": "mi",
+    "t": 1.67,
+    "d": 0.098
+   },
+   {
+    "w": "diye",
+    "t": 1.767,
+    "d": 0.207
+   },
+   {
+    "w": "mi",
+    "t": 1.974,
+    "d": 0.087
+   },
+   {
+    "w": "düşünüyorsunuz",
+    "t": 2.061,
+    "d": 0.793
+   }
+  ]
+ },
+ {
+  "text": "Barkodu okutmanız yeterli.",
+  "words": [
+   {
+    "w": "Barkodu",
+    "t": 0.093,
+    "d": 0.641
+   },
+   {
+    "w": "okutmanız",
+    "t": 0.735,
+    "d": 0.587
+   },
+   {
+    "w": "yeterli",
+    "t": 1.322,
+    "d": 0.435
+   }
+  ]
+ },
+ {
+  "text": "Halal Çeker içindekileri okur ve net bir cevap verir: helal, şüpheli ya da haram.",
+  "words": [
+   {
+    "w": "Halal",
+    "t": 0.093,
+    "d": 0.446
+   },
+   {
+    "w": "Çeker",
+    "t": 0.539,
+    "d": 0.293
+   },
+   {
+    "w": "içindekileri",
+    "t": 0.833,
+    "d": 0.554
+   },
+   {
+    "w": "okur",
+    "t": 1.387,
+    "d": 0.304
+   },
+   {
+    "w": "ve",
+    "t": 1.713,
+    "d": 0.13
+   },
+   {
+    "w": "net",
+    "t": 1.843,
+    "d": 0.207
+   },
+   {
+    "w": "bir",
+    "t": 2.083,
+    "d": 0.141
+   },
+   {
+    "w": "cevap",
+    "t": 2.224,
+    "d": 0.326
+   },
+   {
+    "w": "verir",
+    "t": 2.572,
+    "d": 0.272
+   },
+   {
+    "w": "helal",
+    "t": 2.985,
+    "d": 0.359
+   },
+   {
+    "w": "şüpheli",
+    "t": 3.43,
+    "d": 0.38
+   },
+   {
+    "w": "ya",
+    "t": 3.811,
+    "d": 0.076
+   },
+   {
+    "w": "da",
+    "t": 3.887,
+    "d": 0.098
+   },
+   {
+    "w": "haram",
+    "t": 3.985,
+    "d": 0.348
+   }
+  ]
+ },
+ {
+  "text": "Ve sorunun hangi maddede olduğunu tam olarak gösterir.",
+  "words": [
+   {
+    "w": "Ve",
+    "t": 0.093,
+    "d": 0.185
+   },
+   {
+    "w": "sorunun",
+    "t": 0.354,
+    "d": 0.402
+   },
+   {
+    "w": "hangi",
+    "t": 0.757,
+    "d": 0.304
+   },
+   {
+    "w": "maddede",
+    "t": 1.072,
+    "d": 0.37
+   },
+   {
+    "w": "olduğunu",
+    "t": 1.441,
+    "d": 0.37
+   },
+   {
+    "w": "tam",
+    "t": 1.811,
+    "d": 0.228
+   },
+   {
+    "w": "olarak",
+    "t": 2.039,
+    "d": 0.283
+   },
+   {
+    "w": "gösterir",
+    "t": 2.333,
+    "d": 0.511
+   }
+  ]
+ },
+ {
+  "text": "Bir mezhebe mi uyuyorsunuz? Mezhebinizi seçin, sonuçlar kaynaklarıyla birlikte uyarlansın.",
+  "words": [
+   {
+    "w": "Bir",
+    "t": 0.093,
+    "d": 0.293
+   },
+   {
+    "w": "mezhebe",
+    "t": 0.474,
+    "d": 0.424
+   },
+   {
+    "w": "mi",
+    "t": 0.898,
+    "d": 0.098
+   },
+   {
+    "w": "uyuyorsunuz",
+    "t": 0.996,
+    "d": 0.707
+   },
+   {
+    "w": "Mezhebinizi",
+    "t": 2.663,
+    "d": 0.761
+   },
+   {
+    "w": "seçin",
+    "t": 3.424,
+    "d": 0.413
+   },
+   {
+    "w": "sonuçlar",
+    "t": 3.946,
+    "d": 0.522
+   },
+   {
+    "w": "kaynaklarıyla",
+    "t": 4.467,
+    "d": 0.641
+   },
+   {
+    "w": "birlikte",
+    "t": 5.109,
+    "d": 0.38
+   },
+   {
+    "w": "uyarlansın",
+    "t": 5.489,
+    "d": 0.674
+   }
+  ]
+ },
+ {
+  "text": "Türkçe, İngilizce, Almanca, Fransızca ve Arapça etiketleri okur.",
+  "words": [
+   {
+    "w": "Türkçe",
+    "t": 0.093,
+    "d": 0.533
+   },
+   {
+    "w": "İngilizce",
+    "t": 0.735,
+    "d": 0.598
+   },
+   {
+    "w": "Almanca",
+    "t": 1.463,
+    "d": 0.565
+   },
+   {
+    "w": "Fransızca",
+    "t": 2.191,
+    "d": 0.565
+   },
+   {
+    "w": "ve",
+    "t": 2.757,
+    "d": 0.087
+   },
+   {
+    "w": "Arapça",
+    "t": 2.843,
+    "d": 0.413
+   },
+   {
+    "w": "etiketleri",
+    "t": 3.257,
+    "d": 0.489
+   },
+   {
+    "w": "okur",
+    "t": 3.746,
+    "d": 0.315
+   }
+  ]
+ },
+ {
+  "text": "Ayrıca tarama geçmişiniz ve eksiksiz bir katkı maddesi rehberi.",
+  "words": [
+   {
+    "w": "Ayrıca",
+    "t": 0.093,
+    "d": 0.522
+   },
+   {
+    "w": "tarama",
+    "t": 0.615,
+    "d": 0.315
+   },
+   {
+    "w": "geçmişiniz",
+    "t": 0.93,
+    "d": 0.641
+   },
+   {
+    "w": "ve",
+    "t": 1.637,
+    "d": 0.098
+   },
+   {
+    "w": "eksiksiz",
+    "t": 1.735,
+    "d": 0.511
+   },
+   {
+    "w": "bir",
+    "t": 2.246,
+    "d": 0.141
+   },
+   {
+    "w": "katkı",
+    "t": 2.387,
+    "d": 0.304
+   },
+   {
+    "w": "maddesi",
+    "t": 2.691,
+    "d": 0.402
+   },
+   {
+    "w": "rehberi",
+    "t": 3.093,
+    "d": 0.391
+   }
+  ]
+ },
+ {
+  "text": "Halal Çeker. Okut. Kontrol et. Gönül rahatlığıyla alışveriş yap.",
+  "words": [
+   {
+    "w": "Halal",
+    "t": 0.093,
+    "d": 0.413
+   },
+   {
+    "w": "Çeker",
+    "t": 0.507,
+    "d": 0.402
+   },
+   {
+    "w": "Okut",
+    "t": 1.902,
+    "d": 0.326
+   },
+   {
+    "w": "Kontrol",
+    "t": 3.13,
+    "d": 0.533
+   },
+   {
+    "w": "et",
+    "t": 3.663,
+    "d": 0.163
+   },
+   {
+    "w": "Gönül",
+    "t": 4.826,
+    "d": 0.5
+   },
+   {
+    "w": "rahatlığıyla",
+    "t": 5.326,
+    "d": 0.522
+   },
+   {
+    "w": "alışveriş",
+    "t": 5.848,
+    "d": 0.576
+   },
+   {
+    "w": "yap",
+    "t": 6.424,
+    "d": 0.207
+   }
+  ]
+ }
+]

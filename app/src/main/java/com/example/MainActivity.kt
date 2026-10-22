@@ -2,6 +2,7 @@ package com.example
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -9,8 +10,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.screens.MainHalalScreen
 import com.example.ui.theme.HalalKontrolTheme
 import com.example.ui.viewmodel.HalalScannerViewModel
@@ -19,6 +24,7 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.review.ReviewManagerFactory
 
 class MainActivity : ComponentActivity() {
 
@@ -50,6 +56,13 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     MainHalalScreen(viewModel = viewModel)
                 }
+                val reviewRequested by viewModel.reviewRequest.collectAsStateWithLifecycle()
+                LaunchedEffect(reviewRequested) {
+                    if (reviewRequested) {
+                        viewModel.onReviewRequestHandled()
+                        launchReviewFlow()
+                    }
+                }
             }
         }
         checkForImmediateUpdate()
@@ -57,7 +70,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+        appUpdateManager.appUpdateInfo.addOnSuccessListener(this) { info ->
             if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                 startImmediateUpdate(info)
             }
@@ -65,7 +78,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun checkForImmediateUpdate() {
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+        appUpdateManager.appUpdateInfo.addOnSuccessListener(this) { info ->
             if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
                 info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
             ) {
@@ -75,10 +88,31 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun startImmediateUpdate(appUpdateInfo: AppUpdateInfo) {
-        appUpdateManager.startUpdateFlowForResult(
-            appUpdateInfo,
-            updateResultLauncher,
-            AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
-        )
+        // Listeners are activity-scoped (removed on stop), but onCreate's and onResume's lookups can
+        // still both start the flow; the second start throws IllegalStateException (Play vitals,
+        // 2.0), and the first flow is already showing, so that one is safe to ignore.
+        try {
+            appUpdateManager.startUpdateFlowForResult(
+                appUpdateInfo,
+                updateResultLauncher,
+                AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+            )
+        } catch (e: IllegalStateException) {
+            Log.w("MainActivity", "Update flow already started", e)
+        }
+    }
+
+    // Play In-App Review: Google decides whether the dialog is actually shown (quota), and gives
+    // no result either way, so failures are just logged. No-ops on non-Play installs.
+    private fun launchReviewFlow() {
+        val reviewManager = ReviewManagerFactory.create(this)
+        reviewManager.requestReviewFlow().addOnCompleteListener(this) { request ->
+            when {
+                !request.isSuccessful -> Log.w("MainActivity", "Review flow unavailable", request.exception)
+                !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) ->
+                    Log.i("MainActivity", "Review flow skipped: activity not in foreground")
+                else -> reviewManager.launchReviewFlow(this, request.result)
+            }
+        }
     }
 }

@@ -1,0 +1,397 @@
+[
+ {
+  "text": "Im Supermarkt und unsicher, ob es halal ist?",
+  "words": [
+   {
+    "w": "Im",
+    "t": 0.049,
+    "d": 0.231
+   },
+   {
+    "w": "Supermarkt",
+    "t": 0.281,
+    "d": 0.625
+   },
+   {
+    "w": "und",
+    "t": 0.906,
+    "d": 0.197
+   },
+   {
+    "w": "unsicher",
+    "t": 1.102,
+    "d": 0.509
+   },
+   {
+    "w": "ob",
+    "t": 1.681,
+    "d": 0.093
+   },
+   {
+    "w": "es",
+    "t": 1.774,
+    "d": 0.093
+   },
+   {
+    "w": "halal",
+    "t": 1.866,
+    "d": 0.359
+   },
+   {
+    "w": "ist",
+    "t": 2.225,
+    "d": 0.336
+   }
+  ]
+ },
+ {
+  "text": "Scann einfach den Barcode.",
+  "words": [
+   {
+    "w": "Scann",
+    "t": 0.093,
+    "d": 0.37
+   },
+   {
+    "w": "einfach",
+    "t": 0.463,
+    "d": 0.324
+   },
+   {
+    "w": "den",
+    "t": 0.787,
+    "d": 0.162
+   },
+   {
+    "w": "Barcode",
+    "t": 0.949,
+    "d": 0.521
+   }
+  ]
+ },
+ {
+  "text": "Halal Checker liest die Zutaten und gibt eine klare Antwort: halal, zweifelhaft oder haram.",
+  "words": [
+   {
+    "w": "Halal",
+    "t": 0.049,
+    "d": 0.347
+   },
+   {
+    "w": "Checker",
+    "t": 0.396,
+    "d": 0.347
+   },
+   {
+    "w": "liest",
+    "t": 0.744,
+    "d": 0.197
+   },
+   {
+    "w": "die",
+    "t": 0.94,
+    "d": 0.081
+   },
+   {
+    "w": "Zutaten",
+    "t": 1.021,
+    "d": 0.602
+   },
+   {
+    "w": "und",
+    "t": 1.623,
+    "d": 0.139
+   },
+   {
+    "w": "gibt",
+    "t": 1.762,
+    "d": 0.174
+   },
+   {
+    "w": "eine",
+    "t": 1.936,
+    "d": 0.127
+   },
+   {
+    "w": "klare",
+    "t": 2.063,
+    "d": 0.324
+   },
+   {
+    "w": "Antwort",
+    "t": 2.387,
+    "d": 0.394
+   },
+   {
+    "w": "halal",
+    "t": 3.255,
+    "d": 0.394
+   },
+   {
+    "w": "zweifelhaft",
+    "t": 3.857,
+    "d": 0.683
+   },
+   {
+    "w": "oder",
+    "t": 4.551,
+    "d": 0.162
+   },
+   {
+    "w": "haram",
+    "t": 4.713,
+    "d": 0.451
+   }
+  ]
+ },
+ {
+  "text": "Und es zeigt genau, welche Zutat das Problem ist.",
+  "words": [
+   {
+    "w": "Und",
+    "t": 0.093,
+    "d": 0.139
+   },
+   {
+    "w": "es",
+    "t": 0.232,
+    "d": 0.116
+   },
+   {
+    "w": "zeigt",
+    "t": 0.347,
+    "d": 0.312
+   },
+   {
+    "w": "genau",
+    "t": 0.66,
+    "d": 0.405
+   },
+   {
+    "w": "welche",
+    "t": 1.285,
+    "d": 0.289
+   },
+   {
+    "w": "Zutat",
+    "t": 1.574,
+    "d": 0.44
+   },
+   {
+    "w": "das",
+    "t": 2.014,
+    "d": 0.139
+   },
+   {
+    "w": "Problem",
+    "t": 2.153,
+    "d": 0.394
+   },
+   {
+    "w": "ist",
+    "t": 2.546,
+    "d": 0.324
+   }
+  ]
+ },
+ {
+  "text": "Du folgst einer Rechtsschule? Wähle deine, und die Ergebnisse passen sich an, mit Quellen.",
+  "words": [
+   {
+    "w": "Du",
+    "t": 0.081,
+    "d": 0.104
+   },
+   {
+    "w": "folgst",
+    "t": 0.185,
+    "d": 0.405
+   },
+   {
+    "w": "einer",
+    "t": 0.59,
+    "d": 0.208
+   },
+   {
+    "w": "Rechtsschule",
+    "t": 0.799,
+    "d": 0.741
+   },
+   {
+    "w": "Wähle",
+    "t": 1.856,
+    "d": 0.382
+   },
+   {
+    "w": "deine",
+    "t": 2.237,
+    "d": 0.382
+   },
+   {
+    "w": "und",
+    "t": 2.92,
+    "d": 0.139
+   },
+   {
+    "w": "die",
+    "t": 3.059,
+    "d": 0.104
+   },
+   {
+    "w": "Ergebnisse",
+    "t": 3.163,
+    "d": 0.498
+   },
+   {
+    "w": "passen",
+    "t": 3.661,
+    "d": 0.266
+   },
+   {
+    "w": "sich",
+    "t": 3.927,
+    "d": 0.197
+   },
+   {
+    "w": "an",
+    "t": 4.124,
+    "d": 0.232
+   },
+   {
+    "w": "mit",
+    "t": 4.552,
+    "d": 0.15
+   },
+   {
+    "w": "Quellen",
+    "t": 4.703,
+    "d": 0.521
+   }
+  ]
+ },
+ {
+  "text": "Es liest Etiketten auf Deutsch, Englisch, Französisch und Arabisch.",
+  "words": [
+   {
+    "w": "Es",
+    "t": 0.093,
+    "d": 0.127
+   },
+   {
+    "w": "liest",
+    "t": 0.22,
+    "d": 0.266
+   },
+   {
+    "w": "Etiketten",
+    "t": 0.486,
+    "d": 0.498
+   },
+   {
+    "w": "auf",
+    "t": 0.984,
+    "d": 0.162
+   },
+   {
+    "w": "Deutsch",
+    "t": 1.146,
+    "d": 0.382
+   },
+   {
+    "w": "Englisch",
+    "t": 1.759,
+    "d": 0.382
+   },
+   {
+    "w": "Französisch",
+    "t": 2.303,
+    "d": 0.671
+   },
+   {
+    "w": "und",
+    "t": 3.032,
+    "d": 0.174
+   },
+   {
+    "w": "Arabisch",
+    "t": 3.206,
+    "d": 0.59
+   }
+  ]
+ },
+ {
+  "text": "Dazu dein Scan-Verlauf und ein kompletter E-Nummern-Ratgeber.",
+  "words": [
+   {
+    "w": "Dazu",
+    "t": 0.081,
+    "d": 0.278
+   },
+   {
+    "w": "dein",
+    "t": 0.359,
+    "d": 0.208
+   },
+   {
+    "w": "Scan-Verlauf",
+    "t": 0.567,
+    "d": 0.741
+   },
+   {
+    "w": "und",
+    "t": 1.308,
+    "d": 0.185
+   },
+   {
+    "w": "ein",
+    "t": 1.493,
+    "d": 0.116
+   },
+   {
+    "w": "kompletter",
+    "t": 1.609,
+    "d": 0.567
+   },
+   {
+    "w": "E-Nummern-Ratgeber",
+    "t": 2.176,
+    "d": 1.03
+   }
+  ]
+ },
+ {
+  "text": "Halal Checker. Scannen. Prüfen. Sicher einkaufen.",
+  "words": [
+   {
+    "w": "Halal",
+    "t": 0.081,
+    "d": 0.324
+   },
+   {
+    "w": "Checker",
+    "t": 0.405,
+    "d": 0.498
+   },
+   {
+    "w": "Scannen",
+    "t": 1.218,
+    "d": 0.613
+   },
+   {
+    "w": "Prüfen",
+    "t": 2.144,
+    "d": 0.66
+   },
+   {
+    "w": "Sicher",
+    "t": 3.117,
+    "d": 0.486
+   },
+   {
+    "w": "einkaufen",
+    "t": 3.603,
+    "d": 0.729
+   }
+  ]
+ }
+]

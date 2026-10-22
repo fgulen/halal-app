@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 15 / versionName 2.2 (2026-10-22)
+
+Uygulama içi değerlendirme isteği (3. ve 20. başarılı taramadan sonra, sonuç kapatılınca; Google kotası belirler). Uygulama içi güncelleme akışının iki kez başlatılmasından doğan çökme giderildi (Play vitals, 2.0). Fransızca tarama geçmişi başlığında "Effacer" düğmesinin harf harf alt alta dizilmesi düzeltildi.
+
+<tr-TR>
+Birkaç taramadan sonra, isterseniz uygulamayı Google Play'de doğrudan uygulama içinden değerlendirebilirsiniz. Güncelleme sırasında nadiren oluşan bir çökme giderildi ve tarama geçmişi başlığı uzun dillerde artık düzgün görünüyor.
+</tr-TR>
+
+<en-US>
+After a few scans you can now rate the app on Google Play right from inside the app, if you like. A rare crash during app updates has been fixed, and the scan history header now displays correctly in longer languages.
+</en-US>
+
+<de-DE>
+Nach einigen Scans können Sie die App jetzt, wenn Sie möchten, direkt in der App bei Google Play bewerten. Ein seltener Absturz beim App-Update wurde behoben, und die Überschrift des Scan-Verlaufs wird jetzt auch in längeren Sprachen korrekt angezeigt.
+</de-DE>
+
+<fr-FR>
+Après quelques scans, vous pouvez désormais noter l'application sur Google Play directement depuis l'application, si vous le souhaitez. Un plantage rare lors des mises à jour a été corrigé, et l'en-tête de l'historique des scans s'affiche désormais correctement en français.
+</fr-FR>
+
+<ar>
+بعد بضع عمليات مسح، يمكنك الآن تقييم التطبيق على Google Play مباشرةً من داخل التطبيق إن رغبت. تم إصلاح عطل نادر كان يحدث أثناء تحديث التطبيق، وأصبح عنوان سجل المسح يظهر بشكل صحيح.
+</ar>
+
+---
+
 ## versionCode 14 / versionName 2.1 (2026-10-15)
 
 versionCode 13 incelemeye gönderildi ama YAYINLANMADI: yerine 14 yüklendi (v13'te Almanca bileşik kelimelerdeki peynir altı suyu yanlış HELAL çıkıyordu; v13 yayınlansaydı bu sonuçlar önbellekte kalırdı). Notlar bu yüzden v13'ün içeriğini de kapsar. Ek olarak: Almanca bileşik kelimeler (Süßmolkenpulver, Schweineschmalz, Rindergelatine, Eierlikör) ve Arapça içerik metni artık eşleşiyor.

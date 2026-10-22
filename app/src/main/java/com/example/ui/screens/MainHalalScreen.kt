@@ -523,7 +523,7 @@ fun MainHalalScreen(
         ProductResultBottomSheet(
             product = product,
             language = language,
-            onDismiss = { viewModel.dismissResult() },
+            onDismiss = { viewModel.closeResult() },
             onScanAgain = {
                 viewModel.dismissResult()
                 onTriggerScanner()

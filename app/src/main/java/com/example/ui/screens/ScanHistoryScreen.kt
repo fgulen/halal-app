@@ -203,7 +203,9 @@ fun ScanHistoryScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                // weight: long titles (FR "Historique des scans") wrap instead of squeezing the
+                // Clear button until its label breaks one letter per line
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = AppStrings.getOnDeviceStorage(language),
                         fontSize = 11.sp,
@@ -218,7 +220,8 @@ fun ScanHistoryScreen(
                             fontSize = 24.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = NaturalTextDark,
-                            letterSpacing = (-0.5).sp
+                            letterSpacing = (-0.5).sp,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Surface(
@@ -231,6 +234,8 @@ fun ScanHistoryScreen(
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldPrimaryDeep,
+                                maxLines = 1,
+                                softWrap = false,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                             )
                         }
@@ -238,6 +243,7 @@ fun ScanHistoryScreen(
                 }
 
                 if (scanHistory.isNotEmpty()) {
+                    Spacer(modifier = Modifier.width(8.dp))
                     Surface(
                         onClick = { showClearDialog = true },
                         shape = CircleShape,
@@ -266,7 +272,9 @@ fun ScanHistoryScreen(
                                 },
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = HaramRed
+                                color = HaramRed,
+                                maxLines = 1,
+                                softWrap = false
                             )
                         }
                     }

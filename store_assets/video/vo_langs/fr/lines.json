@@ -1,0 +1,437 @@
+[
+ {
+  "text": "Au rayon, vous vous demandez si c'est halal ?",
+  "words": [
+   {
+    "w": "Au",
+    "t": 0.081,
+    "d": 0.081
+   },
+   {
+    "w": "rayon",
+    "t": 0.162,
+    "d": 0.394
+   },
+   {
+    "w": "vous",
+    "t": 0.868,
+    "d": 0.081
+   },
+   {
+    "w": "vous",
+    "t": 0.949,
+    "d": 0.093
+   },
+   {
+    "w": "demandez",
+    "t": 1.042,
+    "d": 0.382
+   },
+   {
+    "w": "si",
+    "t": 1.424,
+    "d": 0.15
+   },
+   {
+    "w": "c'est",
+    "t": 1.574,
+    "d": 0.139
+   },
+   {
+    "w": "halal",
+    "t": 1.713,
+    "d": 0.463
+   }
+  ]
+ },
+ {
+  "text": "Scannez simplement le code-barres.",
+  "words": [
+   {
+    "w": "Scannez",
+    "t": 0.081,
+    "d": 0.405
+   },
+   {
+    "w": "simplement",
+    "t": 0.486,
+    "d": 0.451
+   },
+   {
+    "w": "le",
+    "t": 0.938,
+    "d": 0.093
+   },
+   {
+    "w": "code-barres",
+    "t": 1.03,
+    "d": 0.66
+   }
+  ]
+ },
+ {
+  "text": "Halal Checker lit les ingrédients et donne une réponse claire : halal, douteux ou haram.",
+  "words": [
+   {
+    "w": "Halal",
+    "t": 0.093,
+    "d": 0.232
+   },
+   {
+    "w": "Checker",
+    "t": 0.324,
+    "d": 0.428
+   },
+   {
+    "w": "lit",
+    "t": 0.752,
+    "d": 0.116
+   },
+   {
+    "w": "les",
+    "t": 0.868,
+    "d": 0.093
+   },
+   {
+    "w": "ingrédients",
+    "t": 0.961,
+    "d": 0.59
+   },
+   {
+    "w": "et",
+    "t": 1.643,
+    "d": 0.093
+   },
+   {
+    "w": "donne",
+    "t": 1.736,
+    "d": 0.162
+   },
+   {
+    "w": "une",
+    "t": 1.898,
+    "d": 0.069
+   },
+   {
+    "w": "réponse",
+    "t": 1.968,
+    "d": 0.324
+   },
+   {
+    "w": "claire",
+    "t": 2.292,
+    "d": 0.394
+   },
+   {
+    "w": "halal",
+    "t": 2.975,
+    "d": 0.417
+   },
+   {
+    "w": "douteux",
+    "t": 3.576,
+    "d": 0.336
+   },
+   {
+    "w": "ou",
+    "t": 3.924,
+    "d": 0.093
+   },
+   {
+    "w": "haram",
+    "t": 4.016,
+    "d": 0.521
+   }
+  ]
+ },
+ {
+  "text": "Et il montre exactement quel ingrédient pose problème.",
+  "words": [
+   {
+    "w": "Et",
+    "t": 0.093,
+    "d": 0.081
+   },
+   {
+    "w": "il",
+    "t": 0.174,
+    "d": 0.139
+   },
+   {
+    "w": "montre",
+    "t": 0.312,
+    "d": 0.278
+   },
+   {
+    "w": "exactement",
+    "t": 0.66,
+    "d": 0.579
+   },
+   {
+    "w": "quel",
+    "t": 1.238,
+    "d": 0.174
+   },
+   {
+    "w": "ingrédient",
+    "t": 1.412,
+    "d": 0.44
+   },
+   {
+    "w": "pose",
+    "t": 1.852,
+    "d": 0.208
+   },
+   {
+    "w": "problème",
+    "t": 2.06,
+    "d": 0.625
+   }
+  ]
+ },
+ {
+  "text": "Vous suivez une école juridique ? Choisissez la vôtre, et les résultats s'adaptent, sources à l'appui.",
+  "words": [
+   {
+    "w": "Vous",
+    "t": 0.093,
+    "d": 0.162
+   },
+   {
+    "w": "suivez",
+    "t": 0.255,
+    "d": 0.324
+   },
+   {
+    "w": "une",
+    "t": 0.579,
+    "d": 0.116
+   },
+   {
+    "w": "école",
+    "t": 0.694,
+    "d": 0.243
+   },
+   {
+    "w": "juridique",
+    "t": 0.938,
+    "d": 0.694
+   },
+   {
+    "w": "Choisissez",
+    "t": 1.979,
+    "d": 0.451
+   },
+   {
+    "w": "la",
+    "t": 2.431,
+    "d": 0.104
+   },
+   {
+    "w": "vôtre",
+    "t": 2.535,
+    "d": 0.394
+   },
+   {
+    "w": "et",
+    "t": 3.241,
+    "d": 0.023
+   },
+   {
+    "w": "les",
+    "t": 3.264,
+    "d": 0.093
+   },
+   {
+    "w": "résultats",
+    "t": 3.357,
+    "d": 0.382
+   },
+   {
+    "w": "s'adaptent",
+    "t": 3.738,
+    "d": 0.532
+   },
+   {
+    "w": "sources",
+    "t": 4.525,
+    "d": 0.301
+   },
+   {
+    "w": "à",
+    "t": 4.826,
+    "d": 0.046
+   },
+   {
+    "w": "l'appui",
+    "t": 4.873,
+    "d": 0.486
+   }
+  ]
+ },
+ {
+  "text": "Il lit les étiquettes en français, anglais, allemand et arabe.",
+  "words": [
+   {
+    "w": "Il",
+    "t": 0.093,
+    "d": 0.139
+   },
+   {
+    "w": "lit",
+    "t": 0.232,
+    "d": 0.127
+   },
+   {
+    "w": "les",
+    "t": 0.359,
+    "d": 0.093
+   },
+   {
+    "w": "étiquettes",
+    "t": 0.451,
+    "d": 0.44
+   },
+   {
+    "w": "en",
+    "t": 0.891,
+    "d": 0.058
+   },
+   {
+    "w": "français",
+    "t": 0.949,
+    "d": 0.521
+   },
+   {
+    "w": "anglais",
+    "t": 1.806,
+    "d": 0.417
+   },
+   {
+    "w": "allemand",
+    "t": 2.488,
+    "d": 0.347
+   },
+   {
+    "w": "et",
+    "t": 2.836,
+    "d": 0.093
+   },
+   {
+    "w": "arabe",
+    "t": 2.928,
+    "d": 0.521
+   }
+  ]
+ },
+ {
+  "text": "Avec votre historique de scans et un guide complet des additifs alimentaires.",
+  "words": [
+   {
+    "w": "Avec",
+    "t": 0.093,
+    "d": 0.22
+   },
+   {
+    "w": "votre",
+    "t": 0.312,
+    "d": 0.197
+   },
+   {
+    "w": "historique",
+    "t": 0.509,
+    "d": 0.359
+   },
+   {
+    "w": "de",
+    "t": 0.868,
+    "d": 0.116
+   },
+   {
+    "w": "scans",
+    "t": 0.984,
+    "d": 0.336
+   },
+   {
+    "w": "et",
+    "t": 1.319,
+    "d": 0.081
+   },
+   {
+    "w": "un",
+    "t": 1.4,
+    "d": 0.081
+   },
+   {
+    "w": "guide",
+    "t": 1.482,
+    "d": 0.382
+   },
+   {
+    "w": "complet",
+    "t": 1.91,
+    "d": 0.347
+   },
+   {
+    "w": "des",
+    "t": 2.257,
+    "d": 0.093
+   },
+   {
+    "w": "additifs",
+    "t": 2.35,
+    "d": 0.417
+   },
+   {
+    "w": "alimentaires",
+    "t": 2.766,
+    "d": 0.799
+   }
+  ]
+ },
+ {
+  "text": "Halal Checker. Scannez. Vérifiez. Achetez en toute confiance.",
+  "words": [
+   {
+    "w": "Halal",
+    "t": 0.049,
+    "d": 0.417
+   },
+   {
+    "w": "Checker",
+    "t": 0.466,
+    "d": 0.532
+   },
+   {
+    "w": "Scannez",
+    "t": 1.312,
+    "d": 0.972
+   },
+   {
+    "w": "Vérifiez",
+    "t": 2.596,
+    "d": 0.972
+   },
+   {
+    "w": "Achetez",
+    "t": 3.912,
+    "d": 0.44
+   },
+   {
+    "w": "en",
+    "t": 4.352,
+    "d": 0.104
+   },
+   {
+    "w": "toute",
+    "t": 4.456,
+    "d": 0.185
+   },
+   {
+    "w": "confiance",
+    "t": 4.641,
+    "d": 0.764
+   }
+  ]
+ }
+]

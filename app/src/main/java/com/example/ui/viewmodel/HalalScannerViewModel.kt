@@ -29,6 +29,11 @@ sealed class ScanError {
 
 class HalalScannerViewModel(application: Application) : AndroidViewModel(application) {
 
+    private companion object {
+        // Successful scans after which closing a result asks for a Play review (each at most once).
+        val REVIEW_PROMPT_THRESHOLDS = listOf(3, 20)
+    }
+
     private val repository: ProductRepository
     private val userPreferences = UserPreferences(application)
 
@@ -73,6 +78,14 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     private val _photoIngredientsReview = MutableStateFlow<String?>(null)
     val photoIngredientsReview: StateFlow<String?> = _photoIngredientsReview.asStateFlow()
+
+    // One-shot signal for MainActivity to launch the Play in-app review flow.
+    private val _reviewRequest = MutableStateFlow(false)
+    val reviewRequest: StateFlow<Boolean> = _reviewRequest.asStateFlow()
+
+    // True while the open result sheet is a fresh scan with a real verdict (not "not found", not a
+    // history item), i.e. the only kind of result after which a review prompt makes sense.
+    private var freshVerdictShown = false
 
     private var lastScanQuery: String? = null
     private var scanJob: Job? = null
@@ -161,6 +174,42 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     fun dismissResult() {
         _activeProduct.value = null
+        freshVerdictShown = false
+    }
+
+    /**
+     * The user closed a result sheet (not "scan again"): a calm moment right after they got value
+     * from the app, so ask for a review there once enough scans have succeeded.
+     */
+    fun closeResult() {
+        val eligible = freshVerdictShown
+        dismissResult()
+        if (!eligible) return
+        viewModelScope.launch {
+            try {
+                if (userPreferences.claimReviewPrompt(REVIEW_PROMPT_THRESHOLDS)) _reviewRequest.value = true
+            } catch (e: Exception) {
+                Log.w("HalalScannerViewModel", "Couldn't check review prompt", e)
+            }
+        }
+    }
+
+    fun onReviewRequestHandled() {
+        _reviewRequest.value = false
+    }
+
+    /** Shows a fresh scan result; a real verdict is counted first so a quick close sees it. */
+    private suspend fun showScanResult(product: FoodProduct) {
+        val isVerdict = product.status != HalalStatus.BULUNAMADI
+        if (isVerdict) {
+            try {
+                userPreferences.recordSuccessfulScan()
+            } catch (e: Exception) {
+                Log.w("HalalScannerViewModel", "Couldn't record successful scan", e)
+            }
+        }
+        _activeProduct.value = product
+        freshVerdictShown = isVerdict
     }
 
     fun setFilter(status: HalalStatus?) {
@@ -181,7 +230,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             try {
                 madhhabLoaded.await()
                 val product = repository.checkBarcode(barcode, _selectedLanguage.value, _selectedMadhhab.value)
-                _activeProduct.value = product
+                showScanResult(product)
             } catch (e: ProductRepository.NetworkUnavailableException) {
                 Log.w("HalalScannerViewModel", "Network unavailable while checking '$barcode'")
                 _scanError.value = ScanError.NetworkUnavailable(barcode)
@@ -208,6 +257,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     fun selectHistoryItem(product: FoodProduct) {
         _activeProduct.value = product
+        freshVerdictShown = false
     }
 
     /** A photo was captured and OCR'd (possibly to an empty string if nothing was recognized). */
@@ -229,7 +279,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
                 language = _selectedLanguage.value,
                 madhhab = _selectedMadhhab.value
             )
-            _activeProduct.value = product
+            showScanResult(product)
         }
     }
 
