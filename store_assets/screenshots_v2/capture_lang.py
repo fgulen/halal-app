@@ -134,7 +134,9 @@ def home_typed(lang):
     shot("home_typed", lang)
 
 
-if len(sys.argv) > 2 and sys.argv[2] == "home":
-    home_typed(sys.argv[1])
-else:
-    main(sys.argv[1])
+# Guarded so the helpers can be imported (runpy/import) without overwriting screens/*.png.
+if __name__ == "__main__":
+    if len(sys.argv) > 2 and sys.argv[2] == "home":
+        home_typed(sys.argv[1])
+    else:
+        main(sys.argv[1])
