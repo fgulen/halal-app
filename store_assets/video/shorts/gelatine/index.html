@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Manrope"; font-weight: 500; src: url("assets/fonts/manrope-500.woff2") format("woff2"); }
+      @font-face { font-family: "Manrope"; font-weight: 700; src: url("assets/fonts/manrope-700.woff2") format("woff2"); }
+      :root { --bg: #052e22; --mint: #6ee7b7; --white: #f4fbf7; --acc: #fb923c; --halal: #34d399; --doubt: #fbbf24; --haram: #fb7185; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--bg);
+              font-family: "Manrope", sans-serif; color: var(--white); }
+      .glow { position: absolute; width: 1600px; height: 1600px; left: -260px; top: 160px; border-radius: 50%;
+              background: radial-gradient(circle, rgba(52,211,153,0.20) 0%, rgba(52,211,153,0) 60%); }
+      .grid { position: absolute; left: 0; top: 0; width: 1080px; height: 2040px;
+              background-image: linear-gradient(rgba(110,231,183,0.09) 2px, transparent 2px),
+                                linear-gradient(90deg, rgba(110,231,183,0.09) 2px, transparent 2px);
+              background-size: 120px 120px; }
+
+      /* captions: top band, y 250-660 */
+      .cap { position: absolute; left: 0; top: 250px; width: 1080px; height: 420px; }
+      .capline { position: absolute; left: 70px; right: 70px; top: 0; bottom: 0; display: flex; flex-wrap: wrap;
+                 align-content: center; justify-content: center; gap: 0 22px; text-align: center; }
+      .cw { font-family: "Archivo Black", sans-serif; font-size: 92px; line-height: 1.08; text-transform: uppercase;
+            color: var(--white); opacity: 0; text-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+      .cw.key { color: var(--acc); }
+
+      /* visuals: middle band, y 700-1500 */
+      .vis { position: absolute; left: 0; top: 700px; width: 1080px; height: 800px; }
+      .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .col { gap: 18px; }
+      .card { position: absolute; left: 110px; top: 120px; width: 860px; padding: 56px 60px; border-radius: 34px; background: #fbf7f0;
+              color: #1f2937; box-shadow: 0 40px 100px rgba(0,0,0,0.45); }
+      .cardh { font-weight: 700; font-size: 34px; letter-spacing: 0.22em; text-transform: uppercase; color: #6b7280; margin-bottom: 22px; }
+      .cardb { font-weight: 500; font-size: 50px; line-height: 1.4; }
+      .cardb b { font-weight: 700; border-radius: 12px; padding: 2px 10px; }
+      .giant { font-family: "Archivo Black", sans-serif; font-size: 230px; line-height: 0.95; text-transform: uppercase; color: var(--acc);
+               text-align: center; max-width: 1000px; }
+      .gsub { margin-top: 34px; font-weight: 700; font-size: 56px; color: var(--mint); text-align: center; max-width: 900px; }
+      .stat { font-family: "Archivo Black", sans-serif; font-size: 250px; line-height: 1; color: var(--acc); }
+      .step { font-family: "Archivo Black", sans-serif; font-size: 70px; line-height: 1.05; text-transform: uppercase; text-align: center;
+              padding: 16px 40px; border-radius: 26px; background: rgba(110,231,183,0.10); border: 4px solid rgba(110,231,183,0.35); }
+      .step.acc { color: var(--acc); border-color: var(--acc); }
+      .arrow { font-weight: 700; font-size: 46px; line-height: 1; color: var(--mint); }
+      .eq { font-family: "Archivo Black", sans-serif; font-size: 150px; line-height: 1; color: var(--mint); }
+      .tiles { position: absolute; left: 90px; right: 90px; top: 60px; bottom: 60px; display: flex; flex-wrap: wrap;
+               align-content: center; justify-content: center; gap: 30px; }
+      .tile { width: 435px; height: 250px; border-radius: 34px; display: flex; align-items: center; justify-content: center; text-align: center;
+              padding: 0 26px; font-family: "Archivo Black", sans-serif; font-size: 62px; line-height: 1.05; text-transform: uppercase;
+              background: rgba(255,255,255,0.06); border: 4px solid var(--acc); }
+      .chip { font-family: "Archivo Black", sans-serif; font-size: 84px; line-height: 1; padding: 30px 60px; border-radius: 999px; text-align: center; }
+      .chip.bad { background: rgba(251,113,133,0.16); border: 5px solid var(--haram); color: #fecdd3; }
+      .chip.doubt { background: rgba(251,191,36,0.14); border: 5px solid var(--doubt); color: #fde68a; }
+      .chip.good { background: rgba(52,211,153,0.16); border: 5px solid var(--halal); color: #a7f3d0; }
+
+      /* end: phone + lockup, full frame */
+      .ring { position: absolute; left: 24px; right: 24px; height: 180px; border-radius: 26px; border: 7px solid var(--haram); opacity: 0; }
+      .phone { position: absolute; left: 225px; top: -20px; width: 630px; height: 1330px; border-radius: 86px; background: #0d1210;
+               padding: 18px; box-shadow: 0 50px 120px rgba(0,0,0,0.5), inset 0 0 0 4px #2b3431; }
+      .pscreen { position: relative; width: 594px; height: 1294px; border-radius: 70px; overflow: hidden; background: #f3ece2; }
+      .scr { position: absolute; left: 0; top: 0; width: 594px; }
+      .beam { position: absolute; left: 0; right: 0; top: 0; height: 130px; opacity: 0;
+              background: linear-gradient(180deg, rgba(52,211,153,0) 0%, rgba(52,211,153,0.4) 80%, rgba(110,231,183,1) 100%); }
+      .ecard { position: absolute; left: 26px; right: 26px; top: 640px; padding: 30px 30px 34px; border-radius: 30px; background: #fffbeb;
+               border: 3px solid #fcd34d; box-shadow: 0 20px 50px rgba(0,0,0,0.25); color: #1f2937; }
+      .ech { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+      .ecode { font-weight: 700; font-size: 34px; color: #b45309; }
+      .ename { font-weight: 700; font-size: 30px; flex: 1; }
+      .ebadge { font-weight: 700; font-size: 24px; color: #b45309; background: #fef3c7; padding: 8px 18px; border-radius: 999px; }
+      .ereason { margin-top: 16px; font-weight: 500; font-size: 26px; line-height: 1.4; color: #374151; }
+      .lockup { position: absolute; left: 0; right: 0; top: 0; height: 800px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .icon { width: 300px; height: 300px; border-radius: 70px; overflow: hidden; opacity: 0; box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
+      .icon img { width: 100%; height: 100%; display: block; }
+      .wordmark { margin-top: 48px; font-family: "Archivo Black", sans-serif; font-size: 116px; line-height: 1; opacity: 0; }
+      .sticker { position: absolute; left: 500px; top: 520px; padding: 22px 40px; border-radius: 24px; background: var(--acc); color: #fff;
+                 font-family: "Archivo Black", sans-serif; font-size: 64px; text-transform: uppercase; transform: rotate(4deg);
+                 box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+      .store { margin-top: 30px; padding: 16px 36px; border-radius: 999px; border: 3px solid var(--white); font-weight: 700; font-size: 44px; opacity: 0; }
+      .tag { margin-top: 26px; font-weight: 700; font-size: 50px; color: var(--mint); opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="27.46" data-width="1080" data-height="1920">
+      <audio id="music-bed" src="assets/bgm/bed.m4a" data-start="0" data-duration="27.46" data-volume="0.3"></audio>
+      <audio id="vo1" src="assets/vo/line1.mp3" data-start="0.35" data-volume="1"></audio>
+      <audio id="vo2" src="assets/vo/line2.mp3" data-start="4.338" data-volume="1"></audio>
+      <audio id="vo3" src="assets/vo/line3.mp3" data-start="6.43" data-volume="1"></audio>
+      <audio id="vo4" src="assets/vo/line4.mp3" data-start="10.61" data-volume="1"></audio>
+      <audio id="vo5" src="assets/vo/line5.mp3" data-start="13.374" data-volume="1"></audio>
+      <audio id="vo6" src="assets/vo/line6.mp3" data-start="17.386" data-volume="1"></audio>
+      <audio id="vo7" src="assets/vo/line7.mp3" data-start="22.502" data-volume="1"></audio>
+
+      <div class="clip" id="bg" data-start="0" data-duration="27.46" data-track-index="0">
+        <div class="grid" id="grid"></div>
+        <div class="glow" id="glow"></div>
+      </div>
+
+      <div class="clip cap" id="cap0" data-start="0.35" data-duration="3.988" data-track-index="1"><div class="capline"><span class="cw" id="c0w0" style="font-size: 78px">Most</span> <span class="cw" id="c0w1" style="font-size: 78px">gummy</span> <span class="cw" id="c0w2" style="font-size: 78px">bears</span> <span class="cw" id="c0w3" style="font-size: 78px">are</span> <span class="cw" id="c0w4" style="font-size: 78px">made</span> <span class="cw" id="c0w5" style="font-size: 78px">from</span> <span class="cw" id="c0w6" style="font-size: 78px">boiled</span> <span class="cw" id="c0w7" style="font-size: 78px">animal</span> <span class="cw" id="c0w8" style="font-size: 78px">skin</span> <span class="cw" id="c0w9" style="font-size: 78px">and</span> <span class="cw key" id="c0w10" style="font-size: 78px">bones.</span></div></div>
+      <div class="clip cap" id="cap1" data-start="4.338" data-duration="2.092" data-track-index="1"><div class="capline"><span class="cw" id="c1w0">That&#x27;s</span> <span class="cw key" id="c1w1">gelatine.</span></div></div>
+      <div class="clip cap" id="cap2" data-start="6.43" data-duration="4.18" data-track-index="1"><div class="capline"><span class="cw" id="c2w0" style="font-size: 78px">Much</span> <span class="cw" id="c2w1" style="font-size: 78px">of</span> <span class="cw" id="c2w2" style="font-size: 78px">it</span> <span class="cw" id="c2w3" style="font-size: 78px">comes</span> <span class="cw" id="c2w4" style="font-size: 78px">from</span> <span class="cw key" id="c2w5" style="font-size: 78px">pig</span> <span class="cw" id="c2w6" style="font-size: 78px">skin,</span> <span class="cw" id="c2w7" style="font-size: 78px">the</span> <span class="cw" id="c2w8" style="font-size: 78px">rest</span> <span class="cw" id="c2w9" style="font-size: 78px">from</span> <span class="cw" id="c2w10" style="font-size: 78px">cattle</span> <span class="cw" id="c2w11" style="font-size: 78px">and</span> <span class="cw" id="c2w12" style="font-size: 78px">fish.</span></div></div>
+      <div class="clip cap" id="cap3" data-start="10.61" data-duration="2.764" data-track-index="1"><div class="capline"><span class="cw" id="c3w0">And</span> <span class="cw" id="c3w1">the</span> <span class="cw" id="c3w2">label</span> <span class="cw" id="c3w3">rarely</span> <span class="cw" id="c3w4">says</span> <span class="cw" id="c3w5">which</span> <span class="cw key" id="c3w6">animal.</span></div></div>
+      <div class="clip cap" id="cap4" data-start="13.374" data-duration="4.012" data-track-index="1"><div class="capline"><span class="cw" id="c4w0" style="font-size: 78px">It</span> <span class="cw" id="c4w1" style="font-size: 78px">hides</span> <span class="cw" id="c4w2" style="font-size: 78px">in</span> <span class="cw" id="c4w3" style="font-size: 78px">marshmallows,</span> <span class="cw" id="c4w4" style="font-size: 78px">yogurts,</span> <span class="cw" id="c4w5" style="font-size: 78px">desserts,</span> <span class="cw" id="c4w6" style="font-size: 78px">even</span> <span class="cw" id="c4w7" style="font-size: 78px">some</span> <span class="cw key" id="c4w8" style="font-size: 78px">juices.</span></div></div>
+      <div class="clip cap" id="cap5" data-start="17.386" data-duration="5.116" data-track-index="1"><div class="capline"><span class="cw" id="c5w0" style="font-size: 78px">Look</span> <span class="cw" id="c5w1" style="font-size: 78px">for</span> <span class="cw" id="c5w2" style="font-size: 78px">pectin,</span> <span class="cw key" id="c5w3" style="font-size: 78px">agar,</span> <span class="cw" id="c5w4" style="font-size: 78px">fish</span> <span class="cw" id="c5w5" style="font-size: 78px">gelatine,</span> <span class="cw" id="c5w6" style="font-size: 78px">or</span> <span class="cw" id="c5w7" style="font-size: 78px">a</span> <span class="cw" id="c5w8" style="font-size: 78px">halal-certified</span> <span class="cw" id="c5w9" style="font-size: 78px">label.</span></div></div>
+      <div class="clip cap" id="cap6" data-start="22.502" data-duration="4.958" data-track-index="1"><div class="capline"><span class="cw" id="c6w0">Not</span> <span class="cw" id="c6w1">sure?</span> <span class="cw" id="c6w2">Scan</span> <span class="cw" id="c6w3">it</span> <span class="cw" id="c6w4">with</span> <span class="cw" id="c6w5">Halal</span> <span class="cw key" id="c6w6">Checker.</span></div></div>
+      <div class="clip vis" id="v0" data-start="0" data-duration="4.338" data-track-index="2"><div class="card" id="v0-card"><div class="cardh">Ingredients</div><div class="cardb">Glucose syrup, sugar, <b id="hl">gelatine</b>, dextrose, fruit juice from concentrate (5%), citric acid.</div></div></div>
+      <div class="clip vis" id="v1" data-start="4.338" data-duration="2.092" data-track-index="3"><div class="center"><div class="giant" id="v1-g" style="font-size:150px">Gelatine</div><div class="gsub" id="v1-s">Animal source</div></div></div>
+      <div class="clip vis" id="v2" data-start="6.43" data-duration="4.18" data-track-index="2"><div class="center col"><div class="step" id="v2-i0">Pig skin</div><div class="arrow" id="v2-a1">&#8595;</div><div class="step" id="v2-i1">Cattle</div><div class="arrow" id="v2-a2">&#8595;</div><div class="step" id="v2-i2">Fish</div></div></div>
+      <div class="clip vis" id="v3" data-start="10.61" data-duration="2.764" data-track-index="3"><div class="center"><div class="giant" id="v3-g" style="font-size:171px">Which animal?</div><div class="gsub" id="v3-s">“gelatine”</div></div></div>
+      <div class="clip vis" id="v4" data-start="13.374" data-duration="4.012" data-track-index="2"><div class="tiles"><div class="tile" id="v4-i0" style="font-size:38px">Marshmallows</div><div class="tile" id="v4-i1" style="font-size:62px">Yogurts</div><div class="tile" id="v4-i2" style="font-size:57px">Desserts</div><div class="tile" id="v4-i3" style="font-size:62px">Some juices</div></div></div>
+      <div class="clip vis" id="v5" data-start="17.386" data-duration="5.116" data-track-index="3"><div class="center col"><div class="chip good" id="v5-i0" style="font-size:84px">Pectin</div><div class="chip good" id="v5-i1" style="font-size:84px">Agar</div><div class="chip good" id="v5-i2" style="font-size:78px">Halal-certified</div></div></div>
+      <div class="clip vis" id="v6" data-start="22.502" data-duration="4.958" data-track-index="2"><div class="phone" id="v6-ph" data-layout-allow-overflow><div class="pscreen"><img class="scr" id="v6-scr" data-layout-allow-overflow src="assets/screens/gummies_en_top.png" alt="" /><div class="beam" id="v6-beam" data-layout-allow-overflow></div></div></div><div class="lockup" id="v6-lock"><div class="icon" id="v6-icon"><img src="assets/logo/icon_clean.png" alt="" /></div><div class="wordmark" id="v6-wm">Halal Checker</div><div class="tag" id="v6-tag">Scan it. Know what's inside.</div><div class="store" id="v6-gp">Free on Google Play</div></div></div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const ACC = getComputedStyle(document.documentElement).getPropertyValue("--acc").trim();
+      const slamIn = (sel, t, from = 1.25) => tl.fromTo(sel, { opacity: 0, scale: from }, { opacity: 1, scale: 1, duration: 0.22, ease: "power4.out" }, t);
+      const rise = (sel, t) => tl.fromTo(sel, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.32, ease: "power3.out" }, t);
+      const pop = (sel, t) => tl.fromTo(sel, { opacity: 0, y: 18, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power3.out" }, t);
+
+      tl.fromTo("#grid", { y: 0 }, { y: -120, duration: 27.46, ease: "none" }, 0);
+      tl.fromTo("#glow", { scale: 1 }, { scale: 1.12, duration: 27.46, ease: "none" }, 0);
+      pop("#c0w0", 0.443);
+      pop("#c0w1", 0.651);
+      pop("#c0w2", 0.825);
+      pop("#c0w3", 1.091);
+      pop("#c0w4", 1.16);
+      pop("#c0w5", 1.438);
+      pop("#c0w6", 1.646);
+      pop("#c0w7", 2.109);
+      pop("#c0w8", 2.41);
+      pop("#c0w9", 3.024);
+      pop("#c0w10", 3.151);
+      tl.to("#cap0 .capline", { opacity: 0, duration: 0.12 }, 4.218);
+      pop("#c1w0", 4.442);
+      pop("#c1w1", 4.755);
+      tl.to("#cap1 .capline", { opacity: 0, duration: 0.12 }, 6.31);
+      pop("#c2w0", 6.511);
+      pop("#c2w1", 6.662);
+      pop("#c2w2", 6.731);
+      pop("#c2w3", 6.789);
+      pop("#c2w4", 7.067);
+      pop("#c2w5", 7.31);
+      pop("#c2w6", 7.576);
+      pop("#c2w7", 8.282);
+      pop("#c2w8", 8.363);
+      pop("#c2w9", 8.698);
+      pop("#c2w10", 8.861);
+      pop("#c2w11", 9.3);
+      pop("#c2w12", 9.393);
+      tl.to("#cap2 .capline", { opacity: 0, duration: 0.12 }, 10.49);
+      pop("#c3w0", 10.703);
+      pop("#c3w1", 10.76);
+      pop("#c3w2", 10.842);
+      pop("#c3w3", 11.212);
+      pop("#c3w4", 11.571);
+      pop("#c3w5", 12.092);
+      pop("#c3w6", 12.404);
+      tl.to("#cap3 .capline", { opacity: 0, duration: 0.12 }, 13.254);
+      pop("#c4w0", 13.455);
+      pop("#c4w1", 13.513);
+      pop("#c4w2", 13.779);
+      pop("#c4w3", 13.837);
+      pop("#c4w4", 14.798);
+      pop("#c4w5", 15.342);
+      pop("#c4w6", 15.886);
+      pop("#c4w7", 16.071);
+      pop("#c4w8", 16.21);
+      tl.to("#cap4 .capline", { opacity: 0, duration: 0.12 }, 17.266);
+      pop("#c5w0", 17.467);
+      pop("#c5w1", 17.56);
+      pop("#c5w2", 17.687);
+      pop("#c5w3", 18.705);
+      pop("#c5w4", 19.354);
+      pop("#c5w5", 19.666);
+      pop("#c5w6", 20.58);
+      pop("#c5w7", 20.661);
+      pop("#c5w8", 20.685);
+      pop("#c5w9", 21.564);
+      tl.to("#cap5 .capline", { opacity: 0, duration: 0.12 }, 22.382);
+      pop("#c6w0", 22.583);
+      pop("#c6w1", 22.71);
+      pop("#c6w2", 23.451);
+      pop("#c6w3", 23.764);
+      pop("#c6w4", 23.868);
+      pop("#c6w5", 24.018);
+      pop("#c6w6", 24.435);
+      tl.fromTo("#v0-card", { opacity: 0, y: 120, rotation: -6 }, { opacity: 1, y: 0, rotation: -3, duration: 0.6, ease: "expo.out" }, 0);
+      tl.fromTo("#hl", { backgroundColor: "rgba(0,0,0,0)", color: "#1f2937" }, { backgroundColor: ACC, color: "#ffffff", duration: 0.2 }, 2.41);
+      tl.fromTo("#v0-card", { scale: 1 }, { scale: 1.06, duration: 0.25, ease: "back.out(2)" }, 2.41);
+      tl.to("#v0 > *", { opacity: 0, y: -50, duration: 0.16, ease: "power2.in" }, 4.178);
+      slamIn("#v1-g", 4.755, 1.4);
+      rise("#v1-s", 5.005);
+      tl.to("#v1 > *", { opacity: 0, y: -50, duration: 0.16, ease: "power2.in" }, 6.27);
+      slamIn("#v2-i0", 7.31, 1.25);
+      slamIn("#v2-i1", 8.861, 1.25);
+      rise("#v2-a1", 8.741);
+      slamIn("#v2-i2", 9.393, 1.25);
+      rise("#v2-a2", 9.273);
+      tl.to("#v2 > *", { opacity: 0, y: -50, duration: 0.16, ease: "power2.in" }, 10.45);
+      slamIn("#v3-g", 12.092, 1.4);
+      rise("#v3-s", 12.342);
+      tl.to("#v3 > *", { opacity: 0, y: -50, duration: 0.16, ease: "power2.in" }, 13.214);
+      slamIn("#v4-i0", 13.837, 1.3);
+      slamIn("#v4-i1", 14.798, 1.3);
+      slamIn("#v4-i2", 15.342, 1.3);
+      slamIn("#v4-i3", 16.21, 1.3);
+      tl.to("#v4 > *", { opacity: 0, y: -50, duration: 0.16, ease: "power2.in" }, 17.226);
+      slamIn("#v5-i0", 17.687, 1.3);
+      slamIn("#v5-i1", 18.705, 1.3);
+      slamIn("#v5-i2", 20.685, 1.3);
+      tl.to("#v5 > *", { opacity: 0, y: -50, duration: 0.16, ease: "power2.in" }, 22.342);
+      tl.fromTo("#v6-ph", { y: 1300 }, { y: 0, duration: 0.5, ease: "expo.out" }, 22.502);
+      tl.fromTo("#v6-beam", { opacity: 1, y: -120 }, { y: 1300, duration: 0.9, ease: "power1.inOut" }, 23.451);
+      tl.to("#v6-beam", { opacity: 0, duration: 0.1 }, 24.351);
+      tl.to("#v6-ph", { y: 1400, duration: 0.45, ease: "power3.in" }, 23.818);
+      tl.fromTo("#v6-icon", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, 24.018);
+      slamIn("#v6-wm", 24.168, 1.15);
+      rise("#v6-tag", 24.718);
+      rise("#v6-gp", 25.118);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

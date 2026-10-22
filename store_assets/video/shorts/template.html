@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Manrope"; font-weight: 500; src: url("assets/fonts/manrope-500.woff2") format("woff2"); }
+      @font-face { font-family: "Manrope"; font-weight: 700; src: url("assets/fonts/manrope-700.woff2") format("woff2"); }
+      :root { --bg: #052e22; --mint: #6ee7b7; --white: #f4fbf7; --acc: {{ACCENT}}; --halal: #34d399; --doubt: #fbbf24; --haram: #fb7185; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--bg);
+              font-family: "Manrope", sans-serif; color: var(--white); }
+      .glow { position: absolute; width: 1600px; height: 1600px; left: -260px; top: 160px; border-radius: 50%;
+              background: radial-gradient(circle, rgba(52,211,153,0.20) 0%, rgba(52,211,153,0) 60%); }
+      .grid { position: absolute; left: 0; top: 0; width: 1080px; height: 2040px;
+              background-image: linear-gradient(rgba(110,231,183,0.09) 2px, transparent 2px),
+                                linear-gradient(90deg, rgba(110,231,183,0.09) 2px, transparent 2px);
+              background-size: 120px 120px; }
+
+      /* captions: top band, y 250-660 */
+      .cap { position: absolute; left: 0; top: 250px; width: 1080px; height: 420px; }
+      .capline { position: absolute; left: 70px; right: 70px; top: 0; bottom: 0; display: flex; flex-wrap: wrap;
+                 align-content: center; justify-content: center; gap: 0 22px; text-align: center; }
+      .cw { font-family: "Archivo Black", sans-serif; font-size: 92px; line-height: 1.08; text-transform: uppercase;
+            color: var(--white); opacity: 0; text-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+      .cw.key { color: var(--acc); }
+
+      /* visuals: middle band, y 700-1500 */
+      .vis { position: absolute; left: 0; top: 700px; width: 1080px; height: 800px; }
+      .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .col { gap: 18px; }
+      .card { position: absolute; left: 110px; top: 120px; width: 860px; padding: 56px 60px; border-radius: 34px; background: #fbf7f0;
+              color: #1f2937; box-shadow: 0 40px 100px rgba(0,0,0,0.45); }
+      .cardh { font-weight: 700; font-size: 34px; letter-spacing: 0.22em; text-transform: uppercase; color: #6b7280; margin-bottom: 22px; }
+      .cardb { font-weight: 500; font-size: 50px; line-height: 1.4; }
+      .cardb b { font-weight: 700; border-radius: 12px; padding: 2px 10px; }
+      .giant { font-family: "Archivo Black", sans-serif; font-size: 230px; line-height: 0.95; text-transform: uppercase; color: var(--acc);
+               text-align: center; max-width: 1000px; }
+      .gsub { margin-top: 34px; font-weight: 700; font-size: 56px; color: var(--mint); text-align: center; max-width: 900px; }
+      .stat { font-family: "Archivo Black", sans-serif; font-size: 250px; line-height: 1; color: var(--acc); }
+      .step { font-family: "Archivo Black", sans-serif; font-size: 70px; line-height: 1.05; text-transform: uppercase; text-align: center;
+              padding: 16px 40px; border-radius: 26px; background: rgba(110,231,183,0.10); border: 4px solid rgba(110,231,183,0.35); }
+      .step.acc { color: var(--acc); border-color: var(--acc); }
+      .arrow { font-weight: 700; font-size: 46px; line-height: 1; color: var(--mint); }
+      .eq { font-family: "Archivo Black", sans-serif; font-size: 150px; line-height: 1; color: var(--mint); }
+      .tiles { position: absolute; left: 90px; right: 90px; top: 60px; bottom: 60px; display: flex; flex-wrap: wrap;
+               align-content: center; justify-content: center; gap: 30px; }
+      .tile { width: 435px; height: 250px; border-radius: 34px; display: flex; align-items: center; justify-content: center; text-align: center;
+              padding: 0 26px; font-family: "Archivo Black", sans-serif; font-size: 62px; line-height: 1.05; text-transform: uppercase;
+              background: rgba(255,255,255,0.06); border: 4px solid var(--acc); }
+      .chip { font-family: "Archivo Black", sans-serif; font-size: 84px; line-height: 1; padding: 30px 60px; border-radius: 999px; text-align: center; }
+      .chip.bad { background: rgba(251,113,133,0.16); border: 5px solid var(--haram); color: #fecdd3; }
+      .chip.doubt { background: rgba(251,191,36,0.14); border: 5px solid var(--doubt); color: #fde68a; }
+      .chip.good { background: rgba(52,211,153,0.16); border: 5px solid var(--halal); color: #a7f3d0; }
+
+      /* end: phone + lockup, full frame */
+      .ring { position: absolute; left: 24px; right: 24px; height: 180px; border-radius: 26px; border: 7px solid var(--haram); opacity: 0; }
+      .phone { position: absolute; left: 225px; top: -20px; width: 630px; height: 1330px; border-radius: 86px; background: #0d1210;
+               padding: 18px; box-shadow: 0 50px 120px rgba(0,0,0,0.5), inset 0 0 0 4px #2b3431; }
+      .pscreen { position: relative; width: 594px; height: 1294px; border-radius: 70px; overflow: hidden; background: #f3ece2; }
+      .scr { position: absolute; left: 0; top: 0; width: 594px; }
+      .beam { position: absolute; left: 0; right: 0; top: 0; height: 130px; opacity: 0;
+              background: linear-gradient(180deg, rgba(52,211,153,0) 0%, rgba(52,211,153,0.4) 80%, rgba(110,231,183,1) 100%); }
+      .ecard { position: absolute; left: 26px; right: 26px; top: 640px; padding: 30px 30px 34px; border-radius: 30px; background: #fffbeb;
+               border: 3px solid #fcd34d; box-shadow: 0 20px 50px rgba(0,0,0,0.25); color: #1f2937; }
+      .ech { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+      .ecode { font-weight: 700; font-size: 34px; color: #b45309; }
+      .ename { font-weight: 700; font-size: 30px; flex: 1; }
+      .ebadge { font-weight: 700; font-size: 24px; color: #b45309; background: #fef3c7; padding: 8px 18px; border-radius: 999px; }
+      .ereason { margin-top: 16px; font-weight: 500; font-size: 26px; line-height: 1.4; color: #374151; }
+      .lockup { position: absolute; left: 0; right: 0; top: 0; height: 800px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .icon { width: 300px; height: 300px; border-radius: 70px; overflow: hidden; opacity: 0; box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
+      .icon img { width: 100%; height: 100%; display: block; }
+      .wordmark { margin-top: 48px; font-family: "Archivo Black", sans-serif; font-size: 116px; line-height: 1; opacity: 0; }
+      .sticker { position: absolute; left: 500px; top: 520px; padding: 22px 40px; border-radius: 24px; background: var(--acc); color: #fff;
+                 font-family: "Archivo Black", sans-serif; font-size: 64px; text-transform: uppercase; transform: rotate(4deg);
+                 box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+      .store { margin-top: 30px; padding: 16px 36px; border-radius: 999px; border: 3px solid var(--white); font-weight: 700; font-size: 44px; opacity: 0; }
+      .tag { margin-top: 26px; font-weight: 700; font-size: 50px; color: var(--mint); opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="{{TOTAL}}" data-width="1080" data-height="1920">
+      <audio id="music-bed" src="assets/bgm/bed.m4a" data-start="0" data-duration="{{TOTAL}}" data-volume="0.3"></audio>
+      {{AUDIO}}
+
+      <div class="clip" id="bg" data-start="0" data-duration="{{TOTAL}}" data-track-index="0">
+        <div class="grid" id="grid"></div>
+        <div class="glow" id="glow"></div>
+      </div>
+
+      {{CLIPS}}
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const ACC = getComputedStyle(document.documentElement).getPropertyValue("--acc").trim();
+      const slamIn = (sel, t, from = 1.25) => tl.fromTo(sel, { opacity: 0, scale: from }, { opacity: 1, scale: 1, duration: 0.22, ease: "power4.out" }, t);
+      const rise = (sel, t) => tl.fromTo(sel, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.32, ease: "power3.out" }, t);
+      const pop = (sel, t) => tl.fromTo(sel, { opacity: 0, y: 18, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power3.out" }, t);
+
+      tl.fromTo("#grid", { y: 0 }, { y: -120, duration: {{TOTAL}}, ease: "none" }, 0);
+      tl.fromTo("#glow", { scale: 1 }, { scale: 1.12, duration: {{TOTAL}}, ease: "none" }, 0);
+      {{JS}}
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
