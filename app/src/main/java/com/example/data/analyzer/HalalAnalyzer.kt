@@ -4,30 +4,31 @@ import com.example.data.model.AppLanguage
 import com.example.data.model.FlaggedIngredient
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.data.model.LocalizedText
 import com.example.data.model.Madhhab
 import com.example.data.remote.OffProduct
 import java.util.Locale
 
 object HalalAnalyzer {
 
+    // id: language-independent rule key (the original English name); logic keys off it, never off
+    // the localized display text.
     data class HaramRule(
         val keywords: List<String>,
-        val nameEn: String,
-        val nameTr: String,
-        val reasonEn: String,
-        val reasonTr: String,
+        val id: String,
+        val name: LocalizedText,
+        val reason: LocalizedText,
         val eCode: String? = null,
-        val origin: String = "Animal / Alcohol / Insect"
+        val origin: LocalizedText
     )
 
     data class SuspiciousRule(
         val keywords: List<String>,
-        val nameEn: String,
-        val nameTr: String,
-        val reasonEn: String,
-        val reasonTr: String,
+        val id: String,
+        val name: LocalizedText,
+        val reason: LocalizedText,
         val eCode: String? = null,
-        val origin: String = "Animal or Plant",
+        val origin: LocalizedText,
         // The meat rule below is the only one set to true: a product that already carries an
         // explicit halal claim/label is presumed to source its meat from zabiha slaughter, so
         // flagging the meat again would contradict the certification we're about to display.
@@ -38,7 +39,7 @@ object HalalAnalyzer {
     // halal validity depends on zabiha (Islamic) slaughter, which packaging/ingredient data
     // essentially never states - so absent a halal claim, meat must default to "unconfirmed"
     // rather than being silently passed through as Helal.
-    // Stable identifier for the meat rule (its nameEn), used to detect "only meat was flagged"
+    // Stable identifier for the meat rule (its id), used to detect "only meat was flagged"
     // independent of the language-localized display name.
     private const val MEAT_RULE_ID = "Meat / Poultry (Slaughter Method Unconfirmed)"
     // Stable identifier for the beef/fish-gelatin rule, used below to skip the generic
@@ -51,6 +52,61 @@ object HalalAnalyzer {
 
     private const val RENNET_RULE_ID = "Animal Rennet / Cheese Enzymes"
     private const val WHEY_RULE_ID = "Whey Powder / Whey Byproduct"
+    // Verdict-level suggestions and label lines, shown next to the (localized) flag cards.
+    private val ALT_CERTIFIED_EQUIVALENTS = LocalizedText(
+        en = "Halal Certified equivalents (IFANCA, GIMDES, HMC)",
+        de = "Halal-zertifizierte Alternativen (IFANCA, GIMDES, HMC)",
+        fr = "Équivalents certifiés halal (IFANCA, GIMDES, HMC)",
+        tr = "Helal sertifikalı muadiller (IFANCA, GİMDES, HMC)",
+        ar = "بدائل حاصلة على شهادة حلال (IFANCA، GIMDES، HMC)"
+    )
+    private val ALT_VEGAN_NO_ALCOHOL = LocalizedText(
+        en = "100% Plant-Based / Vegan certified products without alcohol",
+        de = "100 % pflanzliche / vegan zertifizierte Produkte ohne Alkohol",
+        fr = "Produits 100 % végétaux / certifiés vegan sans alcool",
+        tr = "Alkolsüz, %100 bitkisel / vegan sertifikalı ürünler",
+        ar = "منتجات نباتية 100% / حاصلة على شهادة نباتية وخالية من الكحول"
+    )
+    private val ALT_CERT_MARK = LocalizedText(
+        en = "Look for a halal certification mark (IFANCA, GIMDES, HMC, JAKIM, MUI)",
+        de = "Auf ein Halal-Zertifizierungszeichen achten (IFANCA, GIMDES, HMC, JAKIM, MUI)",
+        fr = "Rechercher un label de certification halal (IFANCA, GIMDES, HMC, JAKIM, MUI)",
+        tr = "Helal sertifika logosu arayın (IFANCA, GİMDES, HMC, JAKIM, MUI)",
+        ar = "ابحث عن علامة شهادة حلال (IFANCA، GIMDES، HMC، JAKIM، MUI)"
+    )
+    private val ALT_VEGETABLE_EMULSIFIERS = LocalizedText(
+        en = "Look for '100% Vegetable Emulsifiers' indication",
+        de = "Auf den Hinweis „100 % pflanzliche Emulgatoren“ achten",
+        fr = "Rechercher la mention « émulsifiants 100 % végétaux »",
+        tr = "\"%100 bitkisel emülgatör\" ibaresini arayın",
+        ar = "ابحث عن عبارة \"مستحلبات نباتية 100%\""
+    )
+    private val ALT_CERTIFIED_ALTERNATIVES = LocalizedText(
+        en = "Choose certified Halal alternatives",
+        de = "Halal-zertifizierte Alternativen wählen",
+        fr = "Choisir des alternatives certifiées halal",
+        tr = "Helal sertifikalı alternatifleri tercih edin",
+        ar = "اختر بدائل حاصلة على شهادة حلال"
+    )
+    // "Certified" is deliberately absent: these come from Open Food Facts' crowd-sourced labels.
+    private val CERT_HALAL_LABEL = LocalizedText(
+        en = "Carries a Halal Label (per product data)",
+        de = "Trägt ein Halal-Kennzeichen (laut Produktdaten)",
+        fr = "Porte un label halal (selon les données du produit)",
+        tr = "Helal etiketi taşıyor (ürün verisine göre)",
+        ar = "يحمل علامة حلال (وفق بيانات المنتج)"
+    )
+    private val CERT_VEGAN_LABEL = LocalizedText(
+        en = "100% Plant-Based / Vegan Label (per product data)",
+        de = "100 % pflanzlich / Vegan-Kennzeichen (laut Produktdaten)",
+        fr = "Label 100 % végétal / vegan (selon les données du produit)",
+        tr = "%100 bitkisel / vegan etiketi (ürün verisine göre)",
+        ar = "علامة نباتية 100% / نباتي صرف (وفق بيانات المنتج)"
+    )
+
+    // The two pork Haram rules; once either fires, gelatin-family doubtful cards are skipped.
+    private const val PORK_GELATIN_RULE_ID = "E441 Pork Gelatin"
+    private const val PORK_RULE_ID = "Pork / Lard / Swine Derivatives"
 
     // Each link backs exactly the sentence it is attached to, and each was verified 2026-10-07 by
     // downloading the page and finding the quoted ruling verbatim (source table in
@@ -168,14 +224,31 @@ object HalalAnalyzer {
 
     private val HARAM_RULES = listOf(
         HaramRule(
-            keywords = listOf("e441", "pork gelatin", "porcine gelatin", "schweinegelatine", "gelatine de porc", "porc gelatine", "varkensgelatine", "domuz jelatini",
+            keywords = listOf("e441", "pork gelatin", "porcine gelatin", "schweinegelatine", "gelatine de porc", "gélatine de porc", "porc gelatine", "varkensgelatine", "domuz jelatini",
                 "جيلاتين خنزير", "جيلاتين الخنزير", "جلاتين خنزير"),
-            nameEn = "E441 Pork Gelatin",
-            nameTr = "E441 Domuz Jelatini",
-            reasonEn = "Porcine collagen derived from pig skin and bones. Prohibited in Islamic law.",
-            reasonTr = "Domuz deri ve kemik kolajeninden elde edilen jelleştirici. Dinen haramdır.",
+            id = PORK_GELATIN_RULE_ID,
+            name = LocalizedText(
+                en = "E441 Pork Gelatin",
+                de = "E441 Schweinegelatine",
+                fr = "E441 Gélatine de porc",
+                tr = "E441 Domuz Jelatini",
+                ar = "E441 جيلاتين الخنزير"
+            ),
+            reason = LocalizedText(
+                en = "Porcine collagen derived from pig skin and bones. Prohibited in Islamic law.",
+                de = "Kollagen vom Schwein, gewonnen aus Schweinehaut und -knochen. Im islamischen Recht verboten.",
+                fr = "Collagène porcin issu de la peau et des os de porc. Interdit en droit islamique.",
+                tr = "Domuz deri ve kemik kolajeninden elde edilen jelleştirici. Dinen haramdır.",
+                ar = "كولاجين مستخرج من جلد الخنزير وعظامه. محرّم في الشريعة الإسلامية."
+            ),
             eCode = "E441",
-            origin = "Pork / Swine"
+            origin = LocalizedText(
+                en = "Pork / Swine",
+                de = "Schwein",
+                fr = "Porc",
+                tr = "Domuz",
+                ar = "خنزير"
+            )
         ),
         HaramRule(
             // "porcine" bare (not just "porcine gelatin" in the E441 rule above) so
@@ -186,22 +259,56 @@ object HalalAnalyzer {
                 // Arabic: the article/conjunction prefix ("الخنزير", "دهن الخنزير") is handled in
                 // containsKeyword, so the bare noun covers them.
                 "خنزير"),
-            nameEn = "Pork / Lard / Swine Derivatives",
-            nameTr = "Domuz Eti / Domuz Yağı (Lard)",
-            reasonEn = "Direct pig meat or lard fats. Explicitly forbidden in the Quran.",
-            reasonTr = "Domuz eti ve iç yağı. Tüketimi Kur'an-ı Kerim'de açıkça yasaklanmıştır.",
+            id = PORK_RULE_ID,
+            name = LocalizedText(
+                en = "Pork / Lard / Swine Derivatives",
+                de = "Schweinefleisch / Schmalz / Schweineerzeugnisse",
+                fr = "Porc / Saindoux / Dérivés du porc",
+                tr = "Domuz Eti / Domuz Yağı (Lard)",
+                ar = "لحم الخنزير / شحمه / مشتقاته"
+            ),
+            reason = LocalizedText(
+                en = "Direct pig meat or lard fats. Explicitly forbidden in the Quran.",
+                de = "Schweinefleisch oder Schweineschmalz. Im Koran ausdrücklich verboten.",
+                fr = "Viande de porc ou saindoux. Explicitement interdit dans le Coran.",
+                tr = "Domuz eti ve iç yağı. Tüketimi Kur'an-ı Kerim'de açıkça yasaklanmıştır.",
+                ar = "لحم الخنزير أو شحمه. محرّم صراحةً في القرآن الكريم."
+            ),
             eCode = null,
-            origin = "Pork / Swine"
+            origin = LocalizedText(
+                en = "Pork / Swine",
+                de = "Schwein",
+                fr = "Porc",
+                tr = "Domuz",
+                ar = "خنزير"
+            )
         ),
         HaramRule(
             keywords = listOf("e120", "cochineal", "carmines", "karmin", "carmine", "acide carminique", "karminsäure", "cochineal extract", "crimson lake", "natural red 4", "dactylopius coccus",
                 "كارمين", "قرمز", "دودة القرمز"),
-            nameEn = "E120 Carmine (Cochineal Red)",
-            nameTr = "E120 Karmin (Koşnil Kırmızısı)",
-            reasonEn = "Red pigment obtained from crushed female scale insects. Prohibited across major Islamic fiqh councils.",
-            reasonTr = "Kurutulmuş kabuklu kalkan bitinin ezilmesiyle elde edilen kırmızı renklendirici. Fıkhen sakıncalıdır.",
+            id = "E120 Carmine (Cochineal Red)",
+            name = LocalizedText(
+                en = "E120 Carmine (Cochineal Red)",
+                de = "E120 Karmin (Cochenillerot)",
+                fr = "E120 Carmin (Rouge cochenille)",
+                tr = "E120 Karmin (Koşnil Kırmızısı)",
+                ar = "E120 الكارمين (أحمر القرمز)"
+            ),
+            reason = LocalizedText(
+                en = "Red pigment obtained from crushed female scale insects. Prohibited across major Islamic fiqh councils.",
+                de = "Roter Farbstoff aus zerstoßenen weiblichen Schildläusen. Von großen islamischen Fiqh-Gremien als unzulässig eingestuft.",
+                fr = "Pigment rouge obtenu à partir de cochenilles femelles broyées. Jugé interdit par les principaux conseils de fiqh islamique.",
+                tr = "Kurutulmuş kabuklu kalkan bitinin ezilmesiyle elde edilen kırmızı renklendirici. Fıkhen sakıncalıdır.",
+                ar = "صبغة حمراء تُستخرج من سحق إناث حشرة القرمز. تعدّها المجامع الفقهية الإسلامية الكبرى غير جائزة."
+            ),
             eCode = "E120",
-            origin = "Insect (Dactylopius coccus)"
+            origin = LocalizedText(
+                en = "Insect (Dactylopius coccus)",
+                de = "Insekt (Dactylopius coccus)",
+                fr = "Insecte (Dactylopius coccus)",
+                tr = "Böcek (Dactylopius coccus)",
+                ar = "حشرة (Dactylopius coccus)"
+            )
         ),
         HaramRule(
             // Note: no bare "bourbon" - "Bourbon-Vanille" (Bourbon vanilla, named after Île
@@ -226,21 +333,55 @@ object HalalAnalyzer {
                 // Arabic. "كحولي/كحولية" listed because suffixes defeat the end boundary.
                 "كحول", "كحولي", "كحولية", "إيثانول", "نبيذ", "خمر", "بيرة", "روم", "ويسكي", "فودكا",
                 "براندي", "كونياك", "ليكيور"),
-            nameEn = "Alcohol / Liqueur / Wine Additive",
-            nameTr = "Alkol / Likör / Şarap Bileşeni",
-            reasonEn = "Intoxicating alcoholic beverages or flavourings. Non-permissible in foods.",
-            reasonTr = "Aroma verici veya çözücü olarak kullanılan alkol / likör bileşeni. Gıdalarda tüketimi helal değildir.",
+            id = "Alcohol / Liqueur / Wine Additive",
+            name = LocalizedText(
+                en = "Alcohol / Liqueur / Wine Additive",
+                de = "Alkohol / Likör / Weinbestandteil",
+                fr = "Alcool / Liqueur / Ingrédient à base de vin",
+                tr = "Alkol / Likör / Şarap Bileşeni",
+                ar = "كحول / مشروب كحولي / مكوّن من النبيذ"
+            ),
+            reason = LocalizedText(
+                en = "Intoxicating alcoholic beverages or flavourings. Non-permissible in foods.",
+                de = "Berauschende alkoholische Getränke oder Aromen. In Lebensmitteln nicht zulässig.",
+                fr = "Boissons ou arômes alcoolisés enivrants. Non permis dans les aliments.",
+                tr = "Aroma verici veya çözücü olarak kullanılan alkol / likör bileşeni. Gıdalarda tüketimi helal değildir.",
+                ar = "مشروبات أو منكّهات كحولية مسكرة. غير جائزة في الأطعمة."
+            ),
             eCode = null,
-            origin = "Alcoholic Intoxicant"
+            origin = LocalizedText(
+                en = "Alcoholic Intoxicant",
+                de = "Alkoholisches Rauschmittel",
+                fr = "Substance alcoolique enivrante",
+                tr = "Sarhoş edici alkol",
+                ar = "مادة كحولية مسكرة"
+            )
         ),
         HaramRule(
             keywords = listOf("e542", "bone phosphate", "schweinefett"),
-            nameEn = "E542 Bone Phosphate",
-            nameTr = "E542 Kemik Fosfatı",
-            reasonEn = "Derived from defatted bones of non-halal slaughtered animals.",
-            reasonTr = "Helal kesim olmayan hayvan kemiklerinden elde edilen mineral.",
+            id = "E542 Bone Phosphate",
+            name = LocalizedText(
+                en = "E542 Bone Phosphate",
+                de = "E542 Knochenphosphat",
+                fr = "E542 Phosphate d'os",
+                tr = "E542 Kemik Fosfatı",
+                ar = "E542 فوسفات العظام"
+            ),
+            reason = LocalizedText(
+                en = "Derived from defatted bones of non-halal slaughtered animals.",
+                de = "Gewonnen aus entfetteten Knochen nicht halal geschlachteter Tiere.",
+                fr = "Obtenu à partir d'os dégraissés d'animaux non abattus selon le rite halal.",
+                tr = "Helal kesim olmayan hayvan kemiklerinden elde edilen mineral.",
+                ar = "يُستخرج من عظام منزوعة الدهن لحيوانات لم تُذبح ذبحاً حلالاً."
+            ),
             eCode = "E542",
-            origin = "Animal Bones"
+            origin = LocalizedText(
+                en = "Animal Bones",
+                de = "Tierknochen",
+                fr = "Os d'animaux",
+                tr = "Hayvan kemiği",
+                ar = "عظام حيوانية"
+            )
         ),
         HaramRule(
             // Specific multi-word phrases only, never bare "blood" - "blood orange"/"blutorange"/
@@ -251,69 +392,188 @@ object HalalAnalyzer {
                 "blood plasma", "dried blood", "blood sausage", "black pudding",
                 "blutplasma", "blutwurst", "boudin noir", "kan plazması"
             ),
-            nameEn = "Blood / Blood Plasma",
-            nameTr = "Kan / Kan Plazması",
-            reasonEn = "Drained/consumed blood is explicitly forbidden in Islamic law.",
-            reasonTr = "Akıtılmış kanın tüketimi dinen açıkça yasaklanmıştır.",
+            id = "Blood / Blood Plasma",
+            name = LocalizedText(
+                en = "Blood / Blood Plasma",
+                de = "Blut / Blutplasma",
+                fr = "Sang / Plasma sanguin",
+                tr = "Kan / Kan Plazması",
+                ar = "دم / بلازما الدم"
+            ),
+            reason = LocalizedText(
+                en = "Drained/consumed blood is explicitly forbidden in Islamic law.",
+                de = "Der Verzehr von ausgeflossenem Blut ist im islamischen Recht ausdrücklich verboten.",
+                fr = "La consommation de sang versé est explicitement interdite en droit islamique.",
+                tr = "Akıtılmış kanın tüketimi dinen açıkça yasaklanmıştır.",
+                ar = "تناول الدم المسفوح محرّم صراحةً في الشريعة الإسلامية."
+            ),
             eCode = null,
-            origin = "Animal Blood"
+            origin = LocalizedText(
+                en = "Animal Blood",
+                de = "Tierblut",
+                fr = "Sang animal",
+                tr = "Hayvan kanı",
+                ar = "دم حيواني"
+            )
         )
     )
 
     private val SUSPICIOUS_RULES = listOf(
         SuspiciousRule(
             keywords = listOf("e471", "mono- and diglycerides of fatty acids", "monoglycerides", "diglycerides", "mono- et diglycérides d'acides gras", "speisefettsäuren"),
-            nameEn = "E471 Mono- and Diglycerides",
-            nameTr = "E471 Yağ Asitlerinin Mono/Digliseritleri",
-            reasonEn = "Emulsifier from vegetable oil (Halal) OR animal fats (Pork/Beef lard). Source must be verified.",
-            reasonTr = "Bitkisel yağdan üretildiyse helal, hayvansal yağdan (domuz/sığır) üretildiyse sakıncalıdır. Kaynak teyidi gerekir.",
+            id = "E471 Mono- and Diglycerides",
+            name = LocalizedText(
+                en = "E471 Mono- and Diglycerides",
+                de = "E471 Mono- und Diglyceride von Speisefettsäuren",
+                fr = "E471 Mono- et diglycérides d'acides gras",
+                tr = "E471 Yağ Asitlerinin Mono/Digliseritleri",
+                ar = "E471 أحادي وثنائي غليسريد الأحماض الدهنية"
+            ),
+            reason = LocalizedText(
+                en = "Emulsifier from vegetable oil (Halal) OR animal fats (Pork/Beef lard). Source must be verified.",
+                de = "Emulgator aus Pflanzenöl (halal) ODER tierischem Fett (Schwein/Rind). Die Herkunft muss geprüft werden.",
+                fr = "Émulsifiant issu d'huile végétale (halal) OU de graisses animales (porc/bœuf). L'origine doit être vérifiée.",
+                tr = "Bitkisel yağdan üretildiyse helal, hayvansal yağdan (domuz/sığır) üretildiyse sakıncalıdır. Kaynak teyidi gerekir.",
+                ar = "مستحلب من زيت نباتي (حلال) أو من دهون حيوانية (خنزير/بقر). يجب التحقق من المصدر."
+            ),
             eCode = "E471",
-            origin = "Plant or Animal"
+            origin = LocalizedText(
+                en = "Plant or Animal",
+                de = "Pflanzlich oder tierisch",
+                fr = "Végétale ou animale",
+                tr = "Bitkisel veya hayvansal",
+                ar = "نباتي أو حيواني"
+            )
         ),
         SuspiciousRule(
             keywords = listOf("e472", "e472a", "e472b", "e472c", "e472e", "datem", "esters of mono- and diglycerides"),
-            nameEn = "E472a-f / DATEM Emulsifiers",
-            nameTr = "E472a-f / DATEM Yağ Asidi Esterleri",
-            reasonEn = "Fatty acid derivatives used in bakery. Requires vegetable origin confirmation.",
-            reasonTr = "Unlu mamul emülgatörleri. Hayvansal yağ riski nedeniyle bitkisel köken teyidi gereklidir.",
+            id = "E472a-f / DATEM Emulsifiers",
+            name = LocalizedText(
+                en = "E472a-f / DATEM Emulsifiers",
+                de = "E472a-f / DATEM-Emulgatoren",
+                fr = "E472a-f / Émulsifiants DATEM",
+                tr = "E472a-f / DATEM Yağ Asidi Esterleri",
+                ar = "E472a-f / مستحلبات DATEM"
+            ),
+            reason = LocalizedText(
+                en = "Fatty acid derivatives used in bakery. Requires vegetable origin confirmation.",
+                de = "Fettsäurederivate für Backwaren. Die pflanzliche Herkunft muss bestätigt sein.",
+                fr = "Dérivés d'acides gras utilisés en boulangerie. L'origine végétale doit être confirmée.",
+                tr = "Unlu mamul emülgatörleri. Hayvansal yağ riski nedeniyle bitkisel köken teyidi gereklidir.",
+                ar = "مشتقات أحماض دهنية تُستخدم في المخبوزات. يلزم تأكيد المصدر النباتي."
+            ),
             eCode = "E472",
-            origin = "Plant or Animal"
+            origin = LocalizedText(
+                en = "Plant or Animal",
+                de = "Pflanzlich oder tierisch",
+                fr = "Végétale ou animale",
+                tr = "Bitkisel veya hayvansal",
+                ar = "نباتي أو حيواني"
+            )
         ),
         SuspiciousRule(
             keywords = listOf("e422", "glycerin", "glycerine", "glycerol", "gliserin", "gliserol"),
-            nameEn = "E422 Glycerin / Glycerol",
-            nameTr = "E422 Gliserin / Gliserol",
-            reasonEn = "Humectant from vegetable oil (Halal) OR animal fat (Pork/Beef tallow). Source must be verified.",
-            reasonTr = "Bitkisel yağdan üretildiyse helal, hayvansal yağdan (domuz/sığır donyağı) üretildiyse sakıncalıdır. Kaynak teyidi gerekir.",
+            id = "E422 Glycerin / Glycerol",
+            name = LocalizedText(
+                en = "E422 Glycerin / Glycerol",
+                de = "E422 Glycerin / Glycerol",
+                fr = "E422 Glycérine / Glycérol",
+                tr = "E422 Gliserin / Gliserol",
+                ar = "E422 الغليسرين / الغليسرول"
+            ),
+            reason = LocalizedText(
+                en = "Humectant from vegetable oil (Halal) OR animal fat (Pork/Beef tallow). Source must be verified.",
+                de = "Feuchthaltemittel aus Pflanzenöl (halal) ODER tierischem Fett (Schwein/Rindertalg). Die Herkunft muss geprüft werden.",
+                fr = "Humectant issu d'huile végétale (halal) OU de graisse animale (porc/suif de bœuf). L'origine doit être vérifiée.",
+                tr = "Bitkisel yağdan üretildiyse helal, hayvansal yağdan (domuz/sığır donyağı) üretildiyse sakıncalıdır. Kaynak teyidi gerekir.",
+                ar = "مادة مرطّبة من زيت نباتي (حلال) أو من دهن حيواني (خنزير/شحم بقر). يجب التحقق من المصدر."
+            ),
             eCode = "E422",
-            origin = "Plant or Animal"
+            origin = LocalizedText(
+                en = "Plant or Animal",
+                de = "Pflanzlich oder tierisch",
+                fr = "Végétale ou animale",
+                tr = "Bitkisel veya hayvansal",
+                ar = "نباتي أو حيواني"
+            )
         ),
         SuspiciousRule(
             keywords = listOf("e904", "shellac", "confectioner's glaze", "resinous glaze"),
-            nameEn = "E904 Shellac / Confectioner's Glaze",
-            nameTr = "E904 Şellak / Parlatıcı Sır",
-            reasonEn = "Glazing agent from lac insect secretion. Deemed doubtful by several Halal standards.",
-            reasonTr = "Lak böceğinin salgısından üretilen parlatıcı sır. Bazı helal mercilerince şüpheli görülür.",
+            id = "E904 Shellac / Confectioner's Glaze",
+            name = LocalizedText(
+                en = "E904 Shellac / Confectioner's Glaze",
+                de = "E904 Schellack / Konditorlack",
+                fr = "E904 Gomme laque / Glaçage de confiseur",
+                tr = "E904 Şellak / Parlatıcı Sır",
+                ar = "E904 الشيلاك / طلاء الحلويات"
+            ),
+            reason = LocalizedText(
+                en = "Glazing agent from lac insect secretion. Deemed doubtful by several Halal standards.",
+                de = "Überzugsmittel aus dem Sekret der Lackschildlaus. Mehrere Halal-Standards stufen es als zweifelhaft ein.",
+                fr = "Agent d'enrobage issu de la sécrétion de la cochenille à laque. Jugé douteux par plusieurs normes halal.",
+                tr = "Lak böceğinin salgısından üretilen parlatıcı sır. Bazı helal mercilerince şüpheli görülür.",
+                ar = "مادة تلميع من إفراز حشرة اللك. تعدّها عدة معايير حلال مشبوهة."
+            ),
             eCode = "E904",
-            origin = "Insect Secretion"
+            origin = LocalizedText(
+                en = "Insect Secretion",
+                de = "Insektensekret",
+                fr = "Sécrétion d'insecte",
+                tr = "Böcek salgısı",
+                ar = "إفراز حشري"
+            )
         ),
         SuspiciousRule(
             keywords = listOf("e920", "l-cysteine", "l-cystein", "cysteine"),
-            nameEn = "E920 L-Cysteine (Dough Conditioner)",
-            nameTr = "E920 L-Sistein (Hamur Geliştirici)",
-            reasonEn = "Amino acid often sourced from duck feathers or animal hair. Must be synthetic/fermented.",
-            reasonTr = "Ördek tüyü veya kıldan elde edilen un geliştirici. Sentetik/fermantasyon kökenli olmalıdır.",
+            id = "E920 L-Cysteine (Dough Conditioner)",
+            name = LocalizedText(
+                en = "E920 L-Cysteine (Dough Conditioner)",
+                de = "E920 L-Cystein (Mehlbehandlungsmittel)",
+                fr = "E920 L-Cystéine (agent de traitement de la farine)",
+                tr = "E920 L-Sistein (Hamur Geliştirici)",
+                ar = "E920 إل-سيستين (محسّن للعجين)"
+            ),
+            reason = LocalizedText(
+                en = "Amino acid often sourced from duck feathers or animal hair. Must be synthetic/fermented.",
+                de = "Aminosäure, oft aus Entenfedern oder Tierhaaren gewonnen. Muss synthetisch oder durch Fermentation hergestellt sein.",
+                fr = "Acide aminé souvent issu de plumes de canard ou de poils d'animaux. Doit être synthétique ou issu de fermentation.",
+                tr = "Ördek tüyü veya kıldan elde edilen un geliştirici. Sentetik/fermantasyon kökenli olmalıdır.",
+                ar = "حمض أميني يُستخرج غالباً من ريش البط أو شعر الحيوانات. يجب أن يكون مُصنّعاً أو ناتجاً عن التخمير."
+            ),
             eCode = "E920",
-            origin = "Animal feathers/hair or Fermentation"
+            origin = LocalizedText(
+                en = "Animal feathers/hair or Fermentation",
+                de = "Federn/Haare von Tieren oder Fermentation",
+                fr = "Plumes/poils d'animaux ou fermentation",
+                tr = "Hayvan tüyü/kılı veya fermantasyon",
+                ar = "ريش/شعر حيواني أو تخمير"
+            )
         ),
         SuspiciousRule(
             keywords = listOf("e631", "disodium inosinate", "sodium inosinate"),
-            nameEn = "E631 Disodium Inosinate",
-            nameTr = "E631 Disodyum İnozinat",
-            reasonEn = "Flavor enhancer potentially prepared from meat byproducts.",
-            reasonTr = "Et yan ürünlerinden üretilebilen lezzet artırıcı. Bitkisel/tapiyoka teyidi gerektirir.",
+            id = "E631 Disodium Inosinate",
+            name = LocalizedText(
+                en = "E631 Disodium Inosinate",
+                de = "E631 Dinatriuminosinat",
+                fr = "E631 Inosinate disodique",
+                tr = "E631 Disodyum İnozinat",
+                ar = "E631 إينوزينات ثنائي الصوديوم"
+            ),
+            reason = LocalizedText(
+                en = "Flavor enhancer potentially prepared from meat byproducts.",
+                de = "Geschmacksverstärker, der aus Fleischnebenprodukten hergestellt sein kann.",
+                fr = "Exhausteur de goût pouvant être fabriqué à partir de sous-produits de viande.",
+                tr = "Et yan ürünlerinden üretilebilen lezzet artırıcı. Bitkisel/tapiyoka teyidi gerektirir.",
+                ar = "مُحسّن نكهة قد يُحضَّر من مخلفات اللحوم."
+            ),
             eCode = "E631",
-            origin = "Meat or Microbial"
+            origin = LocalizedText(
+                en = "Meat or Microbial",
+                de = "Fleisch oder mikrobiell",
+                fr = "Viande ou microbienne",
+                tr = "Et veya mikrobiyel",
+                ar = "لحم أو مصدر ميكروبي"
+            )
         ),
         SuspiciousRule(
             keywords = listOf(
@@ -323,12 +583,29 @@ object HalalAnalyzer {
                 "sığır jelatini", "balık jelatini",
                 "gelatina de res", "gelatina de pescado"
             ),
-            nameEn = BEEF_FISH_GELATIN_RULE_ID,
-            nameTr = "Sığır/Balık Jelatini (Kaynak Belirtilmiş)",
-            reasonEn = "Source is stated as beef or fish, not pork - but halal status still depends on whether the animal was slaughtered according to zabiha (Islamic) method, which cannot be confirmed from packaging alone.",
-            reasonTr = "Kaynağın sığır veya balık olduğu belirtilmiş - domuz değil. Ancak helal olması için hayvanın zebiha usulüne uygun kesilmiş olması gerekir; bu bilgi ambalajdan doğrulanamaz.",
+            id = BEEF_FISH_GELATIN_RULE_ID,
+            name = LocalizedText(
+                en = "Beef/Fish Gelatin (Source Stated)",
+                de = "Rinder-/Fischgelatine (Herkunft angegeben)",
+                fr = "Gélatine de bœuf/poisson (origine indiquée)",
+                tr = "Sığır/Balık Jelatini (Kaynak Belirtilmiş)",
+                ar = "جيلاتين بقري/سمكي (المصدر مذكور)"
+            ),
+            reason = LocalizedText(
+                en = "Source is stated as beef or fish, not pork - but halal status still depends on whether the animal was slaughtered according to zabiha (Islamic) method, which cannot be confirmed from packaging alone.",
+                de = "Als Herkunft ist Rind oder Fisch angegeben, nicht Schwein - der Halal-Status hängt aber weiterhin davon ab, ob das Tier nach Zabiha-Ritus (islamisch) geschlachtet wurde, was sich anhand der Verpackung allein nicht bestätigen lässt.",
+                fr = "L'origine indiquée est le bœuf ou le poisson, pas le porc - mais le statut halal dépend toujours de l'abattage zabiha (rite islamique) de l'animal, ce que l'emballage seul ne permet pas de confirmer.",
+                tr = "Kaynağın sığır veya balık olduğu belirtilmiş - domuz değil. Ancak helal olması için hayvanın zebiha usulüne uygun kesilmiş olması gerekir; bu bilgi ambalajdan doğrulanamaz.",
+                ar = "المصدر المذكور بقري أو سمكي وليس خنزيراً، لكن الحكم بالحلّ لا يزال يتوقف على ذبح الحيوان ذبحاً شرعياً، وهو ما لا يمكن تأكيده من العبوة وحدها."
+            ),
             eCode = "E441",
-            origin = "Beef / Fish"
+            origin = LocalizedText(
+                en = "Beef / Fish",
+                de = "Rind / Fisch",
+                fr = "Bœuf / Poisson",
+                tr = "Sığır / Balık",
+                ar = "بقر / سمك"
+            )
         ),
         SuspiciousRule(
             // Collagen/collagen peptides (e.g. "Bovine collagen peptides" on protein/beauty
@@ -345,22 +622,56 @@ object HalalAnalyzer {
                 "colágeno bovino", "colágeno de res", "péptidos de colágeno",
                 "sığır kolajeni", "kolajen peptit", "hidrolize kolajen"
             ),
-            nameEn = "Bovine Collagen (Slaughter Method Unconfirmed)",
-            nameTr = "Sığır Kolajeni (Kesim Yöntemi Teyit Edilmedi)",
-            reasonEn = "Collagen/collagen peptides derived from cattle skin, bone, or connective tissue. Halal status depends on zabiha (Islamic) slaughter, which cannot be confirmed from this product's data alone.",
-            reasonTr = "Sığır deri, kemik veya bağ dokusundan elde edilen kolajen/kolajen peptit. Helal olması dinen usulüne uygun (zebiha) kesime bağlıdır; bu bilgi ürün verisinden doğrulanamaz.",
+            id = "Bovine Collagen (Slaughter Method Unconfirmed)",
+            name = LocalizedText(
+                en = "Bovine Collagen (Slaughter Method Unconfirmed)",
+                de = "Rinderkollagen (Schlachtmethode unbestätigt)",
+                fr = "Collagène bovin (méthode d'abattage non confirmée)",
+                tr = "Sığır Kolajeni (Kesim Yöntemi Teyit Edilmedi)",
+                ar = "كولاجين بقري (طريقة الذبح غير مؤكدة)"
+            ),
+            reason = LocalizedText(
+                en = "Collagen/collagen peptides derived from cattle skin, bone, or connective tissue. Halal status depends on zabiha (Islamic) slaughter, which cannot be confirmed from this product's data alone.",
+                de = "Kollagen/Kollagenpeptide aus Rinderhaut, -knochen oder Bindegewebe. Der Halal-Status hängt von der Zabiha-Schlachtung (islamisch) ab, die sich anhand der Produktdaten allein nicht bestätigen lässt.",
+                fr = "Collagène/peptides de collagène issus de la peau, des os ou du tissu conjonctif de bovins. Le statut halal dépend de l'abattage zabiha (rite islamique), qui ne peut être confirmé à partir des seules données du produit.",
+                tr = "Sığır deri, kemik veya bağ dokusundan elde edilen kolajen/kolajen peptit. Helal olması dinen usulüne uygun (zebiha) kesime bağlıdır; bu bilgi ürün verisinden doğrulanamaz.",
+                ar = "كولاجين أو ببتيدات كولاجين مستخرجة من جلد الأبقار أو عظامها أو نسيجها الضام. يتوقف الحكم بالحلّ على الذبح الشرعي، وهو ما لا يمكن تأكيده من بيانات المنتج وحدها."
+            ),
             eCode = null,
-            origin = "Beef / Bovine",
+            origin = LocalizedText(
+                en = "Beef / Bovine",
+                de = "Rind",
+                fr = "Bovin",
+                tr = "Sığır",
+                ar = "بقري"
+            ),
             suppressIfHalalClaim = true
         ),
         SuspiciousRule(
             keywords = listOf("gelatin", "gélatine", "~gelatine", "gelatina", "jelatin", "جيلاتين", "جلاتين"),
-            nameEn = GELATIN_UNSPECIFIED_RULE_ID,
-            nameTr = "Jelatin (Kaynağı Belirtilmemiş)",
-            reasonEn = "Packaging does not specify whether fish, halal bovine, or non-halal porcine source is used.",
-            reasonTr = "Ambalajda sığır, balık veya domuz olduğu belirtilmemiştir. Üreticiden teyit edilmelidir.",
+            id = GELATIN_UNSPECIFIED_RULE_ID,
+            name = LocalizedText(
+                en = "Gelatin (Unspecified Source)",
+                de = "Gelatine (Herkunft nicht angegeben)",
+                fr = "Gélatine (origine non précisée)",
+                tr = "Jelatin (Kaynağı Belirtilmemiş)",
+                ar = "جيلاتين (المصدر غير مذكور)"
+            ),
+            reason = LocalizedText(
+                en = "Packaging does not specify whether fish, halal bovine, or non-halal porcine source is used.",
+                de = "Auf der Verpackung steht nicht, ob Fisch, halal geschlachtetes Rind oder (nicht halales) Schwein verwendet wurde.",
+                fr = "L'emballage ne précise pas si la source est du poisson, du bœuf halal ou du porc (non halal).",
+                tr = "Ambalajda sığır, balık veya domuz olduğu belirtilmemiştir. Üreticiden teyit edilmelidir.",
+                ar = "لا توضح العبوة ما إذا كان المصدر سمكياً أو بقرياً حلالاً أو خنزيرياً غير حلال."
+            ),
             eCode = "E441",
-            origin = "Animal"
+            origin = LocalizedText(
+                en = "Animal",
+                de = "Tierisch",
+                fr = "Animale",
+                tr = "Hayvansal",
+                ar = "حيواني"
+            )
         ),
         SuspiciousRule(
             // Bare "lab" (German for rennet) dropped: as a standalone word-boundary match it
@@ -372,30 +683,81 @@ object HalalAnalyzer {
             // Never bare "maya": on its own that is bread/baker's yeast.
             keywords = listOf("rennet", "pepsin", "animal rennet", "kälberlab", "kalbslab", "présure", "animal enzymes", "cheese cultures",
                 "peynir mayası", "hayvansal peynir mayası", "hayvansal maya", "şirden", "إنفحة", "منفحة"),
-            nameEn = "Animal Rennet / Cheese Enzymes",
-            nameTr = "Hayvansal Peynir Mayası / Enzim",
-            reasonEn = "Curdling enzyme from calf stomach. Permissible only if from Halal slaughtered animals or microbial.",
-            reasonTr = "Buzağı şirdeninden elde edilen peynir mayası. Helal kesim veya mikrobiyel olmalıdır.",
+            id = RENNET_RULE_ID,
+            name = LocalizedText(
+                en = "Animal Rennet / Cheese Enzymes",
+                de = "Tierisches Lab / Käseenzyme",
+                fr = "Présure animale / Enzymes fromagères",
+                tr = "Hayvansal Peynir Mayası / Enzim",
+                ar = "إنفحة حيوانية / إنزيمات الجبن"
+            ),
+            reason = LocalizedText(
+                en = "Curdling enzyme from calf stomach. Permissible only if from Halal slaughtered animals or microbial.",
+                de = "Gerinnungsenzym aus Kälbermagen. Nur zulässig, wenn es von halal geschlachteten Tieren stammt oder mikrobiell ist.",
+                fr = "Enzyme de caillage issue de l'estomac de veau. Permise seulement si elle provient d'animaux abattus selon le rite halal ou si elle est microbienne.",
+                tr = "Buzağı şirdeninden elde edilen peynir mayası. Helal kesim veya mikrobiyel olmalıdır.",
+                ar = "إنزيم تخثير يُستخرج من معدة العجل. لا يجوز إلا إذا كان من حيوان مذبوح ذبحاً حلالاً أو من مصدر ميكروبي."
+            ),
             eCode = null,
-            origin = "Animal (Calf / Swine)"
+            origin = LocalizedText(
+                en = "Animal (Calf / Swine)",
+                de = "Tierisch (Kalb / Schwein)",
+                fr = "Animale (veau / porc)",
+                tr = "Hayvansal (buzağı / domuz)",
+                ar = "حيواني (عجل / خنزير)"
+            )
         ),
         SuspiciousRule(
             keywords = listOf("whey", "whey powder", "~molke", "lactosérum", "peynir altı suyu tozu", "مصل اللبن", "مصل الحليب"),
-            nameEn = "Whey Powder / Whey Byproduct",
-            nameTr = "Peynir Altı Suyu Tozu",
-            reasonEn = "Cheese byproduct that may involve animal rennet enzymes during milk curdling.",
-            reasonTr = "Peynir üretiminde kullanılan hayvansal mayanın durumuna göre şüpheli olabilir.",
+            id = WHEY_RULE_ID,
+            name = LocalizedText(
+                en = "Whey Powder / Whey Byproduct",
+                de = "Molkenpulver / Molkenerzeugnis",
+                fr = "Lactosérum en poudre / Dérivé du lactosérum",
+                tr = "Peynir Altı Suyu Tozu",
+                ar = "مصل اللبن المجفف / مشتقاته"
+            ),
+            reason = LocalizedText(
+                en = "Cheese byproduct that may involve animal rennet enzymes during milk curdling.",
+                de = "Nebenprodukt der Käseherstellung, bei dem tierisches Lab zum Gerinnen der Milch verwendet worden sein kann.",
+                fr = "Sous-produit du fromage pour lequel de la présure animale a pu être utilisée lors du caillage du lait.",
+                tr = "Peynir üretiminde kullanılan hayvansal mayanın durumuna göre şüpheli olabilir.",
+                ar = "ناتج ثانوي لصناعة الجبن قد تُستخدم فيه إنفحة حيوانية عند تخثير الحليب."
+            ),
             eCode = null,
-            origin = "Dairy Byproduct"
+            origin = LocalizedText(
+                en = "Dairy Byproduct",
+                de = "Milchnebenprodukt",
+                fr = "Sous-produit laitier",
+                tr = "Süt yan ürünü",
+                ar = "ناتج ثانوي للألبان"
+            )
         ),
         SuspiciousRule(
             keywords = MEAT_KEYWORDS,
-            nameEn = MEAT_RULE_ID,
-            nameTr = "Et / Kümes Hayvanı (Kesim Yöntemi Teyit Edilmedi)",
-            reasonEn = "Contains meat or poultry. Halal status depends on zabiha (Islamic) slaughter, which cannot be confirmed from this product listing alone.",
-            reasonTr = "Et veya kümes hayvanı içeriyor. Helal olması dinen usulüne uygun (zebiha) kesime bağlıdır; bu bilgi ürün verisinden doğrulanamaz.",
+            id = MEAT_RULE_ID,
+            name = LocalizedText(
+                en = "Meat / Poultry (Slaughter Method Unconfirmed)",
+                de = "Fleisch / Geflügel (Schlachtmethode unbestätigt)",
+                fr = "Viande / Volaille (méthode d'abattage non confirmée)",
+                tr = "Et / Kümes Hayvanı (Kesim Yöntemi Teyit Edilmedi)",
+                ar = "لحم / دواجن (طريقة الذبح غير مؤكدة)"
+            ),
+            reason = LocalizedText(
+                en = "Contains meat or poultry. Halal status depends on zabiha (Islamic) slaughter, which cannot be confirmed from this product listing alone.",
+                de = "Enthält Fleisch oder Geflügel. Der Halal-Status hängt von der Zabiha-Schlachtung ab, die anhand der Produktdaten nicht bestätigt werden kann.",
+                fr = "Contient de la viande ou de la volaille. Son statut halal dépend de l'abattage zabiha, qui ne peut être confirmé à partir des données du produit.",
+                tr = "Et veya kümes hayvanı içeriyor. Helal olması dinen usulüne uygun (zebiha) kesime bağlıdır; bu bilgi ürün verisinden doğrulanamaz.",
+                ar = "يحتوي على لحم أو دواجن. تعتمد حالته الحلال على الذبح الشرعي (الذبيحة)، والتي لا يمكن تأكيدها من بيانات المنتج."
+            ),
             eCode = null,
-            origin = "Animal Meat",
+            origin = LocalizedText(
+                en = "Animal Meat",
+                de = "Fleisch",
+                fr = "Viande",
+                tr = "Hayvan eti",
+                ar = "لحم حيواني"
+            ),
             suppressIfHalalClaim = true
         )
     )
@@ -473,12 +835,13 @@ object HalalAnalyzer {
         val flaggedItems = mutableListOf<FlaggedIngredient>()
         val harmfulLabels = mutableListOf<String>()
         val suspiciousLabels = mutableListOf<String>()
-        // Tracks which SUSPICIOUS_RULES fired, by their language-stable nameEn, independent of
+        // Tracks which SUSPICIOUS_RULES fired, by their language-stable id, independent of
         // suspiciousLabels (which holds the localized display name). Used below to tell "only
         // the meat rule fired" apart from an actual unverified-origin additive, since those two
         // cases need different reason text - "this additive might be animal-derived" makes no
         // sense for a product whose only flag is containing meat outright.
         val suspiciousRuleIds = mutableListOf<String>()
+        val haramRuleIds = mutableListOf<String>()
 
         // 1. Check for Haram rules (Strict)
         for (rule in HARAM_RULES) {
@@ -487,18 +850,20 @@ object HalalAnalyzer {
             // keyword "e120" - a plain substring check treated E1200 (polydextrose) as E120 (carmine).
             val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> containsKeyword(tag, kw) } }
             if (matchedInText || matchedInAdditives) {
-                val displayName = if (language == AppLanguage.TR) rule.nameTr else rule.nameEn
-                val displayReason = if (language == AppLanguage.TR) rule.reasonTr else rule.reasonEn
+                val displayName = rule.name.get(language)
                 val flagged = FlaggedIngredient(
                     name = displayName,
                     eCode = rule.eCode,
                     status = HalalStatus.HARAM,
-                    reason = displayReason,
-                    origin = rule.origin
+                    reason = rule.reason.get(language),
+                    origin = rule.origin.get(language)
                 )
-                if (flaggedItems.none { it.name == displayName }) {
+                // Keyed on the rule id, not the localized name, so a translation can't change which
+                // cards (and ids) survive.
+                if (rule.id !in haramRuleIds) {
                     flaggedItems.add(flagged)
                     harmfulLabels.add(displayName)
+                    haramRuleIds.add(rule.id)
                 }
             }
         }
@@ -511,7 +876,7 @@ object HalalAnalyzer {
             if (rule.suppressIfHalalClaim && hasHalalClaim) continue
             val matched = matchedKeywords(rule.keywords, ingredientsLower, additiveTags)
             if (matched.isNotEmpty()) {
-                val override = applicableOverride(rule.nameEn, matched, madhhab)
+                val override = applicableOverride(rule.id, matched, madhhab)
                 // A rennet/whey difference can't change a Haram verdict (e.g. "pork rennet"), and a
                 // note calling that same rennet permissible would contradict the Haram banner.
                 val notesRelevant = harmfulLabels.isEmpty()
@@ -520,35 +885,34 @@ object HalalAnalyzer {
                     // Only HELAL overrides exist today: the match simply isn't flagged.
                     if (override.status == HalalStatus.HELAL) continue
                 }
-                if (notesRelevant) differingOverrides(rule.nameEn, matched, madhhab).forEach { o ->
+                if (notesRelevant) differingOverrides(rule.id, matched, madhhab).forEach { o ->
                     o.differenceNote(language).let { if (it !in madhhabNotes) madhhabNotes.add(it) }
                 }
                 // Any gelatin-family suspicious rule (generic-unspecified OR the more specific
                 // beef/fish rule) must be skipped once a pork/gelatin Haram flag already fired -
                 // otherwise a "not pork" Suspicious card renders directly under the Haram
                 // "Prohibited Ingredients" header next to "E441 Pork Gelatin", contradicting it.
-                val isGelatinFamilyRule = rule.nameEn == GELATIN_UNSPECIFIED_RULE_ID || rule.nameEn == BEEF_FISH_GELATIN_RULE_ID
-                if (isGelatinFamilyRule && harmfulLabels.any { it.contains("Gelatin") || it.contains("Pork") }) {
+                val isGelatinFamilyRule = rule.id == GELATIN_UNSPECIFIED_RULE_ID || rule.id == BEEF_FISH_GELATIN_RULE_ID
+                if (isGelatinFamilyRule && (PORK_GELATIN_RULE_ID in haramRuleIds || PORK_RULE_ID in haramRuleIds)) {
                     continue
                 }
                 // The generic rule additionally defers to the more specific beef/fish rule when
                 // that one already matched (source IS stated, just not as pork).
-                if (rule.nameEn == GELATIN_UNSPECIFIED_RULE_ID && suspiciousRuleIds.contains(BEEF_FISH_GELATIN_RULE_ID)) {
+                if (rule.id == GELATIN_UNSPECIFIED_RULE_ID && suspiciousRuleIds.contains(BEEF_FISH_GELATIN_RULE_ID)) {
                     continue
                 }
-                val displayName = if (language == AppLanguage.TR) rule.nameTr else rule.nameEn
-                val displayReason = if (language == AppLanguage.TR) rule.reasonTr else rule.reasonEn
+                val displayName = rule.name.get(language)
                 val flagged = FlaggedIngredient(
                     name = displayName,
                     eCode = rule.eCode,
                     status = HalalStatus.SUPHELI,
-                    reason = displayReason,
-                    origin = rule.origin
+                    reason = rule.reason.get(language),
+                    origin = rule.origin.get(language)
                 )
-                if (flaggedItems.none { it.name == displayName }) {
+                if (rule.id !in suspiciousRuleIds) {
                     flaggedItems.add(flagged)
                     suspiciousLabels.add(displayName)
-                    suspiciousRuleIds.add(rule.nameEn)
+                    suspiciousRuleIds.add(rule.id)
                 }
             }
         }
@@ -605,10 +969,7 @@ object HalalAnalyzer {
                     AppLanguage.TR -> "İçeriğinde dinen yasaklanmış maddeler (${harmfulLabels.joinToString(", ")}) tespit edilmiştir. Tüketilmesi uygun değildir."
                     AppLanguage.AR -> "تم اكتشاف مكونات محظورة (${harmfulLabels.joinToString(", ")}). غير مباح للاستهلاك."
                 }
-                alternatives = listOf(
-                    "Halal Certified equivalents (IFANCA, GIMDES, HMC)",
-                    "100% Plant-Based / Vegan certified products without alcohol"
-                )
+                alternatives = listOf(ALT_CERTIFIED_EQUIVALENTS.get(language), ALT_VEGAN_NO_ALCOHOL.get(language))
                 certificate = null
             }
             // Rule 2: Haram yok ama şüpheli içerik varsa -> ŞÜPHELİ
@@ -625,7 +986,7 @@ object HalalAnalyzer {
                         AppLanguage.TR -> "Et veya kümes hayvanı içeriyor. Helal olması dinen usulüne uygun (zebiha) kesime bağlıdır; bu bilgi ürün verisinden doğrulanamaz."
                         AppLanguage.AR -> "يحتوي على لحم أو دواجن. تعتمد حالته الحلال على الذبح الشرعي (الذبيحة)، والتي لا يمكن تأكيدها من بيانات المنتج."
                     }
-                    alternatives = listOf("Look for a halal certification mark (IFANCA, GIMDES, HMC, JAKIM, MUI)")
+                    alternatives = listOf(ALT_CERT_MARK.get(language))
                 } else {
                     reason = when (language) {
                         AppLanguage.EN -> "Contains additives of unverified origin (${suspiciousLabels.joinToString(", ")}). Must verify whether animal or plant-derived."
@@ -634,10 +995,7 @@ object HalalAnalyzer {
                         AppLanguage.TR -> "İçeriğindeki bazı katkı maddeleri (${suspiciousLabels.joinToString(", ")}) bitkisel veya hayvansal kökenli olabilir. Teyit gerektirir."
                         AppLanguage.AR -> "يحتوي على إضافات غير مؤكدة المصدر (${suspiciousLabels.joinToString(", ")}). يرجى التأكد من المصدر النباتي."
                     }
-                    alternatives = listOf(
-                        "Look for '100% Vegetable Emulsifiers' indication",
-                        "Choose certified Halal alternatives"
-                    )
+                    alternatives = listOf(ALT_VEGETABLE_EMULSIFIERS.get(language), ALT_CERTIFIED_ALTERNATIVES.get(language))
                 }
                 certificate = null
             }
@@ -655,7 +1013,7 @@ object HalalAnalyzer {
                 }
                 // "Certified" is dropped deliberately: this is a claim/label read from Open Food
                 // Facts' crowd-sourced data, not a certification this app has verified itself.
-                certificate = if (hasHalalClaim) "Carries a Halal Label (per product data)" else "100% Plant-Based / Vegan Label (per product data)"
+                certificate = (if (hasHalalClaim) CERT_HALAL_LABEL else CERT_VEGAN_LABEL).get(language)
                 alternatives = emptyList()
             }
             // Rule 4: No rule matched and no positive claim exists either. Absence of a halal/
@@ -897,7 +1255,7 @@ object HalalAnalyzer {
         }
         val stillSuspicious = SUSPICIOUS_RULES.any { rule ->
             val matched = matchedKeywords(rule.keywords, lower, emptyList())
-            matched.isNotEmpty() && applicableOverride(rule.nameEn, matched, madhhab)?.status != HalalStatus.HELAL
+            matched.isNotEmpty() && applicableOverride(rule.id, matched, madhhab)?.status != HalalStatus.HELAL
         }
         if (stillSuspicious) {
             return HalalStatus.SUPHELI

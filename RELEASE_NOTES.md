@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 16 / versionName 2.3 (2026-10-22)
+
+Sonuç kartlarındaki madde adı, açıklama ve kaynak metinleri artık Almanca, Fransızca ve Arapçada kendi dilinde (önceden İngilizce kalıyordu); kaynak bilgisi Türkçede de çevrildi. Türkçede domuz jelatini kartının yanına çelişkili "sığır/balık jelatini" şüpheli kartı eklenmesi düzeltildi. Fransızca "Total Scans" çevrildi, arama kutusundaki marka örnekleri kaldırıldı. Ürün önbelleği bir kez temizlenir (DB v6), tarama geçmişi korunur.
+
+<tr-TR>
+Sonuç ekranındaki içerik kartları artık tamamen seçtiğiniz dilde. Jelatinli bazı ürünlerde görünen çelişkili bir uyarı kaldırıldı ve küçük çeviri hataları düzeltildi.
+</tr-TR>
+
+<en-US>
+Ingredient cards on the result screen are now fully translated into German, French and Arabic. A contradictory gelatin warning on some products has been removed, and small translation issues have been fixed.
+</en-US>
+
+<de-DE>
+Die Zutatenkarten im Ergebnis werden jetzt vollständig auf Deutsch angezeigt (zuvor teilweise Englisch). Ein widersprüchlicher Gelatine-Hinweis bei einigen Produkten wurde entfernt und kleine Übersetzungsfehler wurden behoben.
+</de-DE>
+
+<fr-FR>
+Les fiches d'ingrédients du résultat sont désormais entièrement en français (auparavant en partie en anglais). Un avertissement contradictoire sur la gélatine a été supprimé et de petites erreurs de traduction ont été corrigées.
+</fr-FR>
+
+<ar>
+أصبحت بطاقات المكونات في شاشة النتيجة معروضة بالكامل باللغة العربية بعد أن كانت تظهر جزئياً بالإنجليزية. تمت إزالة تنبيه متناقض حول الجيلاتين في بعض المنتجات، وإصلاح أخطاء ترجمة بسيطة.
+</ar>
+
+---
+
 ## versionCode 15 / versionName 2.2 (2026-10-22)
 
 Uygulama içi değerlendirme isteği (3. ve 20. başarılı taramadan sonra, sonuç kapatılınca; Google kotası belirler). Uygulama içi güncelleme akışının iki kez başlatılmasından doğan çökme giderildi (Play vitals, 2.0). Fransızca tarama geçmişi başlığında "Effacer" düğmesinin harf harf alt alta dizilmesi düzeltildi.

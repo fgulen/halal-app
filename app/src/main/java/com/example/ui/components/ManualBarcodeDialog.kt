@@ -111,11 +111,11 @@ fun ManualBarcodeDialog(
 
             Text(
                 text = when (language) {
-                    AppLanguage.EN -> "Enter a barcode (e.g. 4008400404127) or search by product name (e.g. Nutella):"
-                    AppLanguage.DE -> "Geben Sie einen Barcode (z.B. 4008400404127) oder Produktnamen (z.B. Nutella) ein:"
-                    AppLanguage.FR -> "Entrez un code-barres (ex. 4008400404127) ou le nom du produit (ex. Nutella):"
-                    AppLanguage.TR -> "Barkod numarasını (örn. 4008400404127) veya ürün adını (örn. Nutella) girin:"
-                    AppLanguage.AR -> "أدخل رقم الباركود (مثل 4008400404127) أو اسم المنتج (مثل نوتيلا):"
+                    AppLanguage.EN -> "Enter a barcode (e.g. 4008400404127) or search by product name:"
+                    AppLanguage.DE -> "Geben Sie einen Barcode (z.B. 4008400404127) oder einen Produktnamen ein:"
+                    AppLanguage.FR -> "Entrez un code-barres (ex. 4008400404127) ou le nom du produit :"
+                    AppLanguage.TR -> "Barkod numarasını (örn. 4008400404127) veya ürün adını girin:"
+                    AppLanguage.AR -> "أدخل رقم الباركود (مثل 4008400404127) أو اسم المنتج:"
                 },
                 fontSize = 13.sp,
                 color = NaturalTextMuted
@@ -137,11 +137,11 @@ fun ManualBarcodeDialog(
                 placeholder = {
                     Text(
                         text = when (language) {
-                            AppLanguage.TR -> "örn. 8690504018040 veya Nutella..."
-                            AppLanguage.DE -> "z.B. 4008400404127 oder Nutella..."
-                            AppLanguage.FR -> "ex. 4008400404127 ou Nutella..."
-                            AppLanguage.AR -> "مثل 4008400404127 أو نوتيلا..."
-                            AppLanguage.EN -> "e.g. 4008400404127 or Nutella..."
+                            AppLanguage.TR -> "örn. 8690504018040 veya ürün adı..."
+                            AppLanguage.DE -> "z.B. 4008400404127 oder Produktname..."
+                            AppLanguage.FR -> "ex. 4008400404127 ou nom du produit..."
+                            AppLanguage.AR -> "مثل 4008400404127 أو اسم المنتج..."
+                            AppLanguage.EN -> "e.g. 4008400404127 or product name..."
                         },
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,

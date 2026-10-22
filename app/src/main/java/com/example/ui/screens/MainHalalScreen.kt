@@ -268,11 +268,11 @@ fun MainHalalScreen(
                         value = homeSearchQuery,
                         onValueChange = { homeSearchQuery = it },
                         placeholder = when (language) {
-                            AppLanguage.TR -> "Nutella, Haribo veya Barkod yazın..."
-                            AppLanguage.DE -> "Nutella, Haribo oder Barcode eingeben..."
-                            AppLanguage.FR -> "Entrez Nutella, Haribo ou code-barres..."
-                            AppLanguage.AR -> "ابحث عن نوتيلا، هاريبو أو باركود..."
-                            AppLanguage.EN -> "Type Nutella, Haribo or barcode..."
+                            AppLanguage.TR -> "Ürün adı veya barkod yazın..."
+                            AppLanguage.DE -> "Produktname oder Barcode eingeben..."
+                            AppLanguage.FR -> "Nom du produit ou code-barres..."
+                            AppLanguage.AR -> "اكتب اسم المنتج أو الباركود..."
+                            AppLanguage.EN -> "Type a product name or barcode..."
                         },
                         modifier = Modifier
                             .fillMaxWidth()

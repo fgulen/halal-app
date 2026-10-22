@@ -24,7 +24,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     // v5: added `madhhab` to products and scan_history (default UNSPECIFIED) so each verdict
     // remembers the madhhab it was computed under. scan_history is kept; the products cache is
     // cleared because v5 also changes verdict logic (see MIGRATION_4_5).
-    version = 5,
+    // v6: no schema change. Flag cards (name, reason, origin) are now localized in DE/FR/AR, but
+    // cached rows hold the old English text under the right language, so the stale-language check
+    // can't catch them - those rows are cleared (MIGRATION_5_6); EN rows are unchanged and kept
+    // for offline use; scan_history is kept.
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -53,6 +57,13 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Only non-English rows carry text that changed (TR origins were English too).
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DELETE FROM products WHERE language != 'EN'")
+            }
+        }
+
         internal const val DATABASE_NAME = "halal_kontrol_database"
 
         // The one place the production builder is configured, shared with the migration test so
@@ -61,7 +72,7 @@ abstract class AppDatabase : RoomDatabase() {
         // scan_history included.
         internal fun build(context: Context, name: String = DATABASE_NAME): AppDatabase =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                 .fallbackToDestructiveMigration(dropAllTables = true)
                 .build()
 

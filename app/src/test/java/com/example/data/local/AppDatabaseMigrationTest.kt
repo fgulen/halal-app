@@ -62,6 +62,40 @@ class AppDatabaseMigrationTest {
         db.close()
     }
 
+    // v5 = v4 + the two ALTERs of MIGRATION_4_5, holding one cached product and one history row.
+    private fun createVersion5Database() {
+        createVersion4Database()
+        val db = SQLiteDatabase.openDatabase(context.getDatabasePath(dbName).path, null, SQLiteDatabase.OPEN_READWRITE)
+        db.execSQL("ALTER TABLE products ADD COLUMN madhhab TEXT NOT NULL DEFAULT 'UNSPECIFIED'")
+        db.execSQL("ALTER TABLE scan_history ADD COLUMN madhhab TEXT NOT NULL DEFAULT 'UNSPECIFIED'")
+        db.execSQL("DELETE FROM products")
+        db.execSQL(
+            "INSERT INTO products (barcode, name, brand, category, status, halalCertificate, " +
+                "harmfulOrSuspiciousIngredients, allIngredients, reasonOrDetails, alternatives, imageUrl, language, madhhab) " +
+                "VALUES ('4001686301265', 'Gummibärchen', 'Test', 'Sweets', 'HARAM', NULL, 'E441 Pork Gelatin', 'zucker|||schweinegelatine', 'old English flag text', '', NULL, 'DE', 'UNSPECIFIED')"
+        )
+        db.execSQL(
+            "INSERT INTO products (barcode, name, brand, category, status, halalCertificate, " +
+                "harmfulOrSuspiciousIngredients, allIngredients, reasonOrDetails, alternatives, imageUrl, language, madhhab) " +
+                "VALUES ('0021000612803', 'Marshmallows', 'Test', 'Sweets', 'HARAM', NULL, 'E441 Pork Gelatin', 'sugar|||pork gelatin', 'English verdict', '', NULL, 'EN', 'UNSPECIFIED')"
+        )
+        db.version = 5
+        db.close()
+    }
+
+    // v6 localizes flag cards; a cached DE row would otherwise keep showing "E441 Pork Gelatin".
+    // English rows didn't change, so they stay for offline use.
+    @Test
+    fun `upgrading v5 to current clears non-English cached rows but keeps English rows and history`() = runTest {
+        createVersion5Database()
+
+        database = AppDatabase.build(context, dbName)
+
+        assertEquals(null, database!!.productDao().getProductByBarcode("4001686301265"))
+        assertEquals("Marshmallows", database!!.productDao().getProductByBarcode("0021000612803")?.name)
+        assertEquals(1, database!!.productDao().getScanHistory().first().size)
+    }
+
     // v5 also changes verdicts (madhhab overrides, Turkish rennet keywords, microbial rennet no
     // longer flagged), so - like every earlier verdict-logic change - the resolved-answer cache is
     // cleared. Otherwise a v4 "Halal" for a Turkish cheese whose rennet was never caught would be

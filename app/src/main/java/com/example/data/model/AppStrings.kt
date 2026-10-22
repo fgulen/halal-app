@@ -36,8 +36,8 @@ object AppStrings {
 
     fun getTotalScans(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Total Scans"
-        AppLanguage.DE -> "Gesamt Scans"
-        AppLanguage.FR -> "Total Scans"
+        AppLanguage.DE -> "Scans gesamt"
+        AppLanguage.FR -> "Total des scans"
         AppLanguage.TR -> "Toplam Tarama"
         AppLanguage.AR -> "إجمالي الفحوصات"
     }
