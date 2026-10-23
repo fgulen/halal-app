@@ -222,7 +222,7 @@ object HalalAnalyzer {
         "sığır eti", "dana eti", "kuzu eti", "tavuk eti", "hindi eti", "ördek eti", "et suyu", "et özütü"
     )
 
-    private val HARAM_RULES = listOf(
+    internal val HARAM_RULES = listOf(
         HaramRule(
             keywords = listOf("e441", "pork gelatin", "porcine gelatin", "schweinegelatine", "gelatine de porc", "gélatine de porc", "porc gelatine", "varkensgelatine", "domuz jelatini",
                 "جيلاتين خنزير", "جيلاتين الخنزير", "جلاتين خنزير"),
@@ -418,7 +418,7 @@ object HalalAnalyzer {
         )
     )
 
-    private val SUSPICIOUS_RULES = listOf(
+    internal val SUSPICIOUS_RULES = listOf(
         SuspiciousRule(
             keywords = listOf("e471", "mono- and diglycerides of fatty acids", "monoglycerides", "diglycerides", "mono- et diglycérides d'acides gras", "speisefettsäuren"),
             id = "E471 Mono- and Diglycerides",

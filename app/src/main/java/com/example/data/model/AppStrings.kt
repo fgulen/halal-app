@@ -687,6 +687,14 @@ object AppStrings {
         AppLanguage.AR -> "مشاركة التطبيق"
     }
 
+    fun getRateAppShort(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Rate us"
+        AppLanguage.DE -> "Bewerten"
+        AppLanguage.FR -> "Noter"
+        AppLanguage.TR -> "Değerlendir"
+        AppLanguage.AR -> "قيّمنا"
+    }
+
     fun getShareAppMessage(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Check out Halal Checker — scan any barcode to instantly see if a product is halal, haram, or doubtful: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
         AppLanguage.DE -> "Schau dir Halal Prüfer an — scanne einen Barcode und sieh sofort, ob ein Produkt halal, haram oder zweifelhaft ist: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"

@@ -31,7 +31,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     private companion object {
         // Successful scans after which closing a result asks for a Play review (each at most once).
-        val REVIEW_PROMPT_THRESHOLDS = listOf(3, 20)
+        val REVIEW_PROMPT_THRESHOLDS = listOf(3, 20, 50)
     }
 
     private val repository: ProductRepository

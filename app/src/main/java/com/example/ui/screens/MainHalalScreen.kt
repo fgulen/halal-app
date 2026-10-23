@@ -2,7 +2,9 @@ package com.example.ui.screens
 
 import com.example.ui.theme.PopupBorder
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -44,6 +46,7 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.filled.ErrorOutline
@@ -258,6 +261,19 @@ fun MainHalalScreen(
                                 putExtra(Intent.EXTRA_TEXT, AppStrings.getShareAppMessage(language))
                             }
                             context.startActivity(Intent.createChooser(shareIntent, AppStrings.getShareApp(language)))
+                        },
+                        onRateAppClick = {
+                            // Opens our Play Store page (always works, unlike the quota-limited in-app review flow)
+                            val packageName = context.packageName
+                            try {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+                            } catch (e: ActivityNotFoundException) {
+                                // No Play Store: fall back to the web page; with no browser either, do nothing
+                                try {
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                                } catch (_: ActivityNotFoundException) {
+                                }
+                            }
                         }
                     )
                 }
@@ -745,11 +761,13 @@ fun NaturalAppHeader(
     madhhab: Madhhab,
     onMadhhabClick: () -> Unit,
     onECodesClick: () -> Unit,
-    onShareAppClick: () -> Unit
+    onShareAppClick: () -> Unit,
+    onRateAppClick: () -> Unit
 ) {
     // Two rows so the header never overflows: the title and icon buttons on top, and the
-    // language + madhhab chips side by side underneath. With all four controls in one row the
-    // share button was pushed off-screen (verified on a 1080px emulator, 2026-10-07).
+    // language, madhhab and rate chips side by side underneath. With all four controls in one row
+    // the share button was pushed off-screen (verified on a 1080px emulator, 2026-10-07). The chip
+    // row scrolls sideways so a long label (TR "Değerlendir") can't clip on narrow phones.
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -811,7 +829,11 @@ fun NaturalAppHeader(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             // Language Selection Chip Button
             Surface(
                 onClick = onLanguageClick,
@@ -854,6 +876,35 @@ fun NaturalAppHeader(
                     color = EmeraldPrimaryDeep,
                     maxLines = 1
                 )
+            }
+
+            // Rate App Chip - icon plus text, since a bare star didn't read as "rate us"
+            Surface(
+                onClick = onRateAppClick,
+                shape = CircleShape,
+                color = NaturalWarmSurface,
+                border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreenBorder),
+                modifier = Modifier.testTag("header_rate_app_button")
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFF2B01E),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = AppStrings.getRateAppShort(language),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = EmeraldPrimaryDeep,
+                        maxLines = 1
+                    )
+                }
             }
         }
     }

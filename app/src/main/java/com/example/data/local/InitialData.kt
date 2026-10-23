@@ -558,7 +558,11 @@ object InitialData {
         )
     )
 
-    val eAdditivesDirectory = listOf(
+    // Hand-written entries with per-additive explanations come first; the generated long tail
+    // (tools/e_additives) follows, sorted by code.
+    val eAdditivesDirectory: List<EAdditive> by lazy { curatedEAdditives + EAdditivesGenerated.all }
+
+    private val curatedEAdditives = listOf(
         EAdditive(
             code = "E441",
             name = LocalizedText(

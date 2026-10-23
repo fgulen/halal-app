@@ -1,0 +1,438 @@
+# code	en (empty = OFF name)	tr	ar (empty = OFF name)
+E101		Riboflavin (B2 vitamini)	ريبوفلافين
+E102		Tartrazin
+E103		Alkannin	ألكانين
+E104		Kinolin sarısı	أصفر الكينولين
+E105		Hızlı sarı AB	أصفر سريع AB
+E106	Flavin mononucleotide	Flavin mononükleotit	أحادي نوكليوتيد الفلافين
+E107		Sarı 2G	أصفر 2G
+E110		Gün batımı sarısı FCF	أصفر غروب الشمس FCF
+E111		Turuncu GGN	برتقالي GGN
+E121		Turunçgil kırmızısı 2	أحمر الحمضيات 2
+E122		Azorubin / Karmoisin	أزوروبين
+E123		Amarant	أمارانث
+E124	Ponceau 4R	Ponso 4R / Koşnil kırmızısı A	بونسو 4R
+E125		Kırmızı GN	أحمر قرمزي GN
+E127		Eritrosin	إريثروزين
+E128		Kırmızı 2G	أحمر 2G
+E129		Allura kırmızısı AC	أحمر ألورا AC
+E130		İndantren mavisi RS	أزرق إندانثرين RS
+E131	Patent blue V	Patent mavisi V	أزرق براءة V
+E132		İndigotin / İndigo karmin	إنديغوتين
+E133		Parlak mavi FCF	أزرق لامع FCF
+E140		Klorofiller ve klorofilinler	الكلوروفيل والكلوروفيلين
+E141		Klorofil ve klorofilinlerin bakır kompleksleri	معقدات النحاس للكلوروفيل والكلوروفيلين
+E142	Green S	Yeşil S	أخضر S
+E143		Hızlı yeşil FCF	أخضر سريع FCF
+E150		Karamel renklendiricileri
+E151	Brilliant black BN	Parlak siyah BN	أسود لامع BN
+E152		Siyah 7984	أسود 7984
+E153		Bitkisel karbon	كربون نباتي
+E154		Kahverengi FK	بني FK
+E155	Brown HT	Kahverengi HT	بني HT
+E160		Karotenoidler	كاروتينات
+E161		Ksantofiller	زانثوفيلات
+E163		Antosiyaninler
+E164	Saffron	Safran
+E165		Gardenya mavisi	أزرق الغردينيا
+E166		Sandal ağacı	خشب الصندل
+E170		Kalsiyum karbonatlar	كربونات الكالسيوم
+E171		Titanyum dioksit
+E172		Demir oksitler ve hidroksitler	أكاسيد وهيدروكسيدات الحديد
+E173		Alüminyum	ألومنيوم
+E174		Gümüş	فضة
+E175		Altın	ذهب
+E180	Litholrubine BK	Litolrubin BK	ليثول روبين BK
+E181		Tanen
+E182		Orsein
+E200		Sorbik asit
+E201		Sodyum sorbat	سوربات الصوديوم
+E202		Potasyum sorbat	سوربات البوتاسيوم
+E203		Kalsiyum sorbat
+E209		Heptilparaben	هيبتيل بارابين
+E210		Benzoik asit	حمض البنزويك
+E211		Sodyum benzoat
+E212		Potasyum benzoat	بنزوات البوتاسيوم
+E213		Kalsiyum benzoat	بنزوات الكالسيوم
+E214		Etil paraben	إيثيل بارابين
+E215		Sodyum etil paraben	إيثيل بارابين الصوديوم
+E216		Propil paraben
+E217		Sodyum propil paraben	بروبيل بارابين الصوديوم
+E218		Metil paraben	ميثيل بارابين
+E219		Sodyum metil paraben	ميثيل بارابين الصوديوم
+E220		Kükürt dioksit
+E221		Sodyum sülfit
+E222		Sodyum bisülfit	بيكبريتيت الصوديوم
+E223		Sodyum metabisülfit
+E224		Potasyum metabisülfit
+E225		Kalsiyum disülfit	ثنائي كبريتيت الكالسيوم
+E226		Kalsiyum sülfit	كبريتيت الكالسيوم
+E227		Kalsiyum bisülfit	بيكبريتيت الكالسيوم
+E228		Potasyum bisülfit	بيكبريتيت البوتاسيوم
+E230		Bifenil	ثنائي الفينيل
+E231		Ortofenil fenol	أورثو فينيل فينول
+E232		Sodyum ortofenil fenol
+E233		Tiyabendazol	ثيابندازول
+E234		Nisin
+E235		Natamisin
+E236		Formik asit	حمض الفورميك
+E237	Sodium formate	Sodyum format
+E238	Calcium formate	Kalsiyum format
+E239		Hekzametilentetramin	سداسي ميثيلين رباعي الأمين
+E240		Formaldehit	فورمالديهايد
+E241		Guayak zamkı	صمغ الغاياك
+E242		Dimetil dikarbonat
+E243		Etil lauroil arginat
+E246		Glikolipitler
+E249		Potasyum nitrit	نتريت البوتاسيوم
+E250		Sodyum nitrit
+E251		Sodyum nitrat
+E252		Potasyum nitrat
+E260		Asetik asit
+E261		Potasyum asetat
+E262		Sodyum asetatlar	أسيتات الصوديوم
+E263		Kalsiyum asetat
+E264		Amonyum asetat
+E265		Dehidroasetik asit	حمض ديهيدرو الأسيتيك
+E266		Sodyum dehidroasetat	ديهيدرو أسيتات الصوديوم
+E267		Tamponlanmış sirke	خل مُنظَّم
+E270		Laktik asit
+E280		Propiyonik asit	حمض البروبيونيك
+E281		Sodyum propiyonat
+E282	Calcium propionate	Kalsiyum propiyonat
+E283		Potasyum propiyonat	بروبيونات البوتاسيوم
+E284		Borik asit	حمض البوريك
+E285		Sodyum tetraborat (boraks)	رباعي بورات الصوديوم (البوراكس)
+E290		Karbondioksit
+E296		Malik asit
+E297		Fumarik asit	حمض الفوماريك
+E300		Askorbik asit (C vitamini)	حمض الأسكوربيك (فيتامين C)
+E301		Sodyum askorbat	أسكوربات الصوديوم
+E302		Kalsiyum askorbat	أسكوربات الكالسيوم
+E303		Potasyum askorbat
+E304		Askorbik asidin yağ asidi esterleri
+E306		Tokoferolce zengin ekstrakt (E vitamini)	مستخلص غني بالتوكوفيرول (فيتامين E)
+E307		Alfa-tokoferol	ألفا توكوفيرول
+E308	Gamma-tocopherol	Gama-tokoferol	غاما توكوفيرول
+E309		Delta-tokoferol	دلتا توكوفيرول
+E310		Propil gallat	غالات البروبيل
+E311		Oktil gallat	غالات الأوكتيل
+E312		Dodesil gallat	غالات الدوديسيل
+E313		Etil gallat	غالات الإيثيل
+E314		Guayak reçinesi
+E315		Eritorbik asit	حمض الإريثوربيك
+E316	Sodium erythorbate	Sodyum eritorbat
+E317	Erythorbin acid	Eritorbin asit	حمض الإريثوربين
+E318		Kalsiyum eritorbat	إريثوربات الكالسيوم
+E319	Tertiary-butylhydroquinone (TBHQ)	Tersiyer bütil hidrokinon (TBHQ)	ثلاثي بوتيل هيدروكينون (TBHQ)
+E320	Butylated hydroxyanisole (BHA)	Bütillenmiş hidroksianisol (BHA)	بوتيل هيدروكسي أنيسول (BHA)
+E321	Butylated hydroxytoluene (BHT)	Bütillenmiş hidroksitoluen (BHT)	بوتيل هيدروكسي تولوين (BHT)
+E323		Anoksomer
+E324		Etoksikin	إيثوكسيكين
+E325	Sodium lactate	Sodyum laktat
+E326	Potassium lactate	Potasyum laktat	لاكتات البوتاسيوم
+E327	Calcium lactate	Kalsiyum laktat
+E328	Ammonium lactate	Amonyum laktat	لاكتات الأمونيوم
+E329		Magnezyum laktat	لاكتات المغنيسيوم
+E331		Sodyum sitratlar	سترات الصوديوم
+E332		Potasyum sitratlar	سترات البوتاسيوم
+E333		Kalsiyum sitratlar	سترات الكالسيوم
+E334		L(+)-tartarik asit
+E335		Sodyum tartratlar	طرطرات الصوديوم
+E336		Potasyum tartratlar	طرطرات البوتاسيوم
+E337		Potasyum sodyum tartrat	طرطرات البوتاسيوم والصوديوم
+E338		Fosforik asit	حمض الفوسفوريك
+E339		Sodyum fosfatlar
+E340		Potasyum fosfatlar	فوسفات البوتاسيوم
+E341		Kalsiyum fosfatlar	فوسفات الكالسيوم
+E342		Amonyum fosfat	فوسفات الأمونيوم
+E343		Magnezyum fosfatlar	فوسفات المغنيسيوم
+E344		Lesitin sitrat	سترات الليسيثين
+E345		Magnezyum sitrat	سترات المغنيسيوم
+E349	Ammonium malate	Amonyum malat
+E350		Sodyum malatlar
+E351		Potasyum malat	مالات البوتاسيوم
+E352		Kalsiyum malatlar	مالات الكالسيوم
+E353		Metatartarik asit	حمض الميتاطرطريك
+E354		Kalsiyum tartrat	طرطرات الكالسيوم
+E355		Adipik asit	حمض الأديبيك
+E356		Sodyum adipat	أديبات الصوديوم
+E357		Potasyum adipat	أديبات البوتاسيوم
+E359	Ammonium adipate	Amonyum adipat	أديبات الأمونيوم
+E363		Süksinik asit	حمض السكسينيك
+E364		Sodyum süksinatlar
+E365		Sodyum fumarat	فومارات الصوديوم
+E366		Potasyum fumarat	فومارات البوتاسيوم
+E367		Kalsiyum fumarat	فومارات الكالسيوم
+E368	Ammonium fumarate	Amonyum fumarat	فومارات الأمونيوم
+E369	Alanine	Alanin
+E370	1,4-Heptonolactone	1,4-Heptonolakton	1،4-هبتونولاكتون
+E375		Nikotinik asit (B3 vitamini)	حمض النيكوتينيك (فيتامين B3)
+E380		Triamonyum sitrat	سترات ثلاثي الأمونيوم
+E381	Ferric ammonium citrate	Demir amonyum sitrat	سترات الحديد والأمونيوم
+E383	Calcium glycerophosphate	Kalsiyum gliserofosfat
+E384		İzopropil sitratlar	سترات الأيزوبروبيل
+E385		Kalsiyum disodyum EDTA
+E388		Tiyodipropiyonik asit	حمض الثيوديبروبيونيك
+E391		Fitik asit	حمض الفيتيك
+E392		Biberiye ekstraktı	مستخلص إكليل الجبل
+E399		Kalsiyum laktobiyonat	لاكتوبيونات الكالسيوم
+E400		Aljinik asit	حمض الألجينيك
+E401	Sodium alginate	Sodyum aljinat
+E402		Potasyum aljinat	ألجينات البوتاسيوم
+E403		Amonyum aljinat	ألجينات الأمونيوم
+E404		Kalsiyum aljinat	ألجينات الكالسيوم
+E405	Propane-1,2-diol alginate	Propan-1,2-diol aljinat	ألجينات البروبان-1،2-ديول
+E406		Agar
+E408	Baker's yeast glycan	Ekmek mayası glikanı	غليكان خميرة الخبز
+E409		Arabinogalaktan	أرابينوغالاكتان
+E410		Keçiboynuzu zamkı	صمغ الخروب
+E411	Oat gum	Yulaf zamkı	صمغ الشوفان
+E413		Kitre zamkı
+E414		Arap zamkı
+E416	Karaya gum	Karaya zamkı	صمغ الكارايا
+E417		Tara zamkı	صمغ التارا
+E418		Gellan zamkı
+E419		Gati zamkı
+E420		Sorbitol	سوربيتول
+E421		Mannitol
+E424		Kurdlan
+E425		Konjak	كونجاك
+E426		Soya hemiselülozu	هيميسليلوز فول الصويا
+E427		Kassia zamkı	صمغ الكاسيا
+E429	Peptone	Pepton	ببتون
+E430		Polioksietilen (8) stearat	بولي أوكسي إيثيلين (8) ستيارات
+E431		Polioksietilen (40) stearat	بولي أوكسي إيثيلين (40) ستيارات
+E440		Pektinler
+E442		Amonyum fosfatitler	فوسفاتيدات الأمونيوم
+E443		Bromlu bitkisel yağ
+E444		Sakaroz asetat izobütirat	أسيتات إيزوبوتيرات السكروز
+E445		Odun reçinesinin gliserol esterleri	إسترات الغليسرول لراتنج الخشب
+E446		Süksistearin
+E450		Difosfatlar
+E451		Trifosfatlar
+E452		Polifosfatlar
+E457	Alpha-cyclodextrin	Alfa-siklodekstrin
+E458	Gamma-cyclodextrin	Gama-siklodekstrin
+E459	Beta-cyclodextrin	Beta-siklodekstrin	بيتا سيكلودكسترين
+E460		Selüloz
+E461	Methyl cellulose	Metil selüloz
+E462		Etil selüloz	إيثيل السليولوز
+E463		Hidroksipropil selüloz	هيدروكسي بروبيل السليولوز
+E464		Hidroksipropil metil selüloz
+E465		Etil metil selüloz	إيثيل ميثيل السليولوز
+E466		Sodyum karboksimetil selüloz
+E467		Etuloz
+E468		Çapraz bağlı sodyum karboksimetil selüloz	كربوكسي ميثيل السليولوز الصوديوم المتشابك
+E469		Enzimle hidrolize karboksimetil selüloz	كربوكسي ميثيل السليولوز المحلل إنزيمياً
+E474		Sakkarogliseritler	سكروغليسيريدات
+E476		Poligliserol polirisinoleat (PGPR)
+E477	Propane-1,2-diol esters of fatty acids	Yağ asitlerinin propan-1,2-diol esterleri	إسترات البروبان-1،2-ديول للأحماض الدهنية
+E478	Lactylated fatty acid esters of glycerol and propane-1,2-diol	Gliserol ve propan-1,2-diolün laktillenmiş yağ asidi esterleri	إسترات الأحماض الدهنية الملكتلة للغليسرول والبروبان-1،2-ديول
+E483		Stearil tartrat	طرطرات الستيريل
+E484		Stearil sitrat
+E485		Sodyum stearoil fumarat
+E486		Kalsiyum stearoil fumarat
+E487	Sodium dodecyl sulfate	Sodyum dodesil sülfat	كبريتات دوديسيل الصوديوم
+E488	Ethoxylated mono- and diglycerides	Etoksillenmiş mono- ve digliseritler
+E489		Metil glukozit-hindistan cevizi yağı esteri
+E490	Propane-1,2-diol	Propan-1,2-diol (propilen glikol)	بروبان-1،2-ديول
+E496		Sorbitan trioleat
+E500		Sodyum karbonatlar	كربونات الصوديوم
+E501		Potasyum karbonatlar	كربونات البوتاسيوم
+E502		Karbonatlar	الكربونات
+E503		Amonyum karbonatlar	كربونات الأمونيوم
+E504		Magnezyum karbonatlar	كربونات المغنيسيوم
+E505		Demir(II) karbonat	كربونات الحديد الثنائي
+E507		Hidroklorik asit	حمض الهيدروكلوريك
+E508		Potasyum klorür	كلوريد البوتاسيوم
+E509		Kalsiyum klorür
+E510	Ammonium chloride	Amonyum klorür
+E511		Magnezyum klorür	كلوريد المغنيسيوم
+E512		Kalay(II) klorür	كلوريد القصدير الثنائي
+E513		Sülfürik asit	حمض الكبريتيك
+E514		Sodyum sülfatlar
+E515		Potasyum sülfatlar	كبريتات البوتاسيوم
+E516		Kalsiyum sülfat
+E517		Amonyum sülfat	كبريتات الأمونيوم
+E518		Magnezyum sülfat	كبريتات المغنيسيوم
+E519		Bakır sülfat	كبريتات النحاس
+E520		Alüminyum sülfat	كبريتات الألومنيوم
+E521		Alüminyum sodyum sülfat	كبريتات الألومنيوم والصوديوم
+E522		Alüminyum potasyum sülfat	كبريتات الألومنيوم والبوتاسيوم
+E523		Alüminyum amonyum sülfat	كبريتات الألومنيوم والأمونيوم
+E524		Sodyum hidroksit
+E525		Potasyum hidroksit
+E526		Kalsiyum hidroksit	هيدروكسيد الكالسيوم
+E527		Amonyum hidroksit	هيدروكسيد الأمونيوم
+E528		Magnezyum hidroksit	هيدروكسيد المغنيسيوم
+E529		Kalsiyum oksit
+E530		Magnezyum oksit
+E535		Sodyum ferrosiyanür	فيروسيانيد الصوديوم
+E536		Potasyum ferrosiyanür	فيروسيانيد البوتاسيوم
+E537	Ferrous hexacyanomanganate	Demir hekzasiyanomanganat	سداسي سيانو منغنات الحديد
+E538		Kalsiyum ferrosiyanür	فيروسيانيد الكالسيوم
+E539	Sodium thiosulfate	Sodyum tiyosülfat	ثيوكبريتات الصوديوم
+E540	Dicalcium diphosphate	Dikalsiyum difosfat	ثنائي فوسفات ثنائي الكالسيوم
+E541		Sodyum alüminyum fosfat	فوسفات الألومنيوم والصوديوم
+E543	Calcium sodium polyphosphate	Kalsiyum sodyum polifosfat	متعدد فوسفات الكالسيوم والصوديوم
+E544	Calcium polyphosphate	Kalsiyum polifosfat	متعدد فوسفات الكالسيوم
+E545	Ammonium polyphosphate	Amonyum polifosfat	متعدد فوسفات الأمونيوم
+E546		Magnezyum pirofosfat
+E550		Sodyum silikat
+E551		Silisyum dioksit
+E552		Kalsiyum silikat	سيليكات الكالسيوم
+E553		Magnezyum silikatlar / talk	سيليكات المغنيسيوم
+E554		Sodyum alüminyum silikat	سيليكات الألومنيوم والصوديوم
+E555		Potasyum alüminyum silikat	سيليكات الألومنيوم والبوتاسيوم
+E556		Kalsiyum alüminyum silikat	سيليكات الألومنيوم والكالسيوم
+E557	Hemimorphite	Hemimorfit	هيميمورفيت
+E558		Bentonit
+E559		Alüminyum silikat (kaolin)	سيليكات الألومنيوم (الكاولين)
+E560		Potasyum silikat
+E571	Ammonium stearate	Amonyum stearat
+E572		Magnezyum stearat
+E573		Alüminyum stearat
+E574		Glukonik asit	حمض الغلوكونيك
+E575		Glukono-delta-lakton	غلوكونو دلتا لاكتون
+E576		Sodyum glukonat	غلوكونات الصوديوم
+E577		Potasyum glukonat	غلوكونات البوتاسيوم
+E578	Calcium gluconate	Kalsiyum glukonat
+E579	Ferrous gluconate	Demir(II) glukonat
+E580	Magnesium gluconate	Magnezyum glukonat
+E585		Demir(II) laktat	لاكتات الحديد الثنائي
+E586		4-Heksilresorsinol	4-هكسيل ريسورسينول
+E620		Glutamik asit	حمض الغلوتاميك
+E621		Monosodyum glutamat (MSG)
+E622		Monopotasyum glutamat	غلوتامات أحادي البوتاسيوم
+E623		Kalsiyum diglutamat
+E624		Monoamonyum glutamat	غلوتامات أحادي الأمونيوم
+E625		Magnezyum diglutamat	ثنائي غلوتامات المغنيسيوم
+E626		Guanilik asit	حمض الغوانيليك
+E628		Dipotasyum guanilat	غوانيلات ثنائي البوتاسيوم
+E629		Kalsiyum guanilat	غوانيلات الكالسيوم
+E630		İnosinik asit	حمض الإينوسينيك
+E632		Dipotasyum inosinat	إينوسينات ثنائي البوتاسيوم
+E633		Kalsiyum inosinat	إينوسينات الكالسيوم
+E634		Kalsiyum 5'-ribonükleotitler	5'-ريبونوكليوتيدات الكالسيوم
+E636		Maltol
+E637		Etil maltol	إيثيل مالتول
+E638	Sodium aspartate	Sodyum aspartat	أسبارتات الصوديوم
+E641	Leucine	Lösin
+E642	Lysine hydrochloride	Lizin hidroklorür
+E650		Çinko asetat	أسيتات الزنك
+E710		Spiramisin
+E713		Tilozin
+E900		Dimetilpolisiloksan
+E901	White and yellow beeswax	Beyaz ve sarı balmumu
+E902		Kandelila mumu	شمع الكانديليلا
+E903		Karnauba mumu
+E905		Sentetik mum (mikrokristal)	شمع صناعي
+E906		Benzoin reçinesi
+E907		Hidrojene poli-1-desen	بولي-1-ديسين مهدرج
+E908		Pirinç kepeği mumu
+E909		Spermaçet (balina yağı mumu)
+E910		Mum esterleri	إسترات الشمع
+E911		Yağ asidi metil esterleri	إسترات الميثيل للأحماض الدهنية
+E912		Montanik asit esterleri	إسترات حمض المونتانيك
+E913		Lanolin (yün yağı)
+E914		Oksitlenmiş polietilen mumu
+E915		Kolofan esterleri	إسترات الكولوفان
+E916		Kalsiyum iyodat	يودات الكالسيوم
+E917	Potassium iodate	Potasyum iyodat
+E918		Azot oksitler	أكاسيد النيتروجين
+E919		Nitrozil klorür
+E921		L-sistein hidroklorür monohidrat
+E922		Potasyum persülfat
+E923	Ammonium persulfate	Amonyum persülfat
+E924	Potassium bromate	Potasyum bromat	برومات البوتاسيوم
+E925		Klor	الكلور
+E926		Klor dioksit
+E927		Azodikarbonamit ve karbamit
+E928	Benzoyl peroxide	Benzoil peroksit
+E929	Acetone peroxide	Aseton peroksit	بيروكسيد الأسيتون
+E930	Calcium peroxide	Kalsiyum peroksit
+E931	Ammonium persulfate (flour treatment)	Amonyum persülfat (un işleme)	بيرسلفات الأمونيوم (لمعالجة الدقيق)
+E932		Azot oksit
+E938		Argon	الأرجون
+E939		Helyum	الهيليوم
+E940		Diklorodiflorometan	ثنائي كلورو ثنائي فلورو الميثان
+E941		Azot
+E942		Diazot monoksit (gülme gazı)
+E944		Propan	البروبان
+E945	Chloropentafluoroethane	Kloropentafloroetan
+E946	Octafluorocyclobutane	Oktaflorosiklobütan
+E948		Oksijen	الأكسجين
+E949		Hidrojen	الهيدروجين
+E950	Acesulfame K	Asesülfam K
+E951		Aspartam
+E952		Siklamik asit ve Na, Ca tuzları (siklamat)	حمض السيكلاميك وأملاحه (السيكلامات)
+E953	Isomalt	İzomalt
+E954	Saccharin and its salts	Sakarin ve tuzları
+E955		Sukraloz	سكرالوز
+E956		Alitam
+E957		Taumatin
+E958		Glisirizin (meyan kökü)
+E959		Neohesperidin dihidrokalkon	نيوهسبيريدين ثنائي هيدروكالكون
+E960		Steviol glikozitleri (stevia)	غليكوسيدات الستيفيول (ستيفيا)
+E961		Neotam	نيوتام
+E962		Aspartam-asesülfam tuzu	ملح الأسبارتام والأسيسلفام
+E963		Tagatoz
+E964		Poliglisitol şurubu
+E965	Maltitol	Maltitol
+E966		Laktitol	لاكتيتول
+E967		Ksilitol
+E968		Eritritol
+E969		Advantam	أدفانتام
+E999		Kilaya ekstraktı	مستخلص الكيلايا
+E1000		Kolik asit
+E1001		Kolin tuzları	أملاح الكولين
+E1100		Alfa-amilaz	ألفا أميلاز
+E1101		Proteaz	بروتياز
+E1102		Glukoz oksidaz	أوكسيداز الغلوكوز
+E1103		İnvertaz
+E1104	Lipase	Lipaz
+E1105		Lizozim
+E1200		Polidekstroz	بولي دكستروز
+E1201		Polivinilpirolidon	بولي فينيل بيروليدون
+E1202		Polivinilpolipirolidon	بولي فينيل بولي بيروليدون
+E1203		Polivinil alkol	كحول البولي فينيل
+E1204		Pullulan	بولولان
+E1205		Bazik metakrilat kopolimeri	بوليمر الميثاكريلات القاعدي المشترك
+E1206		Nötr metakrilat kopolimeri	بوليمر الميثاكريلات المتعادل المشترك
+E1207		Anyonik metakrilat kopolimeri	بوليمر الميثاكريلات الأنيوني المشترك
+E1208		Polivinilpirolidon-vinil asetat kopolimeri	بوليمر بولي فينيل بيروليدون وأسيتات الفينيل المشترك
+E1209		Polivinil alkol-polietilen glikol aşı kopolimeri	بوليمر كحول البولي فينيل والبولي إيثيلين غليكول المطعّم
+E1210		Karbomer
+E1400		Dekstrin
+E1401		Asitle işlenmiş nişasta
+E1402		Alkaliyle işlenmiş nişasta	نشا معالج بالقلويات
+E1403		Ağartılmış nişasta
+E1404		Oksitlenmiş nişasta	نشا مؤكسد
+E1405		Enzimle işlenmiş nişasta
+E1410		Mononişasta fosfat	فوسفات النشا الأحادي
+E1411	Distarch glycerol	Dinişasta gliserol	غليسرول النشا الثنائي
+E1412		Dinişasta fosfat	فوسفات النشا الثنائي
+E1413		Fosfatlanmış dinişasta fosfat	فوسفات النشا الثنائي المفسفر
+E1414		Asetillenmiş dinişasta fosfat	فوسفات النشا الثنائي الأسيتيلي
+E1420		Asetillenmiş nişasta	نشا أسيتيلي
+E1421	Monostarch acetate	Mononişasta asetat	أسيتات النشا الأحادي
+E1422		Asetillenmiş dinişasta adipat	أديبات النشا الثنائي الأسيتيلي
+E1423		Asetillenmiş dinişasta gliserol	غليسرول النشا الثنائي الأسيتيلي
+E1430	Distarch glycerine	Dinişasta gliserin	غليسرين النشا الثنائي
+E1440		Hidroksipropil nişasta	نشا هيدروكسي بروبيل
+E1441	Hydroxypropyl distarch glycerine	Hidroksipropil dinişasta gliserin	غليسرين النشا الثنائي هيدروكسي بروبيل
+E1442		Hidroksipropil dinişasta fosfat	فوسفات النشا الثنائي هيدروكسي بروبيل
+E1443	Hydroxypropyl distarch glycerol	Hidroksipropil dinişasta gliserol	غليسرول النشا الثنائي هيدروكسي بروبيل
+E1450		Nişasta sodyum oktenil süksinat	أوكتينيل سكسينات النشا والصوديوم
+E1451		Asetillenmiş oksitlenmiş nişasta	نشا مؤكسد أسيتيلي
+E1452		Nişasta alüminyum oktenil süksinat	أوكتينيل سكسينات النشا والألومنيوم
+E1503		Hint yağı
+E1504	Ethyl acetate	Etil asetat	أسيتات الإيثيل
+E1505		Trietil sitrat	سترات ثلاثي الإيثيل
+E1510	Ethanol (ethyl alcohol)	Etanol (etil alkol)	الإيثانول (الكحول الإيثيلي)
+E1517		Gliseril diasetat (diasetin)	ثنائي أسيتات الغليسريل
+E1518		Gliseril triasetat (triasetin)	ثلاثي أسيتات الغليسريل
+E1519		Benzil alkol	كحول البنزيل
+E1520		Propilen glikol
+E1521		Polietilen glikol	بولي إيثيلين غليكول
