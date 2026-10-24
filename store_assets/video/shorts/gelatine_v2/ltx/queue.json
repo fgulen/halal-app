@@ -1,0 +1,47 @@
+[
+ {
+  "model_type": "ltx2_25_22B_distilled",
+  "num_inference_steps": 8,
+  "resolution": "704x1280",
+  "video_length": 121,
+  "prompt": "Extreme macro close-up of a heap of glossy translucent gummy bears in red, orange, yellow and green on a dark slate surface. Start: the heap fills the lower two thirds of the frame, one red gummy bear in the front centre in sharp focus. Action: the red gummy bear wobbles and jiggles elastically as the surface is tapped, light glints through its jelly body. End: the same red gummy bear still in front centre, gently settling. Camera: 100 mm macro lens, table-top height, level angle, very shallow depth of field, noticeable steady push-in toward the red gummy bear. Lighting: strong warm backlight making the jelly glow, dark moody background. No people, no hands, no faces, no text, no letters, no logos, no packaging, no watermark. Photorealistic commercial food macro footage, vertical 9:16.",
+  "seed": 3,
+  "output_filename": "hook_a"
+ },
+ {
+  "model_type": "ltx2_25_22B_distilled",
+  "num_inference_steps": 8,
+  "resolution": "704x1280",
+  "video_length": 121,
+  "prompt": "Extreme macro close-up of a heap of glossy translucent gummy bears in red, orange, yellow and green on a dark slate surface. Start: the heap fills the lower two thirds of the frame, one red gummy bear in the front centre in sharp focus. Action: the red gummy bear wobbles and jiggles elastically as the surface is tapped, light glints through its jelly body. End: the same red gummy bear still in front centre, gently settling. Camera: 100 mm macro lens, table-top height, level angle, very shallow depth of field, noticeable steady push-in toward the red gummy bear. Lighting: strong warm backlight making the jelly glow, dark moody background. No people, no hands, no faces, no text, no letters, no logos, no packaging, no watermark. Photorealistic commercial food macro footage, vertical 9:16.",
+  "seed": 8,
+  "output_filename": "hook_b"
+ },
+ {
+  "model_type": "ltx2_25_22B_distilled",
+  "num_inference_steps": 8,
+  "resolution": "704x1280",
+  "video_length": 121,
+  "prompt": "Macro close-up of one single red translucent gummy bear standing upright on a dark steel plate. Start: the gummy bear is whole, centred, sharp. Action: it slowly softens and melts from the bottom up into a glossy red puddle, its shape sagging. End: a shiny red jelly puddle with a faint bear outline, centred. Exactly one gummy bear. Camera: 100 mm macro, table-top height, level angle, shallow depth of field, slow noticeable push-in. Lighting: warm side light, dark background, subtle steam. No people, no hands, no faces, no text, no letters, no logos, no packaging, no watermark. Photorealistic commercial food macro footage, vertical 9:16.",
+  "seed": 5,
+  "output_filename": "melt"
+ },
+ {
+  "model_type": "ltx2_25_22B_distilled",
+  "num_inference_steps": 8,
+  "resolution": "704x1280",
+  "video_length": 121,
+  "prompt": "Macro close-up of a clear glass bowl of warm water seen from slightly above. Start: three thin transparent gelatine sheets float in the water. Action: the sheets soften, curl and slowly dissolve into swirling clear ribbons. End: the water is clear and slightly thick, faint swirls remain. Exactly one bowl. Camera: 85 mm, high angle about 45 degrees, shallow depth of field, slow noticeable push-in toward the centre of the bowl. Lighting: cool clean daylight, neutral grey background. No people, no hands, no faces, no text, no letters, no logos, no packaging, no watermark. Photorealistic commercial food macro footage, vertical 9:16.",
+  "seed": 4,
+  "output_filename": "gelatin"
+ },
+ {
+  "model_type": "ltx2_25_22B_distilled",
+  "num_inference_steps": 8,
+  "resolution": "704x1280",
+  "video_length": 121,
+  "prompt": "Macro tabletop shot: halved bright green apples and fresh red berries beside a small heap of glossy fruit gummies on a light wooden board. Start: apples on the left, gummies on the right, all in frame. Action: a few drops of water glisten and roll on the apple halves. End: same arrangement, nothing moved. Camera: 85 mm, table-top height, level angle, shallow depth of field, slow steady truck to the right from the apples to the gummies. Lighting: bright fresh morning daylight, soft shadows, airy clean feel. No people, no hands, no faces, no text, no letters, no logos, no packaging, no watermark. Photorealistic commercial food macro footage, vertical 9:16.",
+  "seed": 6,
+  "output_filename": "fruit"
+ }
+]

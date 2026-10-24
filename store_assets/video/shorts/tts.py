@@ -34,6 +34,14 @@ SCRIPTS = {
         "Look for pectin, agar, fish gelatine, or a halal-certified label.",
         "Not sure? Scan it with Halal Checker.",
     ],
+    # v2: real-footage hook (LTX b-roll), ~16 s instead of 26 s
+    "gelatine_v2": [
+        "Your gummy bears might contain pig.",
+        "It's the gelatine, made from animal skin and bones.",
+        "And the label rarely says which animal.",
+        "Look for pectin, agar, fish gelatine, or halal-certified.",
+        "Not sure? Scan it with Halal Checker.",
+    ],
 }
 
 

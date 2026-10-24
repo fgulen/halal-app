@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Manrope"; font-weight: 700; src: url("assets/fonts/manrope-700.woff2") format("woff2"); }
+      :root { --bg: #052e22; --mint: #6ee7b7; --white: #ffffff; --acc: #fb923c; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000;
+              font-family: "Manrope", sans-serif; color: var(--white); }
+
+      .broll { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; z-index: 0; }
+      /* top shade so captions read over bright footage */
+      .shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1000px;
+               background: linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.38) 55%, rgba(0,0,0,0) 100%); }
+      #shadewrap { position: absolute; inset: 0; z-index: 1; }
+      .cap { z-index: 3; }
+
+      /* captions: y 260-680, clear of the Shorts UI at the bottom */
+      .cap { position: absolute; left: 0; top: 260px; width: 1080px; height: 420px; }
+      .capline { position: absolute; left: 60px; right: 60px; top: 0; bottom: 0; display: flex; flex-wrap: wrap;
+                 align-content: center; justify-content: center; gap: 0 24px; text-align: center; }
+      .cw { font-family: "Archivo Black", sans-serif; font-size: 96px; line-height: 1.08; text-transform: uppercase;
+            color: var(--white); opacity: 0; -webkit-text-stroke: 3px rgba(0,0,0,0.55);
+            text-shadow: 0 6px 28px rgba(0,0,0,0.75); }
+      .cw.key { color: var(--acc); }
+
+      .endbg { position: absolute; inset: 0; z-index: 2; background: radial-gradient(circle at 50% 55%, #0b5d3b 0%, var(--bg) 70%); }
+      .vis { position: absolute; z-index: 4; left: 0; top: 700px; width: 1080px; height: 800px; }
+      .phone { position: absolute; left: 225px; top: -20px; width: 630px; height: 1330px; border-radius: 86px; background: #0d1210;
+               padding: 18px; box-shadow: 0 50px 120px rgba(0,0,0,0.5), inset 0 0 0 4px #2b3431; }
+      .pscreen { position: relative; width: 594px; height: 1294px; border-radius: 70px; overflow: hidden; background: #f3ece2; }
+      .scr { position: absolute; left: 0; top: 0; width: 594px; }
+      .beam { position: absolute; left: 0; right: 0; top: 0; height: 130px; opacity: 0;
+              background: linear-gradient(180deg, rgba(52,211,153,0) 0%, rgba(52,211,153,0.4) 80%, rgba(110,231,183,1) 100%); }
+      .lockup { position: absolute; left: 0; right: 0; top: 0; height: 800px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .icon { width: 300px; height: 300px; border-radius: 70px; overflow: hidden; opacity: 0; box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
+      .icon img { width: 100%; height: 100%; display: block; }
+      .wordmark { margin-top: 48px; font-family: "Archivo Black", sans-serif; font-size: 116px; line-height: 1; opacity: 0; }
+      .store { margin-top: 30px; padding: 16px 36px; border-radius: 999px; border: 3px solid var(--white); font-weight: 700; font-size: 44px; opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="18.01" data-width="1080" data-height="1920">
+      <audio id="music-bed" src="assets/bgm/bed.m4a" data-start="0" data-duration="18.01" data-volume="0.3"></audio>
+      <audio id="vo1" src="assets/vo/line1.mp3" data-start="0.0" data-volume="1"></audio>
+      <audio id="vo2" src="assets/vo/line2.mp3" data-start="2.118" data-volume="1"></audio>
+      <audio id="vo3" src="assets/vo/line3.mp3" data-start="5.964" data-volume="1"></audio>
+      <audio id="vo4" src="assets/vo/line4.mp3" data-start="8.658" data-volume="1"></audio>
+      <audio id="vo5" src="assets/vo/line5.mp3" data-start="13.248" data-volume="1"></audio>
+
+      <video id="b0" class="clip broll" src="assets/broll/melt.mp4" data-start="0.0" data-duration="2.118" data-media-start="0.4" data-track-index="0" muted playsinline></video>
+      <video id="b1" class="clip broll" src="assets/broll/hook_a.mp4" data-start="2.118" data-duration="2.115" data-media-start="1.5" data-track-index="0" muted playsinline></video>
+      <video id="b2" class="clip broll" src="assets/broll/hook_b.mp4" data-start="4.233" data-duration="1.731" data-media-start="2.0" data-track-index="0" muted playsinline></video>
+      <video id="b3" class="clip broll" src="assets/broll/gelatin.mp4" data-start="5.964" data-duration="2.694" data-media-start="0.5" data-track-index="0" muted playsinline></video>
+      <video id="b4" class="clip broll" src="assets/broll/fruit.mp4" data-start="8.658" data-duration="4.59" data-media-start="0.0" data-track-index="0" muted playsinline></video>
+      <div class="clip cap" id="cap0" data-start="0.0" data-duration="2.118" data-track-index="2"><div class="capline"><span class="cw" id="c0w0">Your</span> <span class="cw" id="c0w1">gummy</span> <span class="cw" id="c0w2">bears</span> <span class="cw" id="c0w3">might</span> <span class="cw" id="c0w4">contain</span> <span class="cw key" id="c0w5">pig.</span></div></div>
+      <div class="clip cap" id="cap1" data-start="2.118" data-duration="3.846" data-track-index="2"><div class="capline"><span class="cw" id="c1w0">It&#x27;s</span> <span class="cw" id="c1w1">the</span> <span class="cw key" id="c1w2">gelatine,</span> <span class="cw" id="c1w3">made</span> <span class="cw" id="c1w4">from</span> <span class="cw" id="c1w5">animal</span> <span class="cw" id="c1w6">skin</span> <span class="cw" id="c1w7">and</span> <span class="cw" id="c1w8">bones.</span></div></div>
+      <div class="clip cap" id="cap2" data-start="5.964" data-duration="2.694" data-track-index="2"><div class="capline"><span class="cw" id="c2w0">And</span> <span class="cw" id="c2w1">the</span> <span class="cw" id="c2w2">label</span> <span class="cw" id="c2w3">rarely</span> <span class="cw" id="c2w4">says</span> <span class="cw" id="c2w5">which</span> <span class="cw key" id="c2w6">animal.</span></div></div>
+      <div class="clip cap" id="cap3" data-start="8.658" data-duration="4.59" data-track-index="2"><div class="capline"><span class="cw" id="c3w0">Look</span> <span class="cw" id="c3w1">for</span> <span class="cw" id="c3w2">pectin,</span> <span class="cw" id="c3w3">agar,</span> <span class="cw" id="c3w4">fish</span> <span class="cw" id="c3w5">gelatine,</span> <span class="cw" id="c3w6">or</span> <span class="cw key" id="c3w7">halal-certified.</span></div></div>
+      <div class="clip cap" id="cap4" data-start="13.248" data-duration="4.762" data-track-index="2"><div class="capline"><span class="cw" id="c4w0">Not</span> <span class="cw" id="c4w1">sure?</span> <span class="cw" id="c4w2">Scan</span> <span class="cw" id="c4w3">it</span> <span class="cw" id="c4w4">with</span> <span class="cw" id="c4w5">Halal</span> <span class="cw key" id="c4w6">Checker.</span></div></div>
+      <div class="clip endbg" id="endbg" data-start="13.248" data-duration="4.762" data-track-index="1"></div>
+      <div class="clip vis" id="end" data-start="13.248" data-duration="4.762" data-track-index="3"><div class="phone" id="ph" data-layout-allow-overflow><div class="pscreen"><img class="scr" src="assets/screens/gummies_en_top.png" alt="" /><div class="beam" id="beam" data-layout-allow-overflow></div></div></div><div class="lockup" id="lock"><div class="icon" id="icon"><img src="assets/logo/icon_clean.png" alt="" /></div><div class="wordmark" id="wm">Halal Checker</div><div class="store" id="gp">Free on Google Play</div></div></div>
+
+      <div class="clip" id="shadewrap" data-start="0" data-duration="18.01" data-track-index="4"><div class="shade"></div></div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const pop = (sel, t) => tl.fromTo(sel, { opacity: 0, y: 18, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.12, ease: "power3.out" }, t);
+      tl.fromTo("#b0", { scale: 1.06 }, { scale: 1.16, duration: 2.118, ease: "none" }, 0.0);
+      tl.fromTo("#b1", { scale: 1.06 }, { scale: 1.16, duration: 2.115, ease: "none" }, 2.118);
+      tl.fromTo("#b2", { scale: 1.06 }, { scale: 1.16, duration: 1.731, ease: "none" }, 4.233);
+      tl.fromTo("#b3", { scale: 1.06 }, { scale: 1.16, duration: 2.694, ease: "none" }, 5.964);
+      tl.fromTo("#b4", { scale: 1.06 }, { scale: 1.16, duration: 4.59, ease: "none" }, 8.658);
+      tl.set("#c0w0", { opacity: 1, y: 0, scale: 1 }, 0);
+      tl.set("#c0w1", { opacity: 1, y: 0, scale: 1 }, 0);
+      tl.set("#c0w2", { opacity: 1, y: 0, scale: 1 }, 0);
+      tl.set("#c0w3", { opacity: 1, y: 0, scale: 1 }, 0);
+      tl.set("#c0w4", { opacity: 1, y: 0, scale: 1 }, 0);
+      tl.set("#c0w5", { opacity: 1, y: 0, scale: 1 }, 0);
+      tl.to("#cap0 .capline", { opacity: 0, duration: 0.1 }, 2.018);
+      pop("#c1w0", 2.211);
+      pop("#c1w1", 2.326);
+      pop("#c1w2", 2.419);
+      pop("#c1w3", 3.322);
+      pop("#c1w4", 3.518);
+      pop("#c1w5", 3.785);
+      pop("#c1w6", 4.074);
+      pop("#c1w7", 4.676);
+      pop("#c1w8", 4.803);
+      tl.to("#cap1 .capline", { opacity: 0, duration: 0.1 }, 5.864);
+      pop("#c2w0", 6.057);
+      pop("#c2w1", 6.114);
+      pop("#c2w2", 6.196);
+      pop("#c2w3", 6.566);
+      pop("#c2w4", 6.925);
+      pop("#c2w5", 7.446);
+      pop("#c2w6", 7.758);
+      tl.to("#cap2 .capline", { opacity: 0, duration: 0.1 }, 8.558);
+      pop("#c3w0", 8.739);
+      pop("#c3w1", 8.855);
+      pop("#c3w2", 8.97);
+      pop("#c3w3", 9.989);
+      pop("#c3w4", 10.591);
+      pop("#c3w5", 10.88);
+      pop("#c3w6", 11.69);
+      pop("#c3w7", 11.806);
+      tl.to("#cap3 .capline", { opacity: 0, duration: 0.1 }, 13.148);
+      pop("#c4w0", 13.329);
+      pop("#c4w1", 13.456);
+      pop("#c4w2", 14.197);
+      pop("#c4w3", 14.51);
+      pop("#c4w4", 14.614);
+      pop("#c4w5", 14.764);
+      pop("#c4w6", 15.181);
+      tl.fromTo("#c0w5", { scale: 1 }, { scale: 1.25, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 1.319);
+      tl.fromTo("#ph", { y: 1300 }, { y: 0, duration: 0.45, ease: "expo.out" }, 13.248);
+      tl.fromTo("#beam", { opacity: 1, y: -120 }, { opacity: 1, y: 1300, duration: 0.8, ease: "power1.inOut", immediateRender: false }, 14.197);
+      tl.to("#beam", { opacity: 0, duration: 0.1 }, 14.997);
+      tl.to("#ph", { y: 1400, duration: 0.4, ease: "power3.in" }, 14.964);
+      tl.fromTo("#icon", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)", immediateRender: false }, 15.214);
+      tl.fromTo("#wm", { opacity: 0, scale: 1.2 }, { opacity: 1, scale: 1, duration: 0.22, ease: "power4.out", immediateRender: false }, 15.364);
+      tl.fromTo("#gp", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out", immediateRender: false }, 15.714);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

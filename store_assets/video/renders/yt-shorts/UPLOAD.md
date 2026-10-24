@@ -29,6 +29,11 @@ Scan any product with Halal Checker (free): https://play.google.com/store/apps/d
 #shorts #halal #gelatine #foodfacts
 Etiketler: halal, halal food, gelatine, gelatin, gummy bears, pork, food additives, is it halal, halal checker, barcode scanner, muslim, food facts, shorts
 
+## 3b) short-gelatine-v2.mp4  (v1'in yerine, 18 sn, LTX-2.5 AI görüntülü açılış)
+Başlık/açıklama/etiket: 3) ile aynı (utm_campaign=gelatine_v2 yap).
+Studio "Değiştirilmiş veya yapay içerik" sorusu: **EVET** (fotogerçekçi AI görüntü: eriyen ayıcık, çözünen jelatin).
+Başarı ölçütü: 48 saat sonra "izlemeye devam edenler" oranı. v1 E120 = %12,3. ~%40+ ise E120/E904 da bu formatla yeniden yapılır.
+
 ## Denetim listesi (yüklemeden önce)
 - [ ] Etiket toplamı < 500 karakter (YouTube sınırı) — hepsi ~230.
 - [ ] Başlık < 100 karakter, "#shorts" var.
