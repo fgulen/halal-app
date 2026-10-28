@@ -53,11 +53,18 @@ iletişim şifreli bağlantı (HTTPS) üzerinden yapılır.
 Tüm verileriniz cihazınızda tutulduğu için, verilerinizi görüntülemek, silmek veya taşımak
 tamamen sizin kontrolünüzdedir (uygulama içi geçmiş temizleme veya uygulamayı kaldırma yoluyla).
 
-## 8. Bu politikadaki değişiklikler
+## 8. Gemini ve bağlı uygulama (Connected App)
+
+Uygulamanın Google Gemini içinde "bağlı uygulama" (Connected App) olarak sunulması planlanıyor.
+Bu özellik henüz yayında değildir ve uygulamada şu anda bu akış yoktur. Özellik kullanıma
+alınmadan önce bu bölüm, o zamanki veri akışına göre güncellenecektir. Gemini'ye girdiğiniz
+sorguların işlenmesi için Google Gizlilik Politikası geçerlidir: https://policies.google.com/privacy
+
+## 9. Bu politikadaki değişiklikler
 
 Bu politika güncellenirse, yeni sürüm bu sayfada yayınlanır ve yürürlük tarihi güncellenir.
 
-## 9. İletişim
+## 10. İletişim
 
 Sorularınız için: **fatihgulen@gmail.com**
 
@@ -85,5 +92,10 @@ https://world.openfoodfacts.org/privacy.
 
 **No ads or analytics** are currently used in this app. **Not directed at children.** All
 network requests use HTTPS.
+
+**Gemini / Connected App:** A connected app version inside the Google Gemini app is planned. It is not released yet, and
+the app does not currently have this data flow. Before this feature is launched, this section
+will be updated to match its actual data flow. Until then, Google's Privacy Policy applies to
+anything you send to Gemini: https://policies.google.com/privacy
 
 **Contact:** **fatihgulen@gmail.com**
