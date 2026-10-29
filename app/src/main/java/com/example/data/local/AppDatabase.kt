@@ -28,7 +28,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     // cached rows hold the old English text under the right language, so the stale-language check
     // can't catch them - those rows are cleared (MIGRATION_5_6); EN rows are unchanged and kept
     // for offline use; scan_history is kept.
-    version = 6,
+    // v7: added nutriScore (TEXT) and novaGroup (INTEGER) to both tables for the health gauge.
+    // The products cache is cleared so cached live rows refetch with the new fields; scan_history
+    // keeps old rows, which simply show no gauge.
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -64,6 +67,16 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE products ADD COLUMN nutriScore TEXT")
+                db.execSQL("ALTER TABLE products ADD COLUMN novaGroup INTEGER")
+                db.execSQL("ALTER TABLE scan_history ADD COLUMN nutriScore TEXT")
+                db.execSQL("ALTER TABLE scan_history ADD COLUMN novaGroup INTEGER")
+                db.execSQL("DELETE FROM products")
+            }
+        }
+
         internal const val DATABASE_NAME = "halal_kontrol_database"
 
         // The one place the production builder is configured, shared with the migration test so
@@ -72,7 +85,7 @@ abstract class AppDatabase : RoomDatabase() {
         // scan_history included.
         internal fun build(context: Context, name: String = DATABASE_NAME): AppDatabase =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                 .fallbackToDestructiveMigration(dropAllTables = true)
                 .build()
 

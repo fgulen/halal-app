@@ -1063,7 +1063,9 @@ object HalalAnalyzer {
             alternatives = alternatives,
             imageUrl = imageUrl,
             language = language,
-            madhhab = madhhab
+            madhhab = madhhab,
+            nutriScore = offProduct.nutriScore,
+            novaGroup = offProduct.novaGroup
         )
     }
 

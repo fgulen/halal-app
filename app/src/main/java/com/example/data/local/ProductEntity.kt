@@ -26,7 +26,10 @@ data class ProductEntity(
     val language: AppLanguage = AppLanguage.EN,
     // Madhhab this cached verdict was computed under (v5). A hit under a different madhhab is
     // stale and re-analyzed, the same way a different-language hit is.
-    val madhhab: Madhhab = Madhhab.UNSPECIFIED
+    val madhhab: Madhhab = Madhhab.UNSPECIFIED,
+    // Open Food Facts health indicators (v7). Null on rows cached before v7 (those are cleared).
+    val nutriScore: String? = null,
+    val novaGroup: Int? = null
 ) {
     fun toDomainModel(): FoodProduct {
         return FoodProduct(
@@ -42,7 +45,9 @@ data class ProductEntity(
             alternatives = alternatives,
             imageUrl = imageUrl,
             language = language,
-            madhhab = madhhab
+            madhhab = madhhab,
+            nutriScore = nutriScore,
+            novaGroup = novaGroup
         )
     }
 
@@ -61,7 +66,9 @@ data class ProductEntity(
                 alternatives = product.alternatives,
                 imageUrl = product.imageUrl,
                 language = product.language,
-                madhhab = product.madhhab
+                madhhab = product.madhhab,
+                nutriScore = product.nutriScore,
+                novaGroup = product.novaGroup
             )
         }
     }

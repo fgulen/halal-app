@@ -37,7 +37,9 @@ data class OffProduct(
     val imageFrontSmallUrl: String? = null,
     val imageSmallUrl: String? = null,
     val imageThumbUrl: String? = null,
-    val imageFrontThumbUrl: String? = null
+    val imageFrontThumbUrl: String? = null,
+    val nutriScore: String? = null,
+    val novaGroup: Int? = null
 )
 
 data class OffResponse(
@@ -199,7 +201,7 @@ class OpenFoodFactsApi(
         // for the same reason as getProductByBarcode: they can't find anything world can't,
         // and their search endpoint doesn't request the same `fields`, so results were inconsistent.
         val searchUrls = listOf(
-            "https://world.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=15&fields=code,_id,product_name,product_name_en,product_name_de,product_name_fr,product_name_tr,product_name_ar,brands,categories,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_tr,ingredients_text_ar,additives_tags,ingredients_analysis_tags,image_front_url,image_url,image_front_small_url,image_small_url,selected_images,images"
+            "https://world.openfoodfacts.org/api/v2/search?search_terms=$encodedQuery&page_size=15&fields=code,_id,product_name,product_name_en,product_name_de,product_name_fr,product_name_tr,product_name_ar,brands,categories,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,ingredients_text_tr,ingredients_text_ar,additives_tags,ingredients_analysis_tags,nutriscore_grade,nova_group,image_front_url,image_url,image_front_small_url,image_small_url,selected_images,images"
         )
 
         for (searchUrl in searchUrls) {
@@ -417,6 +419,8 @@ class OpenFoodFactsApi(
             ingredientsTextAr = json.optString("ingredients_text_ar").takeIf { it.isNotBlank() },
             additivesTags = extractStringList("additives_tags") ?: extractStringList("additives_original_tags"),
             ingredientsAnalysisTags = extractStringList("ingredients_analysis_tags"),
+            nutriScore = parseNutriScore(json.optString("nutriscore_grade", json.optString("nutrition_grades", ""))),
+            novaGroup = parseNovaGroup(json.optString("nova_group", "")),
             imageUrl = resolvedImageUrl,
             imageFrontUrl = resolvedImageUrl,
             imageFrontSmallUrl = resolvedImageUrl,
@@ -427,6 +431,18 @@ class OpenFoodFactsApi(
     }
 
     companion object {
+        // Only a plain A..E grade counts; OFF also sends "unknown", "not-applicable" or JSON null
+        // (which optString turns into the text "null"), all of which mean "no score".
+        internal fun parseNutriScore(raw: String): String? =
+            raw.trim().uppercase().takeIf { it.length == 1 && it[0] in 'A'..'E' }
+
+        // OFF sends nova_group as a JSON number (3); "4.0" also appears for some records, so read
+        // it as a double and accept only whole numbers 1..4.
+        internal fun parseNovaGroup(raw: String): Int? {
+            val value = raw.trim().toDoubleOrNull() ?: return null
+            return value.toInt().takeIf { value == Math.floor(value) && it in 1..4 }
+        }
+
         fun createOkHttpClient(): OkHttpClient {
             return OkHttpClient.Builder()
                 .followRedirects(true)

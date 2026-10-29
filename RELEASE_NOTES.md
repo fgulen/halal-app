@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 17 / versionName 2.4 (2026-10-29)
+
+Sonuç ekranına sağlık göstergesi eklendi: ürünün Nutri-Score (A–E) ve NOVA (1–4) değeri, kırmızıdan yeşile bir ibre ve sade cümlelerle gösterilir. Bu bilgi helal kararını değiştirmez; veri Open Food Facts'ten gelir ve değeri olmayan ürünlerde kart görünmez. Ürün önbelleği bir kez temizlenir (DB v7), tarama geçmişi korunur. Bu sürümden önceki taramalarda gösterge yoktur; ürünü yeniden tarayınca görünür.
+
+<tr-TR>
+Sonuç ekranına sağlık göstergesi eklendi. Ürünün Nutri-Score (A–E) ve NOVA (1–4) değeri ibre üzerinde, sade cümlelerle gösterilir. Helal kararı değişmez. Eski taramalarda göstergeyi görmek için ürünü yeniden tarayın.
+</tr-TR>
+
+<en-US>
+The result screen now has a health gauge. It shows the product's Nutri-Score (A–E) and NOVA group (1–4) on a red-to-green needle, with plain-language explanations. The halal verdict does not change. To see the gauge on older scans, scan the product again.
+</en-US>
+
+<de-DE>
+Der Ergebnisbildschirm zeigt jetzt eine Gesundheitsanzeige. Nutri-Score (A–E) und NOVA-Gruppe (1–4) des Produkts werden auf einer Nadel von Rot bis Grün mit einfachen Erklärungen angezeigt. Das Halal-Urteil ändert sich nicht. Um die Anzeige bei älteren Scans zu sehen, scannen Sie das Produkt erneut.
+</de-DE>
+
+<fr-FR>
+L'écran de résultat affiche désormais une jauge santé. Le Nutri-Score (A–E) et le groupe NOVA (1–4) du produit apparaissent sur une aiguille du rouge au vert, avec des explications simples. Le verdict halal ne change pas. Pour voir la jauge sur les anciens scans, rescannez le produit.
+</fr-FR>
+
+<ar>
+تعرض شاشة النتيجة الآن مؤشراً صحياً. يظهر Nutri-Score (من A إلى E) ومجموعة NOVA (من 1 إلى 4) للمنتج على إبرة تتدرج من الأحمر إلى الأخضر مع شرح بسيط. لا يتغير حكم الحلال. لرؤية المؤشر في عمليات المسح السابقة، امسح المنتج مرة أخرى.
+</ar>
+
+---
+
 ## versionCode 16 / versionName 2.3 (2026-10-22)
 
 Sonuç kartlarındaki madde adı, açıklama ve kaynak metinleri artık Almanca, Fransızca ve Arapçada kendi dilinde (önceden İngilizce kalıyordu); kaynak bilgisi Türkçede de çevrildi. Türkçede domuz jelatini kartının yanına çelişkili "sığır/balık jelatini" şüpheli kartı eklenmesi düzeltildi. Fransızca "Total Scans" çevrildi, arama kutusundaki marka örnekleri kaldırıldı. Ürün önbelleği bir kez temizlenir (DB v6), tarama geçmişi korunur.

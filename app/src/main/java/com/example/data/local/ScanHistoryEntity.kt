@@ -22,7 +22,10 @@ data class ScanHistoryEntity(
     val imageUrl: String?,
     val scannedAt: Long = System.currentTimeMillis(),
     // Madhhab the verdict was computed under (v5), so history re-renders consistently.
-    val madhhab: Madhhab = Madhhab.UNSPECIFIED
+    val madhhab: Madhhab = Madhhab.UNSPECIFIED,
+    // Health indicators (v7). Old history rows stay null and show no gauge.
+    val nutriScore: String? = null,
+    val novaGroup: Int? = null
 ) {
     fun toDomainModel(): FoodProduct {
         return FoodProduct(
@@ -38,7 +41,9 @@ data class ScanHistoryEntity(
             alternatives = alternatives,
             imageUrl = imageUrl,
             scannedAt = scannedAt,
-            madhhab = madhhab
+            madhhab = madhhab,
+            nutriScore = nutriScore,
+            novaGroup = novaGroup
         )
     }
 
@@ -57,7 +62,9 @@ data class ScanHistoryEntity(
                 alternatives = product.alternatives,
                 imageUrl = product.imageUrl,
                 scannedAt = System.currentTimeMillis(),
-                madhhab = product.madhhab
+                madhhab = product.madhhab,
+                nutriScore = product.nutriScore,
+                novaGroup = product.novaGroup
             )
         }
     }

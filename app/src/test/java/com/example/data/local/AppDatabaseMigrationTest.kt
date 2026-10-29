@@ -85,14 +85,15 @@ class AppDatabaseMigrationTest {
 
     // v6 localizes flag cards; a cached DE row would otherwise keep showing "E441 Pork Gelatin".
     // English rows didn't change, so they stay for offline use.
+    // v7 clears the whole products cache (see MIGRATION_6_7), so the English row goes too; history stays.
     @Test
-    fun `upgrading v5 to current clears non-English cached rows but keeps English rows and history`() = runTest {
+    fun `upgrading v5 to current clears the products cache and keeps history`() = runTest {
         createVersion5Database()
 
         database = AppDatabase.build(context, dbName)
 
         assertEquals(null, database!!.productDao().getProductByBarcode("4001686301265"))
-        assertEquals("Marshmallows", database!!.productDao().getProductByBarcode("0021000612803")?.name)
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
         assertEquals(1, database!!.productDao().getScanHistory().first().size)
     }
 
@@ -122,5 +123,23 @@ class AppDatabaseMigrationTest {
         assertEquals("3017620422003", row.barcode)
         assertEquals(HalalStatus.SUPHELI, row.status)
         assertEquals(Madhhab.UNSPECIFIED, row.madhhab)
+    }
+
+    // v7 adds nutriScore/novaGroup. The products cache is cleared so live rows refetch with the new
+    // fields; history rows survive and simply have no health data.
+    @Test
+    fun `upgrading v6 to v7 adds health columns, clears products cache and keeps history`() = runTest {
+        createVersion5Database()
+        val db = SQLiteDatabase.openDatabase(context.getDatabasePath(dbName).path, null, SQLiteDatabase.OPEN_READWRITE)
+        db.version = 6
+        db.close()
+
+        database = AppDatabase.build(context, dbName)
+
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
+        val history = database!!.productDao().getScanHistory().first()
+        assertEquals(1, history.size)
+        assertEquals(null, history.first().nutriScore)
+        assertEquals(null, history.first().novaGroup)
     }
 }

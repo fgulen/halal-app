@@ -559,6 +559,115 @@ object AppStrings {
         AppLanguage.AR -> "تم الإبلاغ عنه"
     }
 
+    fun getHealthGaugeTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Health indicator"
+        AppLanguage.DE -> "Gesundheitsindikator"
+        AppLanguage.FR -> "Indicateur santé"
+        AppLanguage.TR -> "Sağlık göstergesi"
+        AppLanguage.AR -> "مؤشر الصحة"
+    }
+
+    fun getHealthGaugeNoData(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "This product has no nutrition score"
+        AppLanguage.DE -> "Für dieses Produkt gibt es keine Nährwertbewertung"
+        AppLanguage.FR -> "Ce produit n'a pas de score nutritionnel"
+        AppLanguage.TR -> "Bu ürünün besin puanı yok"
+        AppLanguage.AR -> "لا توجد نقاط تغذية لهذا المنتج"
+    }
+
+    fun getHealthGaugeNote(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Source: Open Food Facts (Nutri-Score A–E, NOVA). This is not a halal verdict."
+        AppLanguage.DE -> "Quelle: Open Food Facts (Nutri-Score A–E, NOVA). Keine Halal-Entscheidung."
+        AppLanguage.FR -> "Source : Open Food Facts (Nutri-Score A–E, NOVA). Ce n'est pas un verdict halal."
+        AppLanguage.TR -> "Kaynak: Open Food Facts (Nutri-Score A–E, NOVA). Helal kararı değildir."
+        AppLanguage.AR -> "المصدر: Open Food Facts (Nutri-Score من A إلى E، وNOVA). ليس حكماً حلالاً."
+    }
+
+    // NOVA 1 = unprocessed ... 4 = ultra-processed.
+    // Plain-language meaning of a NOVA group (1..4). Descriptive only, no health judgement.
+    // Unknown group returns "" instead of crashing; the card never passes one.
+    fun getNovaPlain(lang: AppLanguage, group: Int): String = when (lang) {
+        AppLanguage.EN -> when (group) {
+            1 -> "Natural or barely processed"
+            2 -> "Kitchen ingredient (oil, sugar, salt…)"
+            3 -> "Processed food (bread, cheese, canned…)"
+            4 -> "Ultra-processed ready product (e.g. packaged snacks, soft drinks)"
+            else -> ""
+        }
+        AppLanguage.DE -> when (group) {
+            1 -> "Natürlich oder kaum verarbeitet"
+            2 -> "Küchenzutat (Öl, Zucker, Salz …)"
+            3 -> "Verarbeitetes Lebensmittel (Brot, Käse, Konserven …)"
+            4 -> "Stark verarbeitetes Fertigprodukt (z. B. Snacks, Softdrinks)"
+            else -> ""
+        }
+        AppLanguage.FR -> when (group) {
+            1 -> "Naturel ou très peu transformé"
+            2 -> "Ingrédient culinaire (huile, sucre, sel…)"
+            3 -> "Aliment transformé (pain, fromage, conserve…)"
+            4 -> "Produit ultra-transformé (ex. snacks emballés, boissons gazeuses)"
+            else -> ""
+        }
+        AppLanguage.TR -> when (group) {
+            1 -> "Doğal veya çok az işlenmiş"
+            2 -> "Mutfak malzemesi (yağ, şeker, tuz gibi)"
+            3 -> "İşlenmiş gıda (ekmek, peynir, konserve gibi)"
+            4 -> "Çok işlenmiş hazır ürün (paketli atıştırmalık, gazlı içecek gibi)"
+            else -> ""
+        }
+        AppLanguage.AR -> when (group) {
+            1 -> "طبيعي أو قليل التصنيع"
+            2 -> "مكوّن للطهي (زيت، سكر، ملح…)"
+            3 -> "غذاء مصنّع (خبز، جبن، معلّبات…)"
+            4 -> "منتج جاهز فائق التصنيع (مثل الوجبات الخفيفة المعبأة والمشروبات الغازية)"
+            else -> ""
+        }
+    }
+
+    // Plain-language meaning of a Nutri-Score grade (A..E). Describes the nutritional value only.
+    fun getNutriScorePlain(lang: AppLanguage, grade: String): String = when (lang) {
+        AppLanguage.EN -> when (grade) {
+            "A" -> "Very good nutritional value"
+            "B" -> "Good nutritional value"
+            "C" -> "Average nutritional value"
+            "D" -> "Low nutritional value"
+            "E" -> "Very low nutritional value"
+            else -> ""
+        }
+        AppLanguage.DE -> when (grade) {
+            "A" -> "Sehr gute Nährwerte"
+            "B" -> "Gute Nährwerte"
+            "C" -> "Mittlere Nährwerte"
+            "D" -> "Niedrige Nährwerte"
+            "E" -> "Sehr niedrige Nährwerte"
+            else -> ""
+        }
+        AppLanguage.FR -> when (grade) {
+            "A" -> "Très bonne valeur nutritionnelle"
+            "B" -> "Bonne valeur nutritionnelle"
+            "C" -> "Valeur nutritionnelle moyenne"
+            "D" -> "Faible valeur nutritionnelle"
+            "E" -> "Très faible valeur nutritionnelle"
+            else -> ""
+        }
+        AppLanguage.TR -> when (grade) {
+            "A" -> "Besin değeri çok iyi"
+            "B" -> "Besin değeri iyi"
+            "C" -> "Besin değeri orta"
+            "D" -> "Besin değeri düşük"
+            "E" -> "Besin değeri çok düşük"
+            else -> ""
+        }
+        AppLanguage.AR -> when (grade) {
+            "A" -> "قيمة غذائية ممتازة"
+            "B" -> "قيمة غذائية جيدة"
+            "C" -> "قيمة غذائية متوسطة"
+            "D" -> "قيمة غذائية منخفضة"
+            "E" -> "قيمة غذائية منخفضة جداً"
+            else -> ""
+        }
+    }
+
     fun getCertLabel(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Cert"
         AppLanguage.DE -> "Zertifikat"

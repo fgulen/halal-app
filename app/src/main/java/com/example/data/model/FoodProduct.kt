@@ -29,5 +29,9 @@ data class FoodProduct(
     // Which madhhab produced this verdict. Stored with cache and history rows so a result is
     // always re-displayed (e.g. ingredient chip colours) under the madhhab it was analyzed with,
     // not whatever the user has selected now. Fixed-verdict curated entries stay UNSPECIFIED.
-    val madhhab: Madhhab = Madhhab.UNSPECIFIED
+    val madhhab: Madhhab = Madhhab.UNSPECIFIED,
+    // Health indicators from Open Food Facts (display only, never part of the halal verdict).
+    // nutriScore is "A".."E", novaGroup is 1..4; null when OFF has no value for the product.
+    val nutriScore: String? = null,
+    val novaGroup: Int? = null
 )
