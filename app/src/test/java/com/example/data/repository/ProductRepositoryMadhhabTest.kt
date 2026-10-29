@@ -3,7 +3,9 @@ package com.example.data.repository
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.example.data.local.AppDatabase
+import com.example.data.local.ProductEntity
 import com.example.data.model.AppLanguage
+import com.example.data.model.HalalStatus
 import com.example.data.model.Madhhab
 import com.example.data.remote.OpenFoodFactsApi
 import kotlinx.coroutines.flow.first
@@ -31,7 +33,7 @@ class ProductRepositoryMadhhabTest {
 
     private val cheeseJson = """
         {"status":1,"code":"1234567890123","product":{
-          "product_name":"Test Cheese","brands":"Test",
+          "product_name":"Test Cheese","brands":"Test","nutriscore_grade":"c",
           "ingredients_text":"milk, salt, animal rennet"}}
     """.trimIndent()
 
@@ -87,6 +89,26 @@ class ProductRepositoryMadhhabTest {
 
         assertEquals(callsAfterFirst, offFoodCalls)
         assertEquals(Madhhab.SHAFII, again.madhhab)
+    }
+
+    // A cached product without health data (cached before v7, or no Nutri-Score at OFF) is fetched
+    // again when online, so pre-v7 rows pick up their Nutri-Score/NOVA.
+    @Test
+    fun `cache hit without health data is refetched when online`() = runTest {
+        val repo = repository()
+        database.productDao().insertProduct(
+            ProductEntity(
+                barcode = "1234567890123", name = "Old", brand = "Test", category = "Cheese",
+                status = HalalStatus.HELAL, halalCertificate = null, harmfulOrSuspiciousIngredients = emptyList(),
+                allIngredients = emptyList(), reasonOrDetails = "", alternatives = emptyList(), imageUrl = null,
+                language = AppLanguage.EN, madhhab = Madhhab.SHAFII, nutriScore = null, novaGroup = null
+            )
+        )
+
+        val result = repo.checkBarcode("1234567890123", AppLanguage.EN, Madhhab.SHAFII)
+
+        assertEquals(1, offFoodCalls)
+        assertEquals("C", result.nutriScore)
     }
 
     @Test

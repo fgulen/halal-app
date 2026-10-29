@@ -419,7 +419,9 @@ class OpenFoodFactsApi(
             ingredientsTextAr = json.optString("ingredients_text_ar").takeIf { it.isNotBlank() },
             additivesTags = extractStringList("additives_tags") ?: extractStringList("additives_original_tags"),
             ingredientsAnalysisTags = extractStringList("ingredients_analysis_tags"),
-            nutriScore = parseNutriScore(json.optString("nutriscore_grade", json.optString("nutrition_grades", ""))),
+            // optString turns a JSON null into the text "null", so read each key and fall back on a miss.
+            nutriScore = parseNutriScore(json.optString("nutriscore_grade"))
+                ?: parseNutriScore(json.optString("nutrition_grades")),
             novaGroup = parseNovaGroup(json.optString("nova_group", "")),
             imageUrl = resolvedImageUrl,
             imageFrontUrl = resolvedImageUrl,

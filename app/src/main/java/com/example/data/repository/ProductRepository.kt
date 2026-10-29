@@ -63,6 +63,9 @@ class ProductRepository(
         // both work without a network.
         var hadNetworkError = !isOnline()
         var staleLanguageCacheHit: ProductEntity? = null
+        // Same language and madhhab, but cached before the health columns existed (no Nutri-Score or
+        // NOVA). Used only if live OFF has nothing; otherwise the live answer replaces it.
+        var cachedWithoutHealth: ProductEntity? = null
         val lowerQuery = query.lowercase()
 
         // 1. Direct Nutella / Ferrero intelligent matcher
@@ -125,10 +128,16 @@ class ProductRepository(
                 // settings the product was first analyzed with.
                 val localProduct = productDao.getProductByBarcode(barcodeCandidate)
                 if (localProduct != null && localProduct.status != HalalStatus.BULUNAMADI) {
+                    val hasHealthData = localProduct.nutriScore != null || localProduct.novaGroup != null
                     if (localProduct.language == language && localProduct.madhhab == madhhab) {
-                        val domain = localProduct.toDomainModel()
-                        recordScan(domain)
-                        return@withContext domain
+                        // Offline, or the cache already has health data: serve it. Otherwise refetch
+                        // so pre-v7 rows get their Nutri-Score/NOVA.
+                        if (hasHealthData || hadNetworkError) {
+                            val domain = localProduct.toDomainModel()
+                            recordScan(domain)
+                            return@withContext domain
+                        }
+                        if (cachedWithoutHealth == null) cachedWithoutHealth = localProduct
                     } else if (staleLanguageCacheHit == null) {
                         // Cached in a different language than requested - not a valid result on
                         // its own (see ordering note below), but a real answer worth keeping in
@@ -226,6 +235,13 @@ class ProductRepository(
                 return@withContext domain
             }
             throw NetworkUnavailableException(if (digitsOnly.isNotEmpty()) digitsOnly else query)
+        }
+
+        // Live OFF had nothing new, but this product is cached: keep the cached answer.
+        cachedWithoutHealth?.let { cached ->
+            val domain = cached.toDomainModel()
+            recordScan(domain)
+            return@withContext domain
         }
 
         val notFound = createNotFoundProduct(if (digitsOnly.isNotEmpty()) digitsOnly else query, language)

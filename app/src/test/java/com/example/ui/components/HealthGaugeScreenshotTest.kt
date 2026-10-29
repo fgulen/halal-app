@@ -54,8 +54,6 @@ class HealthGaugeScreenshotTest {
                 }
             }
         }
-        // The needle swings on first show; let the test clock run past it so the screenshot shows the grade.
-        composeTestRule.mainClock.advanceTimeBy(3000)
         composeTestRule.waitForIdle()
         composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/health-gauge-$name.png")
     }

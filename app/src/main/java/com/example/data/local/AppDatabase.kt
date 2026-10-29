@@ -73,7 +73,8 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE products ADD COLUMN novaGroup INTEGER")
                 db.execSQL("ALTER TABLE scan_history ADD COLUMN nutriScore TEXT")
                 db.execSQL("ALTER TABLE scan_history ADD COLUMN novaGroup INTEGER")
-                db.execSQL("DELETE FROM products")
+                // The products cache is kept on purpose (offline use). Rows without health data are
+                // refetched from Open Food Facts on the next online scan, see ProductRepository.
             }
         }
 

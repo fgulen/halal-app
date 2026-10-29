@@ -85,7 +85,8 @@ fun HealthGaugeCard(product: FoodProduct, language: AppLanguage, modifier: Modif
                     text = AppStrings.getNutriScorePlain(language, grade),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NUTRI_SEGMENT_COLORS[segment],
+                    // Dark text: the light yellow/lime segment colours are too faint on white.
+                    color = NaturalTextDark,
                     modifier = Modifier.testTag("health_gauge_grade")
                 )
                 Text(

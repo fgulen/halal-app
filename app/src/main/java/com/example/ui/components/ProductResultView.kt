@@ -127,7 +127,6 @@ fun ProductResultBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val context = LocalContext.current
-    val scrollState = rememberScrollState()
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -141,7 +140,7 @@ fun ProductResultBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(scrollState)
+                .verticalScroll(rememberScrollState())
                 .padding(bottom = 36.dp)
         ) {
             // Header Top Bar with close button
@@ -256,9 +255,9 @@ fun ProductResultBottomSheet(
                     }
                 }
 
-                // Health indicator is separate from the halal verdict above. Hidden when there is no
-                // health data at all: not-found and photo-analysis results, and history rows saved
-                // before v7. A product with NOVA but no Nutri-Score still shows the card.
+                // Health indicator is separate from the halal verdict above. Hidden when the product has
+                // no Nutri-Score and no NOVA: not-found results, photo-analysis results (they carry no
+                // health fields), and history rows saved before v7. NOVA alone still shows the card.
                 val hasHealthData = product.nutriScore != null || product.novaGroup != null
                 if (product.status != HalalStatus.BULUNAMADI && hasHealthData) {
                     Spacer(modifier = Modifier.height(18.dp))

@@ -85,15 +85,15 @@ class AppDatabaseMigrationTest {
 
     // v6 localizes flag cards; a cached DE row would otherwise keep showing "E441 Pork Gelatin".
     // English rows didn't change, so they stay for offline use.
-    // v7 clears the whole products cache (see MIGRATION_6_7), so the English row goes too; history stays.
+    // v7 keeps the English row (offline use) and adds the health columns, which stay null until refetched.
     @Test
-    fun `upgrading v5 to current clears the products cache and keeps history`() = runTest {
+    fun `upgrading v5 to current drops non-English cache rows and keeps history`() = runTest {
         createVersion5Database()
 
         database = AppDatabase.build(context, dbName)
 
         assertEquals(null, database!!.productDao().getProductByBarcode("4001686301265"))
-        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803")?.nutriScore)
         assertEquals(1, database!!.productDao().getScanHistory().first().size)
     }
 
@@ -125,10 +125,10 @@ class AppDatabaseMigrationTest {
         assertEquals(Madhhab.UNSPECIFIED, row.madhhab)
     }
 
-    // v7 adds nutriScore/novaGroup. The products cache is cleared so live rows refetch with the new
-    // fields; history rows survive and simply have no health data.
+    // v7 adds nutriScore/novaGroup. The products cache is kept (offline use); cached rows have no
+    // health data until the next online scan refetches them. History rows keep their data too.
     @Test
-    fun `upgrading v6 to v7 adds health columns, clears products cache and keeps history`() = runTest {
+    fun `upgrading v6 to v7 adds health columns, keeps products cache and history`() = runTest {
         createVersion5Database()
         val db = SQLiteDatabase.openDatabase(context.getDatabasePath(dbName).path, null, SQLiteDatabase.OPEN_READWRITE)
         db.version = 6
@@ -136,7 +136,7 @@ class AppDatabaseMigrationTest {
 
         database = AppDatabase.build(context, dbName)
 
-        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803")?.nutriScore)
         val history = database!!.productDao().getScanHistory().first()
         assertEquals(1, history.size)
         assertEquals(null, history.first().nutriScore)

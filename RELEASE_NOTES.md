@@ -7,9 +7,9 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
-## versionCode 17 / versionName 2.4 (2026-10-29)
+## versionCode 18 / versionName 2.4 (2026-10-29)
 
-Sonuç ekranına sağlık göstergesi eklendi: ürünün Nutri-Score (A–E) ve NOVA (1–4) değeri, kırmızıdan yeşile bir ibre ve sade cümlelerle gösterilir. Bu bilgi helal kararını değiştirmez; veri Open Food Facts'ten gelir ve değeri olmayan ürünlerde kart görünmez. Ürün önbelleği bir kez temizlenir (DB v7), tarama geçmişi korunur. Bu sürümden önceki taramalarda gösterge yoktur; ürünü yeniden tarayınca görünür.
+Sonuç ekranına sağlık göstergesi eklendi: ürünün Nutri-Score (A–E) ve NOVA (1–4) değeri, kırmızıdan yeşile bir ibre ve sade cümlelerle gösterilir. Bu bilgi helal kararını değiştirmez; veri Open Food Facts'ten gelir ve değeri olmayan ürünlerde kart görünmez. Tarama geçmişi ve ürün önbelleği korunur (DB v7); eski önbellekteki ürünler internet varken bir kez yeniden alınarak gösterge eklenir. Bu sürümden önceki taramalarda gösterge yoktur.
 
 <tr-TR>
 Sonuç ekranına sağlık göstergesi eklendi. Ürünün Nutri-Score (A–E) ve NOVA (1–4) değeri ibre üzerinde, sade cümlelerle gösterilir. Helal kararı değişmez. Eski taramalarda göstergeyi görmek için ürünü yeniden tarayın.
