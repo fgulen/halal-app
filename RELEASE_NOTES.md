@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 20 / versionName 2.4 (2026-11-01)
+
+Sürüm 19'daki her şey bu sürümde de var. Ek olarak: mikrobiyal lab artık gereksiz şüpheli işaretlenmiyor, hayvansal lab (tierisches Lab) doğru işaretleniyor, sonuç kartındaki kaynak yazısı düzeltildi. Eski önbellekteki sonuçlar bir kez yenilenir (veritabanı v8; tarama geçmişi korunur).
+
+<tr-TR>
+Mikrobiyal peynir mayası artık gereksiz yere şüpheli gösterilmiyor. Hayvansal lab (örn. "tierisches Lab") doğru şekilde şüpheli işaretleniyor. Sonuç kartındaki kaynak yazısı düzeltildi. Kayıtlı sonuçlar otomatik yenilenir.
+</tr-TR>
+
+<en-US>
+Microbial rennet is no longer flagged as doubtful. Animal rennet (for example "tierisches Lab") is now flagged correctly. The source label on result cards is fixed. Saved results refresh automatically.
+</en-US>
+
+<de-DE>
+Mikrobielles Lab wird nicht mehr als zweifelhaft markiert. Tierisches Lab wird jetzt korrekt als zweifelhaft angezeigt. Die Quellenangabe auf der Ergebniskarte ist korrigiert. Gespeicherte Ergebnisse werden automatisch aktualisiert.
+</de-DE>
+
+<fr-FR>
+La présure microbienne n'est plus signalée comme douteuse. La présure animale (par ex. « tierisches Lab ») est désormais correctement signalée. L'affichage de la source sur la carte de résultat est corrigé. Les résultats enregistrés sont actualisés automatiquement.
+</fr-FR>
+
+<ar>
+لم تعد الإنفحة الميكروبية تُعرض كمشتبه بها. تُعرض الإنفحة الحيوانية (مثل "tierisches Lab") بشكل صحيح الآن. تم تصحيح عرض المصدر في بطاقة النتيجة. تُحدَّث النتائج المحفوظة تلقائياً.
+</ar>
+
+---
+
 ## versionCode 19 / versionName 2.4 (2026-11-01)
 
 Sürüm 18'deki tüm değişiklikler bu sürümde de var (sağlık göstergesi ve önbellek düzeltmesi). Ek olarak çevrimdışıyken önbellekteki bir ürünü tararken hata yerine kayıtlı sonuç gösteriliyor. Uygulamanın indirme boyutu da biraz küçüldü.
