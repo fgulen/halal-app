@@ -1,0 +1,27 @@
+1
+00:00:00,096 --> 00:00:01,891
+Cheese labels often don't list the rennet.
+
+2
+00:00:02,934 --> 00:00:05,678
+Rennet is the enzyme that makes milk curdle.
+
+3
+00:00:06,732 --> 00:00:09,116
+It comes from calves' stomachs or from microbes.
+
+4
+00:00:10,170 --> 00:00:12,728
+Microbial rennet is religiously unobjectionable according to Diyanet.
+
+5
+00:00:13,776 --> 00:00:17,731
+Animal rennet is disputed. Scholars disagree.
+
+6
+00:00:18,798 --> 00:00:21,715
+Halal Checker flags it and explains it for your madhhab.
+
+7
+00:00:22,764 --> 00:00:24,860
+Free: scan with Halal Checker.
