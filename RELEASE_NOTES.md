@@ -7,6 +7,32 @@ bunları böyle bekliyor). Her alan ~500 karakter sınırlıdır.
 
 ---
 
+## versionCode 19 / versionName 2.4 (2026-11-01)
+
+Sürüm 18'deki tüm değişiklikler bu sürümde de var (sağlık göstergesi ve önbellek düzeltmesi). Ek olarak çevrimdışıyken önbellekteki bir ürünü tararken hata yerine kayıtlı sonuç gösteriliyor. Uygulamanın indirme boyutu da biraz küçüldü.
+
+<tr-TR>
+Sonuç ekranına sağlık göstergesi eklendi: ürünün Nutri-Score (A–E) ve NOVA (1–4) değeri ibre üzerinde gösterilir. Helal kararı değişmez. Çevrimdışıyken önbellekteki ürünler artık hata vermeden gösterilir. Uygulamanın indirme boyutu küçüldü.
+</tr-TR>
+
+<en-US>
+The result screen now has a health gauge showing the product's Nutri-Score (A–E) and NOVA group (1–4) on a needle. The halal verdict does not change. Products already cached are now shown when you are offline, instead of an error. The app download is smaller.
+</en-US>
+
+<de-DE>
+Der Ergebnisbildschirm zeigt jetzt eine Gesundheitsanzeige mit Nutri-Score (A–E) und NOVA-Gruppe (1–4) des Produkts auf einer Nadel. Das Halal-Urteil ändert sich nicht. Bereits gespeicherte Produkte werden offline angezeigt statt einer Fehlermeldung. Die Download-Größe der App ist kleiner.
+</de-DE>
+
+<fr-FR>
+L'écran de résultat affiche désormais une jauge santé avec le Nutri-Score (A–E) et le groupe NOVA (1–4) du produit sur une aiguille. Le verdict halal ne change pas. Les produits déjà en cache s'affichent hors ligne au lieu d'un message d'erreur. La taille de téléchargement de l'application est réduite.
+</fr-FR>
+
+<ar>
+تعرض شاشة النتيجة الآن مؤشراً صحياً يوضح Nutri-Score (من A إلى E) ومجموعة NOVA (من 1 إلى 4) للمنتج على إبرة. لا يتغير حكم الحلال. تظهر المنتجات المخزنة مؤقتاً عند عدم الاتصال بدلاً من رسالة خطأ. حجم تنزيل التطبيق أصغر.
+</ar>
+
+---
+
 ## versionCode 18 / versionName 2.4 (2026-10-29)
 
 Sonuç ekranına sağlık göstergesi eklendi: ürünün Nutri-Score (A–E) ve NOVA (1–4) değeri, kırmızıdan yeşile bir ibre ve sade cümlelerle gösterilir. Bu bilgi helal kararını değiştirmez; veri Open Food Facts'ten gelir ve değeri olmayan ürünlerde kart görünmez. Tarama geçmişi ve ürün önbelleği korunur (DB v7); eski önbellekteki ürünler internet varken bir kez yeniden alınarak gösterge eklenir. Bu sürümden önceki taramalarda gösterge yoktur.

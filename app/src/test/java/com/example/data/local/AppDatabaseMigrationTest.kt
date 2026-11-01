@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -93,7 +94,8 @@ class AppDatabaseMigrationTest {
         database = AppDatabase.build(context, dbName)
 
         assertEquals(null, database!!.productDao().getProductByBarcode("4001686301265"))
-        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803")?.nutriScore)
+        assertNotNull(database!!.productDao().getProductByBarcode("0021000612803"))
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803")!!.nutriScore)
         assertEquals(1, database!!.productDao().getScanHistory().first().size)
     }
 
@@ -136,7 +138,8 @@ class AppDatabaseMigrationTest {
 
         database = AppDatabase.build(context, dbName)
 
-        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803")?.nutriScore)
+        assertNotNull(database!!.productDao().getProductByBarcode("0021000612803"))
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803")!!.nutriScore)
         val history = database!!.productDao().getScanHistory().first()
         assertEquals(1, history.size)
         assertEquals(null, history.first().nutriScore)

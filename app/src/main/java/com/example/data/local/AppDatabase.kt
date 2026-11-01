@@ -29,8 +29,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     // can't catch them - those rows are cleared (MIGRATION_5_6); EN rows are unchanged and kept
     // for offline use; scan_history is kept.
     // v7: added nutriScore (TEXT) and novaGroup (INTEGER) to both tables for the health gauge.
-    // The products cache is cleared so cached live rows refetch with the new fields; scan_history
-    // keeps old rows, which simply show no gauge.
+    // The products cache is kept; cached rows without health data are refetched when online
+    // (ProductRepository), and offline they are served as-is. scan_history keeps old rows, which
+    // simply show no gauge.
     version = 7,
     exportSchema = false
 )

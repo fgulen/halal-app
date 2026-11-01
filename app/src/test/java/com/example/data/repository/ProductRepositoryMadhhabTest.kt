@@ -37,17 +37,18 @@ class ProductRepositoryMadhhabTest {
           "ingredients_text":"milk, salt, animal rennet"}}
     """.trimIndent()
 
-    private fun repository(): ProductRepository {
+    private fun repository(offBody: String = cheeseJson, offNetworkError: Boolean = false): ProductRepository {
         val interceptor = Interceptor { chain ->
             val request = chain.request()
             val isOffFood = request.url.host == "world.openfoodfacts.org"
             if (isOffFood) offFoodCalls++
+            if (isOffFood && offNetworkError) throw java.io.IOException("offline")
             Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_1_1)
                 .code(if (isOffFood) 200 else 404)
                 .message("test")
-                .body((if (isOffFood) cheeseJson else "{}").toResponseBody("application/json".toMediaType()))
+                .body((if (isOffFood) offBody else "{}").toResponseBody("application/json".toMediaType()))
                 .build()
         }
         return ProductRepository(
@@ -121,6 +122,35 @@ class ProductRepositoryMadhhabTest {
 
         assertEquals(callsAfterFirst + 1, offFoodCalls)
         assertEquals(Madhhab.HANAFI, again.madhhab)
+    }
+
+    private fun cachedWithoutHealth(): ProductEntity = ProductEntity(
+        barcode = "1234567890123", name = "Cached Cheese", brand = "Cached", category = "Cheese",
+        status = HalalStatus.HELAL, halalCertificate = null, harmfulOrSuspiciousIngredients = emptyList(),
+        allIngredients = emptyList(), reasonOrDetails = "", alternatives = emptyList(), imageUrl = null,
+        language = AppLanguage.EN, madhhab = Madhhab.SHAFII, nutriScore = null, novaGroup = null
+    )
+
+    // Regression: a network error with a same-language cached row used to throw
+    // NetworkUnavailableException instead of returning the cached product.
+    @Test
+    fun `offline with a same-language cached row returns the cached product`() = runTest {
+        database.productDao().insertProduct(cachedWithoutHealth())
+
+        val result = repository(offNetworkError = true).checkBarcode("1234567890123", AppLanguage.EN, Madhhab.SHAFII)
+
+        assertEquals("Cached Cheese", result.name)
+    }
+
+    // OFF has nothing for the barcode: the cached row must win over the name-search fallback.
+    @Test
+    fun `OFF has nothing for the barcode and the cached row is kept`() = runTest {
+        database.productDao().insertProduct(cachedWithoutHealth())
+
+        val result = repository(offBody = """{"status":0,"status_verbose":"product not found"}""")
+            .checkBarcode("1234567890123", AppLanguage.EN, Madhhab.SHAFII)
+
+        assertEquals("Cached Cheese", result.name)
     }
 
     @Test

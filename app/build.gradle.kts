@@ -17,7 +17,7 @@ android {
     applicationId = "com.fatihgulen.helalrehberi"
     minSdk = 24
     targetSdk = 36
-    versionCode = 18
+    versionCode = 19
     versionName = "2.4"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -43,6 +43,8 @@ android {
       // JSON is parsed by hand with org.json (no reflection), and Room/Firebase/ML Kit ship their own
       // consumer rules, so no app-level keeps are needed beyond preserving line numbers.
       isMinifyEnabled = true
+      // Play vitals (2.2): "Kullanılmayan kaynakları kaldırma etkin değil" - shrinkResources needs R8 on.
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       val keystoreFile = file(System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks")
       if (keystoreFile.exists()) {

@@ -175,6 +175,17 @@ class ProductRepository(
                 }
             }
 
+            // Live OFF has nothing for this barcode (or is unreachable) and the product is cached
+            // in the current language/madhhab, just without health data: serve the cached answer
+            // now. Returning it here (before curated and name search) keeps the barcode's own
+            // cached product from being replaced by an unrelated name-search hit, and avoids
+            // NetworkUnavailableException when offline.
+            cachedWithoutHealth?.let { cached ->
+                val domain = cached.toDomainModel()
+                recordScan(domain)
+                return@withContext domain
+            }
+
             // 5. Curated fallback - only reached once live OFF confirmed it has nothing (or
             // is unreachable) for every candidate barcode, so it can no longer shadow real
             // product data.
@@ -235,13 +246,6 @@ class ProductRepository(
                 return@withContext domain
             }
             throw NetworkUnavailableException(if (digitsOnly.isNotEmpty()) digitsOnly else query)
-        }
-
-        // Live OFF had nothing new, but this product is cached: keep the cached answer.
-        cachedWithoutHealth?.let { cached ->
-            val domain = cached.toDomainModel()
-            recordScan(domain)
-            return@withContext domain
         }
 
         val notFound = createNotFoundProduct(if (digitsOnly.isNotEmpty()) digitsOnly else query, language)
