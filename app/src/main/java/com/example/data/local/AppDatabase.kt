@@ -32,7 +32,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     // The products cache is kept; cached rows without health data are refetched when online
     // (ProductRepository), and offline they are served as-is. scan_history keeps old rows, which
     // simply show no gauge.
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -79,6 +79,15 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // v8: the rennet keyword rules changed (German "tierisches Lab" now flagged, "microbiological
+        // rennet" no longer flagged). Cached verdicts computed under the old rules would otherwise be
+        // served forever, so the products cache is cleared once. scan_history is kept.
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DELETE FROM products")
+            }
+        }
+
         internal const val DATABASE_NAME = "halal_kontrol_database"
 
         // The one place the production builder is configured, shared with the migration test so
@@ -87,7 +96,7 @@ abstract class AppDatabase : RoomDatabase() {
         // scan_history included.
         internal fun build(context: Context, name: String = DATABASE_NAME): AppDatabase =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                 .fallbackToDestructiveMigration(dropAllTables = true)
                 .build()
 

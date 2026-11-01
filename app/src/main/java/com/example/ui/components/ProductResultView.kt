@@ -780,27 +780,34 @@ fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean, lan
             .padding(vertical = 4.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            // Title takes the free width (weight) so long names wrap normally. The origin label
+            // used to sit beside it with no width, so it got squeezed to a few pixels and wrapped
+            // one character per line. It now sits under the title with its own line limit.
+            Row(verticalAlignment = Alignment.Top) {
                 Box(
                     modifier = Modifier
+                        .padding(top = 5.dp)
                         .size(8.dp)
                         .background(dotColor, CircleShape)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = flagged.name,
-                    color = titleColor,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
-                if (flagged.origin != null) {
-                    Spacer(modifier = Modifier.weight(1f))
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = flagged.origin,
-                        color = NaturalTextMuted,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold
+                        text = flagged.name,
+                        color = titleColor,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.ExtraBold
                     )
+                    flagged.origin?.let { origin ->
+                        Text(
+                            text = origin,
+                            color = NaturalTextMuted,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
 

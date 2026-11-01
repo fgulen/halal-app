@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -94,8 +93,8 @@ class AppDatabaseMigrationTest {
         database = AppDatabase.build(context, dbName)
 
         assertEquals(null, database!!.productDao().getProductByBarcode("4001686301265"))
-        assertNotNull(database!!.productDao().getProductByBarcode("0021000612803"))
-        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803")!!.nutriScore)
+        // v8 clears the products cache (see MIGRATION_7_8); scan_history is what survives.
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
         assertEquals(1, database!!.productDao().getScanHistory().first().size)
     }
 
@@ -130,7 +129,7 @@ class AppDatabaseMigrationTest {
     // v7 adds nutriScore/novaGroup. The products cache is kept (offline use); cached rows have no
     // health data until the next online scan refetches them. History rows keep their data too.
     @Test
-    fun `upgrading v6 to v7 adds health columns, keeps products cache and history`() = runTest {
+    fun `upgrading v6 to v8 adds health columns and keeps history`() = runTest {
         createVersion5Database()
         val db = SQLiteDatabase.openDatabase(context.getDatabasePath(dbName).path, null, SQLiteDatabase.OPEN_READWRITE)
         db.version = 6
@@ -138,11 +137,25 @@ class AppDatabaseMigrationTest {
 
         database = AppDatabase.build(context, dbName)
 
-        assertNotNull(database!!.productDao().getProductByBarcode("0021000612803"))
-        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803")!!.nutriScore)
+        // v8 clears the products cache (see MIGRATION_7_8); scan_history is what survives.
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
         val history = database!!.productDao().getScanHistory().first()
         assertEquals(1, history.size)
         assertEquals(null, history.first().nutriScore)
         assertEquals(null, history.first().novaGroup)
+    }
+
+    // v8: rennet keyword rules changed, so cached verdicts are cleared once. History is kept.
+    @Test
+    fun `upgrading v7 to v8 clears the products cache and keeps history`() = runTest {
+        createVersion5Database()
+        val db = SQLiteDatabase.openDatabase(context.getDatabasePath(dbName).path, null, SQLiteDatabase.OPEN_READWRITE)
+        db.version = 6
+        db.close()
+        // The fixture is at v6 schema; the production builder runs 6->7 and then 7->8.
+        database = AppDatabase.build(context, dbName)
+
+        assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
+        assertEquals(1, database!!.productDao().getScanHistory().first().size)
     }
 }

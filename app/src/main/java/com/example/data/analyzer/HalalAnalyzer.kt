@@ -681,7 +681,8 @@ object HalalAnalyzer {
             // products Şüpheli; tests show it doesn't.)
             // Turkish terms added 2026-10-07 - Turkish-labelled cheese wasn't caught at all before.
             // Never bare "maya": on its own that is bread/baker's yeast.
-            keywords = listOf("rennet", "pepsin", "animal rennet", "kälberlab", "kalbslab", "présure", "animal enzymes", "cheese cultures",
+            // "tierisches Lab" (animal rennet) is the wording on Milbona Gouda gerieben, 20692490.
+            keywords = listOf("rennet", "pepsin", "animal rennet", "kälberlab", "kalbslab", "tierisches lab", "tierischem lab", "présure", "animal enzymes", "cheese cultures",
                 "peynir mayası", "hayvansal peynir mayası", "hayvansal maya", "şirden", "إنفحة", "منفحة"),
             id = RENNET_RULE_ID,
             name = LocalizedText(
@@ -1140,6 +1141,10 @@ object HalalAnalyzer {
         // animal rennet elsewhere in the same list still does.
         "microbial rennet", "vegetable rennet", "non-animal rennet", "vegetarian rennet",
         "présure microbienne", "présure végétale", "mikrobielles lab", "cuajo microbiano", "cuajo vegetal",
+        // OFF wording seen on real products: "microbiological rennet" (Frico Gouda, 8710912497127),
+        // "mikrobieller Labaustauschstoff" (Milsani, Hofburger, Milbona), "microbiological lab".
+        "microbiological rennet", "microbiological lab",
+        "mikrobieller labaustauschstoff", "mikrobieller lab",
         "mikrobiyal peynir mayası", "bitkisel peynir mayası", "mikrobiyal maya", "bitkisel maya",
         // ...and the same written with the qualifier in brackets after the noun.
         "rennet (microbial)", "rennet (vegetable)", "rennet (non-animal)",

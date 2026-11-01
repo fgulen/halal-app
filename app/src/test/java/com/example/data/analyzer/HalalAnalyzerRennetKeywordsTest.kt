@@ -76,6 +76,29 @@ class HalalAnalyzerRennetKeywordsTest {
         assertEquals(HalalStatus.SUPHELI, analyze("ŞEKER, GLUKOZ ŞURUBU, JELATİN").status)
     }
 
+    // Frico Gouda slices, barcode 8710912497127 (Open Food Facts, checked 2026-11-01): the label
+    // says "microbiological rennet", which used to match the bare "rennet" keyword.
+    @Test
+    fun `Frico microbiological rennet is not flagged`() {
+        val text = "Pasteurised cow's milk, salt, starter culture, microbiological rennet"
+        assertEquals(HalalStatus.HELAL, analyze(text).status)
+        assertEquals(HalalStatus.HELAL, analyze(text, Madhhab.HANAFI).status)
+    }
+
+    // German OFF wording for microbial lab (Milsani, Hofburger, Milbona, Gutes Land, Bio Gouda).
+    @Test
+    fun `German mikrobieller Labaustauschstoff is not flagged`() {
+        assertEquals(HalalStatus.HELAL, analyze("Pasteurisierte Kuhmilch, Salz, Käsereikulturen, mikrobieller Labaustauschstoff.").status)
+    }
+
+    // Milbona Gouda gerieben, barcode 20692490 (Open Food Facts, checked 2026-11-01): animal rennet
+    // written as "tierisches Lab". It was shown as "no suspicious ingredient" (green) before this fix.
+    @Test
+    fun `German tierisches Lab is flagged by default`() {
+        val text = "Pasteurisierte Kuhmilch, Trennmittel: Kartoffelstärke, Speisesalz, Käsereikulturen, tierisches Lab"
+        assertEquals(HalalStatus.SUPHELI, analyze(text).status)
+    }
+
     @Test
     fun `chip colours agree`() {
         assertEquals(HalalStatus.SUPHELI, HalalAnalyzer.classifyIngredientToken("peynir mayası"))
