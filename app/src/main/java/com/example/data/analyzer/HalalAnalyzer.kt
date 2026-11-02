@@ -51,6 +51,10 @@ object HalalAnalyzer {
     private const val GELATIN_UNSPECIFIED_RULE_ID = "Gelatin (Unspecified Source)"
 
     private const val RENNET_RULE_ID = "Animal Rennet / Cheese Enzymes"
+    // Unqualified "Lab" (German for rennet, no origin stated). Matched by containsBareLab, not by
+    // keyword text, because "lab" alone is also a substring of "lab-grown" / "label" in English.
+    private const val BARE_LAB_RULE_ID = "Unlabelled Rennet (Lab, Origin Unknown)"
+    private const val BARE_LAB_KEYWORD = "\u0000bare-lab"
     private const val WHEY_RULE_ID = "Whey Powder / Whey Byproduct"
     // Verdict-level suggestions and label lines, shown next to the (localized) flag cards.
     private val ALT_CERTIFIED_EQUIVALENTS = LocalizedText(
@@ -709,6 +713,36 @@ object HalalAnalyzer {
             )
         ),
         SuspiciousRule(
+            // Label says only "Lab" (or "Lab" with no source): it may be animal or microbial and
+            // the packaging doesn't say which (Oekotest: consumers can't tell). Doubtful, never Haram.
+            // No madhhab override: without a stated source, the Hanafi ruling on animal rennet
+            // can't be applied, so this stays Doubtful under every school.
+            keywords = listOf(BARE_LAB_KEYWORD),
+            id = BARE_LAB_RULE_ID,
+            name = LocalizedText(
+                en = "Unlabelled Rennet ('Lab')",
+                de = "Lab ohne Herkunftsangabe",
+                fr = "Présure non précisée (« Lab »)",
+                tr = "Menşei Belirsiz Peynir Mayası (\"Lab\")",
+                ar = "إنفحة غير محددة المصدر (\"Lab\")"
+            ),
+            reason = LocalizedText(
+                en = "'Lab' (rennet) with no origin stated. It can be animal (calf stomach) or microbial, and the label doesn't say which. Not clearly halal until the manufacturer confirms.",
+                de = "„Lab“ ohne Angabe der Herkunft. Es kann tierisch (Kälbermagen) oder mikrobiell sein; die Packung sagt nicht, welches. Ohne Auskunft des Herstellers nicht eindeutig halal.",
+                fr = "« Présure » sans origine indiquée. Elle peut être animale (estomac de veau) ou microbienne ; l'étiquette ne précise pas laquelle. Pas clairement halal sans confirmation du fabricant.",
+                tr = "Menşei belirtilmemiş peynir mayası (\"Lab\"). Hayvansal (buzağı midesi) veya mikrobiyel olabilir; etiket hangisi olduğunu belirtmiyor. Üretici teyit etmeden kesin helal değildir.",
+                ar = "إنفحة (\"Lab\") دون بيان مصدرها. قد تكون حيوانية (من معدة العجل) أو ميكروبية، والعبوة لا توضح ذلك. لا تُعدّ حلالاً بوضوح دون تأكيد من المصنّع."
+            ),
+            eCode = null,
+            origin = LocalizedText(
+                en = "Unknown (animal or microbial)",
+                de = "Unklar (tierisch oder mikrobiell)",
+                fr = "Inconnue (animale ou microbienne)",
+                tr = "Belirsiz (hayvansal veya mikrobiyel)",
+                ar = "غير معروف (حيواني أو ميكروبي)"
+            )
+        ),
+        SuspiciousRule(
             keywords = listOf("whey", "whey powder", "~molke", "lactosérum", "peynir altı suyu tozu", "مصل اللبن", "مصل الحليب"),
             id = WHEY_RULE_ID,
             name = LocalizedText(
@@ -1218,6 +1252,7 @@ object HalalAnalyzer {
     // [text] must already be normalizeForMatching()'d; the keyword is normalized here so every
     // rule list can stay written in natural spelling (e.g. "peynir mayası", "şirden").
     private fun containsKeyword(text: String, keyword: String): Boolean {
+        if (keyword == BARE_LAB_KEYWORD) return containsBareLab(text)
         if (keyword.startsWith(STEM_MARKER)) return containsStem(text, normalizedKeyword(keyword).removePrefix(STEM_MARKER))
         val kw = normalizedKeyword(keyword)
         var fromIndex = 0
@@ -1244,6 +1279,36 @@ object HalalAnalyzer {
             if (!text.substring(idx + stem.length, wordEnd).contains("frei")) return true
             fromIndex = idx + 1
         }
+    }
+
+    // A standalone "lab" (German rennet) whose origin isn't stated. [text] is normalized (lowercase).
+    // Skipped when the product names microbial/vegetable rennet anywhere (its "Lab" then has a
+    // known origin), and when "lab" directly follows an animal word ("tierisches Lab" is already
+    // flagged by the animal-rennet rule, so this rule doesn't duplicate that chip).
+    private fun containsBareLab(text: String): Boolean {
+        if (BARE_LAB_EXCLUDING_TERMS.any { text.contains(it) }) return false
+        var fromIndex = 0
+        while (true) {
+            val idx = text.indexOf("lab", fromIndex)
+            if (idx == -1) return false
+            val end = idx + 3
+            val beforeOk = idx == 0 || (!text[idx - 1].isLetterOrDigit() && text[idx - 1] != '-')
+            val afterOk = end >= text.length || (!text[end].isLetterOrDigit() && text[end] != '-')
+            if (beforeOk && afterOk && !followsAnimalWord(text, idx)) return true
+            fromIndex = idx + 1
+        }
+    }
+
+    private val BARE_LAB_EXCLUDING_TERMS = listOf("mikrob", "microb", "vegetab", "pflanz")
+
+    private fun followsAnimalWord(text: String, idx: Int): Boolean {
+        var p = idx - 1
+        while (p >= 0 && text[p] == ' ') p--
+        var q = p
+        while (q >= 0 && text[q].isLetter()) q--
+        val prev = text.substring(q + 1, p + 1)
+        return prev.startsWith("tierisch") || prev.startsWith("kälber") || prev.startsWith("kalb") ||
+                prev == "animal" || prev == "animale"
     }
 
     private fun hasArabicCliticPrefix(text: String, idx: Int): Boolean {
