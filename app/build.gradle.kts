@@ -17,8 +17,8 @@ android {
     applicationId = "com.fatihgulen.helalrehberi"
     minSdk = 24
     targetSdk = 36
-    versionCode = 20
-    versionName = "2.4"
+    versionCode = 21
+    versionName = "2.5"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

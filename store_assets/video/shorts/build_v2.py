@@ -21,6 +21,20 @@ SHORTS = {
         ],
         "screen": "gummies_en_top.png",
     },
+    # Rennet short (DE). 7 lines: 1-6 b-roll, line 7 = app proof + lockup.
+    "lab_de": {
+        "accent": "#22c55e",
+        "keys": ["Lab", "Enzym", "Mikroben", "Diyanet", "umstritten", "markiert", "Scan"],
+        "broll": [
+            [("cut_a.mp4", 1.0, 0.3)],
+            [("milk_b.mp4", 1.0, 0.3)],
+            [("mold_c.mp4", 1.0, 0.3)],
+            [("slices_d.mp4", 1.0, 0.3)],
+            [("cut_a.mp4", 1.0, 1.8)],
+            [("block_e.mp4", 1.0, 0.3)],
+        ],
+        "screen": "milbona_doubtful.png",
+    },
 }
 
 

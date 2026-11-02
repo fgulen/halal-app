@@ -5,7 +5,10 @@ import asyncio, json, os, sys
 import edge_tts
 
 sys.stdout.reconfigure(encoding="utf-8")
-VOICE, RATE = "en-US-AndrewMultilingualNeural", "+8%"
+RATE = "+8%"
+# German short uses the approved DE voice (KillianNeural, see memory); the rest stay on EN.
+VOICES = {"lab_de": "de-DE-KillianNeural", "lab_2": "de-DE-FlorianMultilingualNeural", "lab_2_en": "en-US-AndrewMultilingualNeural"}
+DEFAULT_VOICE = "en-US-AndrewMultilingualNeural"
 SCRIPTS = {
     "e120": [
         "That red in your yogurt might come from crushed bugs.",
@@ -34,6 +37,34 @@ SCRIPTS = {
         "Look for pectin, agar, fish gelatine, or a halal-certified label.",
         "Not sure? Scan it with Halal Checker.",
     ],
+    # Rennet short (DE). Every sentence is backed by lab_de/SOURCES.md.
+    "lab_de": [
+        "Auf Käse steht das Lab oft nicht.",
+        "Lab ist das Enzym, das Milch zum Gerinnen bringt.",
+        "Es kommt aus Kälbermägen oder von Mikroben.",
+        "Mikrobielles Lab ist laut Diyanet unbedenklich.",
+        "Tierisches Lab ist umstritten. Die Gelehrten sind sich uneinig.",
+        "Halal Checker markiert es und erklärt es nach deinem Madhhab.",
+        "Kostenlos: Scan mit Halal Checker.",
+    ],
+    # lab_2 (Pesto, v4): same cheese, same calf-rennet rule; only one jar says so. See lab_2/SKRIPT.md.
+    "lab_2": [
+        "Auf diesem Pesto steht nur: Lab.",
+        "Der Parmigiano Reggiano darin muss mit Kälberlab gemacht werden.",
+        "Ein anderes Glas sagt: tierisches Lab. Dieses nur: Lab.",
+        "Ist das Kalb nicht islamisch geschlachtet, halten die meisten Gelehrten das Lab für unrein.",
+        "Halal Checker markiert beide als zweifelhaft.",
+        "Kostenlos: Scan mit Halal Checker.",
+    ],
+    # lab_2 English version (same spine as the German one)
+    "lab_2_en": [
+        "On this pesto jar it only says: Lab.",
+        "The Parmigiano Reggiano in it must be made with calf rennet.",
+        "Another jar says: animal rennet. This one only says: Lab.",
+        "If the calf was not slaughtered by Islamic rules, most scholars consider this rennet impure.",
+        "Halal Checker marks both as doubtful.",
+        "Free: scan with Halal Checker.",
+    ],
     # v2: real-footage hook (LTX b-roll), ~16 s instead of 26 s
     "gelatine_v2": [
         "Your gummy bears might contain pig.",
@@ -53,7 +84,7 @@ async def main(short):
         for attempt in range(4):
             try:
                 words, audio = [], bytearray()
-                async for ch in edge_tts.Communicate(text, VOICE, rate=RATE, boundary="WordBoundary").stream():
+                async for ch in edge_tts.Communicate(text, VOICES.get(short, DEFAULT_VOICE), rate=RATE, boundary="WordBoundary").stream():
                     if ch["type"] == "audio":
                         audio += ch["data"]
                     elif ch["type"] == "WordBoundary":
