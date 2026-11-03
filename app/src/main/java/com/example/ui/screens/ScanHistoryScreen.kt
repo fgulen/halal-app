@@ -582,7 +582,7 @@ fun HistoryProductCard(
                     HalalStatusBadge(
                         status = product.status,
                         language = language,
-                        fontSize = 10.sp,
+                        fontSize = 11.sp,
                         paddingHorizontal = 8.dp,
                         paddingVertical = 2.dp
                     )
@@ -606,7 +606,7 @@ fun HistoryProductCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = formattedDate,
-                        fontSize = 10.sp,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = NaturalTextLight,
                         maxLines = 1,

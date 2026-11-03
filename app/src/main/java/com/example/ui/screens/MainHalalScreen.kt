@@ -58,6 +58,9 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -77,6 +80,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -215,7 +220,9 @@ fun MainHalalScreen(
         containerColor = NaturalWarmBg,
         bottomBar = {
             NaturalBottomNavigation(
-                selectedIndex = selectedBottomNavIndex,
+                // The E-codes tab opens a sheet instead of switching screens, so mark it
+                // selected while that sheet is open.
+                selectedIndex = if (isEAdditivesOpen) 2 else selectedBottomNavIndex,
                 language = language,
                 onSelectIndex = { index ->
                     when (index) {
@@ -433,7 +440,7 @@ fun MainHalalScreen(
                                                 HalalStatusBadge(
                                                     status = match.status,
                                                     language = language,
-                                                    fontSize = 9.sp,
+                                                    fontSize = 11.sp,
                                                     paddingHorizontal = 6.dp,
                                                     paddingVertical = 2.dp
                                                 )
@@ -532,6 +539,14 @@ fun MainHalalScreen(
                 viewModel.openManualEntry()
             }
         )
+    }
+
+    // One light haptic tick when a verdict appears, so the result feels confirmed without a visual cue alone.
+    val haptic = LocalHapticFeedback.current
+    LaunchedEffect(activeProduct) {
+        if (activeProduct != null) {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        }
     }
 
     // Product Result Bottom Sheet
@@ -690,13 +705,13 @@ fun ScanErrorDialog(
                     Box(
                         modifier = Modifier
                             .size(44.dp)
-                            .background(Color(0xFFE2E8F0), CircleShape),
+                            .background(NeutralSlateBorder, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = if (isNetworkError) Icons.Default.WifiOff else Icons.Default.ErrorOutline,
                             contentDescription = null,
-                            tint = Color(0xFF475569),
+                            tint = NeutralSlate,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -915,17 +930,7 @@ fun NaturalHeroScanButton(
     language: AppLanguage,
     onScanClick: () -> Unit
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse_transition")
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.03f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1400, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulse_scale"
-    )
-
+    // Static on purpose: a looping pulse distracts from the content and ignores reduced-motion settings.
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -938,7 +943,6 @@ fun NaturalHeroScanButton(
         ) {
             Box(
                 modifier = Modifier
-                    .scale(pulseScale)
                     .size(210.dp)
                     .shadow(
                         elevation = 24.dp,
@@ -947,7 +951,6 @@ fun NaturalHeroScanButton(
                         spotColor = Color(0x4D059669)
                     )
                     .background(EmeraldPrimary, CircleShape)
-                    .border(8.dp, Color(0xFFF0FDF4), CircleShape)
                     .clip(CircleShape)
                     .clickable(onClick = onScanClick)
                     .testTag("giant_scan_barcode_button"),
@@ -1210,8 +1213,8 @@ fun NaturalHistoryItemCard(
         )
         HalalStatus.BULUNAMADI -> Septuple(
             Color(0xFFF8FAFC),
-            Color(0xFFE2E8F0),
-            Color(0xFFE2E8F0),
+            NeutralSlateBorder,
+            NeutralSlateBorder,
             Color(0xFF64748B),
             Icons.Default.HelpOutline,
             NaturalTextDark,
@@ -1290,7 +1293,7 @@ fun NaturalHistoryItemCard(
                     HalalStatusBadge(
                         status = product.status,
                         language = language,
-                        fontSize = 10.sp,
+                        fontSize = 11.sp,
                         paddingHorizontal = 8.dp,
                         paddingVertical = 2.dp
                     )
@@ -1431,69 +1434,45 @@ fun NaturalBottomNavigation(
     language: AppLanguage,
     onSelectIndex: (Int) -> Unit
 ) {
-    Surface(
-        color = Color.White,
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        shadowElevation = 16.dp,
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3F4F6))
+    // Standard Material 3 bar: flat surface with a pill indicator on the selected tab.
+    NavigationBar(
+        containerColor = NaturalWarmSurface,
+        tonalElevation = 0.dp
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(vertical = 10.dp, horizontal = 12.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            NaturalNavButton(
-                icon = Icons.Default.Home,
-                label = AppStrings.getNavHome(language),
-                isSelected = selectedIndex == 0,
-                onClick = { onSelectIndex(0) }
-            )
-            NaturalNavButton(
-                icon = Icons.Default.History,
-                label = AppStrings.getNavHistory(language),
-                isSelected = selectedIndex == 1,
-                onClick = { onSelectIndex(1) }
-            )
-            NaturalNavButton(
-                icon = Icons.Default.AutoStories,
-                label = AppStrings.getNavECodes(language),
-                isSelected = selectedIndex == 2,
-                onClick = { onSelectIndex(2) }
+        val items = listOf(
+            Triple(Icons.Default.Home, AppStrings.getNavHome(language), 0),
+            Triple(Icons.Default.History, AppStrings.getNavHistory(language), 1),
+            Triple(Icons.Default.AutoStories, AppStrings.getNavECodes(language), 2)
+        )
+        items.forEach { (icon, label, index) ->
+            val isSelected = selectedIndex == index
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = { onSelectIndex(index) },
+                icon = {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                        modifier = Modifier.size(22.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = label,
+                        fontSize = 11.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        maxLines = 1
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = EmeraldPrimary,
+                    selectedTextColor = EmeraldPrimary,
+                    indicatorColor = EmeraldGreenContainer,
+                    unselectedIconColor = NaturalTextLight,
+                    unselectedTextColor = NaturalTextLight
+                )
             )
         }
-    }
-}
-
-@Composable
-fun NaturalNavButton(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 4.dp)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = if (isSelected) EmeraldPrimary else NaturalTextLight,
-            modifier = Modifier.size(22.dp)
-        )
-        Spacer(modifier = Modifier.height(3.dp))
-        Text(
-            text = label,
-            fontSize = 10.sp,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = if (isSelected) EmeraldPrimary else NaturalTextLight
-        )
     }
 }
 

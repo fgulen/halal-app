@@ -802,7 +802,7 @@ fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean, lan
                         Text(
                             text = origin,
                             color = NaturalTextMuted,
-                            fontSize = 10.sp,
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
@@ -1131,7 +1131,7 @@ fun ProductShowcaseImageCard(
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = "${AppStrings.getImageLoadError(language)}: ${errorState.result.throwable.message ?: AppStrings.getUnknownError(language)}",
-                                fontSize = 9.sp,
+                                fontSize = 11.sp,
                                 color = NaturalTextMuted,
                                 maxLines = 2,
                                 textAlign = TextAlign.Center
@@ -1199,7 +1199,7 @@ fun ProductShowcaseImageCard(
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = "Open Food Facts (DE/EU/US)",
-                        fontSize = 10.sp,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = NaturalTextDark
                     )

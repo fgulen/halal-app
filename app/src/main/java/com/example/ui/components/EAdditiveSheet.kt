@@ -1,8 +1,5 @@
 package com.example.ui.components
 
-import com.example.ui.theme.PopupBorder
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -99,7 +96,6 @@ fun EAdditiveSheet(
         sheetState = sheetState,
         containerColor = NaturalWarmBg,
         modifier = modifier
-            .border(1.dp, PopupBorder, BottomSheetDefaults.ExpandedShape)
             .testTag("e_additives_bottom_sheet")
     ) {
         Column(
@@ -298,7 +294,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                HalalStatusBadge(status = item.status, language = language, fontSize = 10.sp, paddingHorizontal = 8.dp, paddingVertical = 2.dp)
+                HalalStatusBadge(status = item.status, language = language, fontSize = 11.sp, paddingHorizontal = 8.dp, paddingVertical = 2.dp)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
