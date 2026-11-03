@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.foundation.border
@@ -168,7 +169,7 @@ fun ManualBarcodeDialog(
                     }
                 ),
                 singleLine = true,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = NaturalTextDark,
                     unfocusedTextColor = NaturalTextDark,
@@ -257,7 +258,7 @@ fun ManualBarcodeDialog(
                         },
                         color = EmeraldPrimary.copy(alpha = 0.1f),
                         border = androidx.compose.foundation.BorderStroke(1.2.dp, EmeraldPrimary),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(AppRadius.Medium),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
@@ -310,7 +311,7 @@ fun ManualBarcodeDialog(
                         },
                         color = NaturalWarmSurface,
                         border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(AppRadius.Medium),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
@@ -322,7 +323,7 @@ fun ManualBarcodeDialog(
                             if (!sample.imageUrl.isNullOrBlank()) {
                                 Surface(
                                     color = Color.White,
-                                    shape = RoundedCornerShape(10.dp),
+                                    shape = RoundedCornerShape(AppRadius.Small),
                                     border = androidx.compose.foundation.BorderStroke(0.8.dp, NaturalWarmBorder),
                                     modifier = Modifier.size(44.dp)
                                 ) {

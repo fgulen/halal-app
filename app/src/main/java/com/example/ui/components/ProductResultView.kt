@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.foundation.border
@@ -398,8 +399,8 @@ fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
-            .shadow(12.dp, RoundedCornerShape(24.dp)),
-        shape = RoundedCornerShape(24.dp),
+            .shadow(12.dp, RoundedCornerShape(AppRadius.Large)),
+        shape = RoundedCornerShape(AppRadius.Large),
         color = Color.Transparent
     ) {
         Box(
@@ -493,7 +494,7 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
         product.halalCertificate?.let { cert ->
             Surface(
                 color = HalalGreenBg,
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 border = androidx.compose.foundation.BorderStroke(1.dp, HalalGreenBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -535,7 +536,7 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
         if (product.reasonOrDetails.isNotBlank()) {
             Surface(
                 color = NaturalWarmSurface,
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -571,7 +572,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
         // Flagged Prohibited Ingredients with Short Reason
         Surface(
             color = HaramRedBg,
-            shape = RoundedCornerShape(18.dp),
+            shape = RoundedCornerShape(AppRadius.Medium),
             border = androidx.compose.foundation.BorderStroke(1.5.dp, HaramRedBorder),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -603,7 +604,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                     product.harmfulOrSuspiciousIngredients.forEach { itemText ->
                         Surface(
                             color = Color.White,
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(AppRadius.Small),
                             border = androidx.compose.foundation.BorderStroke(1.dp, HaramRedBorder),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -636,7 +637,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
         if (product.reasonOrDetails.isNotBlank()) {
             Surface(
                 color = NaturalWarmSurface,
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -672,7 +673,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
         // Flagged Suspicious Ingredients with Short Reason
         Surface(
             color = SuspiciousAmberBg,
-            shape = RoundedCornerShape(18.dp),
+            shape = RoundedCornerShape(AppRadius.Medium),
             border = androidx.compose.foundation.BorderStroke(1.5.dp, SuspiciousAmberBorder),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -703,7 +704,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
                     product.harmfulOrSuspiciousIngredients.forEach { itemText ->
                         Surface(
                             color = Color.White,
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(AppRadius.Small),
                             border = androidx.compose.foundation.BorderStroke(1.dp, SuspiciousAmberBorder),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -736,7 +737,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
         if (product.reasonOrDetails.isNotBlank()) {
             Surface(
                 color = NaturalWarmSurface,
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -773,7 +774,7 @@ fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean, lan
 
     Surface(
         color = Color.White,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(AppRadius.Medium),
         border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
         modifier = Modifier
             .fillMaxWidth()
@@ -832,7 +833,7 @@ fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean, lan
 fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage, madhhab: Madhhab) {
     Surface(
         color = NaturalWarmSurface,
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(AppRadius.Medium),
         border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -868,7 +869,7 @@ fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage, mad
                     }
                     Surface(
                         color = chipBg,
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(AppRadius.Small),
                         border = androidx.compose.foundation.BorderStroke(1.dp, chipBorder.copy(alpha = 0.7f))
                     ) {
                         Text(
@@ -891,7 +892,7 @@ fun LegalDisclaimerCard(language: AppLanguage) {
 
     Surface(
         color = NaturalWarmSurface,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(AppRadius.Medium),
         border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -968,7 +969,7 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto:
         if (product.reasonOrDetails.isNotBlank()) {
             Surface(
                 color = NaturalWarmSurface,
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -992,7 +993,7 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto:
 
         Surface(
             color = NaturalWarmSurface,
-            shape = RoundedCornerShape(18.dp),
+            shape = RoundedCornerShape(AppRadius.Medium),
             border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -1031,7 +1032,7 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto:
                 .fillMaxWidth()
                 .height(52.dp)
                 .testTag("analyze_photo_button"),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(AppRadius.Medium),
             colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
         ) {
             Icon(imageVector = Icons.Default.PhotoCamera, contentDescription = null)
@@ -1061,7 +1062,7 @@ fun ProductShowcaseImageCard(
 
     Surface(
         color = Color.White,
-        shape = RoundedCornerShape(22.dp),
+        shape = RoundedCornerShape(AppRadius.Large),
         border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
         shadowElevation = 2.dp,
         modifier = modifier

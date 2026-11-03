@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.foundation.border
 import androidx.compose.foundation.background
@@ -103,14 +104,14 @@ fun MadhhabSelectionDialog(
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(RoundedCornerShape(AppRadius.Medium))
                             .clickable {
                                 onSelectMadhhab(madhhab)
                                 onDismiss()
                             }
                             .testTag("madhhab_option_${madhhab.code}"),
                         color = if (isSelected) EmeraldGreenBg else NaturalWarmSurface,
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(AppRadius.Medium),
                         border = androidx.compose.foundation.BorderStroke(
                             width = if (isSelected) 1.5.dp else 1.dp,
                             color = if (isSelected) EmeraldPrimary else NaturalWarmBorder
@@ -143,7 +144,7 @@ fun MadhhabSelectionDialog(
             }
         },
         containerColor = NaturalWarmBg,
-        shape = RoundedCornerShape(24.dp),
-        modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(24.dp))
+        shape = RoundedCornerShape(AppRadius.Large),
+        modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(AppRadius.Large))
     )
 }

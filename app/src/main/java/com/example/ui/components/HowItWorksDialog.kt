@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.foundation.border
@@ -161,7 +162,7 @@ fun HowItWorksDialog(language: AppLanguage, onDismiss: () -> Unit) {
 private fun HowItWorksSourcesSection(language: AppLanguage) {
     Surface(
         color = NaturalWarmSurface,
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(AppRadius.Medium),
         border = BorderStroke(1.dp, NaturalWarmBorder),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -263,7 +264,7 @@ private fun HowItWorksLinkRow(label: String, url: String) {
 private fun HowItWorksSection(title: String, body: String) {
     Surface(
         color = NaturalWarmSurface,
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(AppRadius.Medium),
         border = BorderStroke(1.dp, NaturalWarmBorder),
         modifier = Modifier.fillMaxWidth()
     ) {

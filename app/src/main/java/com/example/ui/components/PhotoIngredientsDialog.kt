@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.foundation.border
@@ -152,7 +153,7 @@ fun PhotoIngredientsDialog(
                 Surface(
                     color = SuspiciousAmberBg,
                     border = androidx.compose.foundation.BorderStroke(1.dp, SuspiciousAmberBorder),
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(AppRadius.Medium)
                 ) {
                     Row(
                         modifier = Modifier.padding(12.dp),
@@ -185,7 +186,7 @@ fun PhotoIngredientsDialog(
                     .testTag("photo_analysis_product_name_field"),
                 label = { Text(AppStrings.getPhotoAnalysisProductNameHint(language)) },
                 singleLine = true,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 colors = photoDialogFieldColors()
             )
 
@@ -200,7 +201,7 @@ fun PhotoIngredientsDialog(
                     .testTag("photo_analysis_ingredients_field"),
                 textStyle = TextStyle(color = NaturalTextDark, fontSize = 14.sp),
                 label = { Text(AppStrings.getPhotoAnalysisIngredientsHint(language)) },
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 colors = photoDialogFieldColors()
             )
 
@@ -228,7 +229,7 @@ fun PhotoIngredientsDialog(
                         }
                         Surface(
                             color = chipBg,
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(AppRadius.Small),
                             border = androidx.compose.foundation.BorderStroke(1.dp, chipBorder.copy(alpha = 0.7f))
                         ) {
                             Text(
@@ -248,7 +249,7 @@ fun PhotoIngredientsDialog(
                 Surface(
                     color = SuspiciousAmberBg,
                     border = androidx.compose.foundation.BorderStroke(1.dp, SuspiciousAmberBorder),
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(AppRadius.Medium)
                 ) {
                     Row(
                         modifier = Modifier.padding(12.dp),

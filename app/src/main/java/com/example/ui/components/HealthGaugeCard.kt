@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +65,7 @@ fun HealthGaugeCard(product: FoodProduct, language: AppLanguage, modifier: Modif
         modifier = modifier
             .fillMaxWidth()
             .testTag("health_gauge_card"),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(AppRadius.Medium),
         color = NaturalWarmSurface,
         border = BorderStroke(1.dp, NaturalWarmBorder)
     ) {

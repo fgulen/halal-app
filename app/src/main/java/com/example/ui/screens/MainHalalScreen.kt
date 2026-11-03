@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -19,6 +20,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -315,7 +318,7 @@ fun MainHalalScreen(
                                         homeSearchQuery = ""
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
-                                    shape = RoundedCornerShape(10.dp),
+                                    shape = RoundedCornerShape(AppRadius.Small),
                                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                                 ) {
                                     Text(
@@ -349,7 +352,7 @@ fun MainHalalScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 24.dp, vertical = 4.dp),
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(AppRadius.Medium),
                             color = NaturalWarmSurface,
                             border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                             shadowElevation = 4.dp
@@ -360,7 +363,7 @@ fun MainHalalScreen(
                                         viewModel.onBarcodeScanned(homeSearchQuery.trim())
                                         homeSearchQuery = ""
                                     },
-                                    shape = RoundedCornerShape(12.dp),
+                                    shape = RoundedCornerShape(AppRadius.Small),
                                     color = EmeraldPrimary.copy(alpha = 0.08f),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
@@ -395,7 +398,7 @@ fun MainHalalScreen(
                                                 viewModel.onBarcodeScanned(match.barcode)
                                                 homeSearchQuery = ""
                                             },
-                                            shape = RoundedCornerShape(12.dp),
+                                            shape = RoundedCornerShape(AppRadius.Small),
                                             color = Color.Transparent,
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
@@ -405,7 +408,7 @@ fun MainHalalScreen(
                                             ) {
                                                 if (!match.imageUrl.isNullOrBlank()) {
                                                     Surface(
-                                                        shape = RoundedCornerShape(8.dp),
+                                                        shape = RoundedCornerShape(AppRadius.Small),
                                                         color = Color.White,
                                                         border = androidx.compose.foundation.BorderStroke(0.8.dp, NaturalWarmBorder),
                                                         modifier = Modifier.size(36.dp)
@@ -614,7 +617,7 @@ fun MainHalalScreen(
     if (isLoading) {
         Dialog(onDismissRequest = { viewModel.cancelScan() }) {
             Surface(
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(AppRadius.Large),
                 color = NaturalWarmSurface,
                 shadowElevation = 10.dp,
                 border = androidx.compose.foundation.BorderStroke(1.dp, PopupBorder)
@@ -695,7 +698,7 @@ fun ScanErrorDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(AppRadius.Large),
             color = NaturalWarmSurface,
             shadowElevation = 10.dp,
             border = androidx.compose.foundation.BorderStroke(1.dp, PopupBorder)
@@ -754,7 +757,7 @@ fun ScanErrorDialog(
                         Button(
                             onClick = onRetry,
                             colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(AppRadius.Small)
                         ) {
                             Text(
                                 text = AppStrings.getRetryLabel(language),
@@ -769,6 +772,7 @@ fun ScanErrorDialog(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NaturalAppHeader(
     language: AppLanguage,
@@ -844,10 +848,12 @@ fun NaturalAppHeader(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        // Wraps onto a second line instead of scrolling, so language, madhhab and rate stay visible
+        // and discoverable on every phone width.
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Language Selection Chip Button
             Surface(
@@ -1037,7 +1043,7 @@ fun NaturalStatItem(
         modifier = modifier,
         color = bgColor,
         border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(AppRadius.Large)
     ) {
         Column(
             modifier = Modifier
@@ -1225,7 +1231,7 @@ fun NaturalHistoryItemCard(
     Surface(
         onClick = onClick,
         color = cardBg,
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(AppRadius.Large),
         border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
         modifier = Modifier
             .fillMaxWidth()
@@ -1240,7 +1246,7 @@ fun NaturalHistoryItemCard(
             if (!product.imageUrl.isNullOrBlank()) {
                 Surface(
                     color = Color.White,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(AppRadius.Medium),
                     border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
                     modifier = Modifier.size(48.dp)
                 ) {
@@ -1260,7 +1266,7 @@ fun NaturalHistoryItemCard(
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .background(iconBoxBg, RoundedCornerShape(16.dp)),
+                        .background(iconBoxBg, RoundedCornerShape(AppRadius.Medium)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -1362,7 +1368,7 @@ fun NaturalEmptyHistoryCard(
 ) {
     Surface(
         color = NaturalWarmSurface,
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(AppRadius.Large),
         border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
         modifier = Modifier
             .fillMaxWidth()

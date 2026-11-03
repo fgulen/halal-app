@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -259,7 +260,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
     Surface(
         color = cardBg,
         border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(AppRadius.Large),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

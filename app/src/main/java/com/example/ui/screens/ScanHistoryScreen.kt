@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.foundation.border
 import androidx.compose.foundation.background
@@ -177,8 +178,8 @@ fun ScanHistoryScreen(
                 }
             },
             containerColor = NaturalWarmSurface,
-            shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(20.dp))
+            shape = RoundedCornerShape(AppRadius.Large),
+            modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(AppRadius.Large))
         )
     }
 
@@ -378,7 +379,7 @@ fun ScanHistoryScreen(
             ) {
                 Surface(
                     color = NaturalWarmSurface,
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(AppRadius.Large),
                     border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -513,7 +514,7 @@ fun HistoryProductCard(
     Surface(
         onClick = onClick,
         color = cardBg,
-        shape = RoundedCornerShape(22.dp),
+        shape = RoundedCornerShape(AppRadius.Large),
         border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
         shadowElevation = 1.dp,
         modifier = Modifier
@@ -528,7 +529,7 @@ fun HistoryProductCard(
             if (!product.imageUrl.isNullOrBlank()) {
                 Surface(
                     color = Color.White,
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(AppRadius.Medium),
                     border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
                     modifier = Modifier.size(50.dp)
                 ) {
@@ -548,7 +549,7 @@ fun HistoryProductCard(
                 Box(
                     modifier = Modifier
                         .size(50.dp)
-                        .background(iconBoxBg, RoundedCornerShape(14.dp)),
+                        .background(iconBoxBg, RoundedCornerShape(AppRadius.Medium)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -73,7 +74,7 @@ fun SearchField(
         },
         trailingIcon = trailingIcon,
         singleLine = true,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(AppRadius.Medium),
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = NaturalTextDark,
             unfocusedTextColor = NaturalTextDark,

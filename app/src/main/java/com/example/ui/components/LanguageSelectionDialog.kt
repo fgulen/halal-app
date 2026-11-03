@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -100,14 +101,14 @@ fun LanguageSelectionDialog(
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(RoundedCornerShape(AppRadius.Medium))
                             .clickable {
                                 onSelectLanguage(lang)
                                 onDismiss()
                             }
                             .testTag("lang_option_${lang.code}"),
                         color = if (isSelected) EmeraldGreenBg else NaturalWarmSurface,
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(AppRadius.Medium),
                         border = androidx.compose.foundation.BorderStroke(
                             width = if (isSelected) 1.5.dp else 1.dp,
                             color = if (isSelected) EmeraldPrimary else NaturalWarmBorder
@@ -161,7 +162,7 @@ fun LanguageSelectionDialog(
             }
         },
         containerColor = NaturalWarmBg,
-        shape = RoundedCornerShape(24.dp),
-        modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(24.dp))
+        shape = RoundedCornerShape(AppRadius.Large),
+        modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(AppRadius.Large))
     )
 }

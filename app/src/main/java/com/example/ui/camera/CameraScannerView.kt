@@ -1,5 +1,6 @@
 package com.example.ui.camera
 
+import com.example.ui.theme.AppRadius
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
@@ -227,7 +228,7 @@ fun CameraScannerView(
 
             Surface(
                 color = Color.Black.copy(alpha = 0.55f),
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(AppRadius.Large),
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.2f))
             ) {
                 Row(
@@ -287,7 +288,7 @@ fun CameraScannerView(
             // Instructions Card
             Surface(
                 color = Color.Black.copy(alpha = 0.7f),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(AppRadius.Medium),
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.15f)),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -329,7 +330,7 @@ fun CameraScannerView(
                         containerColor = Color.White.copy(alpha = 0.18f),
                         contentColor = Color.White
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(AppRadius.Small)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Keyboard,
