@@ -147,12 +147,72 @@ private val GERMAN_SAMPLE_TEXT: Map<String, String> = mapOf(
         "Keine Schweinebestandteile und kein Alkohol. 100 % pflanzliches Sojalecithin."
 )
 
+private val FRENCH_SAMPLE_TEXT: Map<String, String> = mapOf(
+    // Certificate labels
+    "Certified OU Kosher Dairy & Vegetarian" to "Végétarien & laitier certifié OU casher",
+    "Certified OU Kosher Dairy" to "Laitier certifié OU casher",
+    "Gelatin-Free Formulation (Vegan-Friendly)" to "Formule sans gélatine (compatible végane)",
+    "Plant-Based & Dairy-Free Formulation" to "Formule végétale et sans lait",
+    "Vegan Formulation (No Animal Fats)" to "Formule végane (sans graisses animales)",
+    "Vegetarian Verified & Certified Clean" to "Végétarien vérifié et certifié sain",
+    "Vegetarian Verified" to "Végétarien vérifié",
+    "Vegetarisch / Keine tierischen Fette" to "Végétarien / sans graisses animales",
+    "TSE / Helal Uygunluk & Vejetaryen" to "TSE / conforme halal & végétarien",
+    // Reason texts
+    "100% plant-based ingredients using distilled grain/spirit vinegar (non-intoxicating). This is an ingredient screening, not a third-party certification claim." to
+        "Ingrédients 100 % végétaux, avec vinaigre de céréales/alcool distillé (non enivrant). Il s'agit d'un contrôle des ingrédients, et non d'une certification par un tiers.",
+    "100% plant-based, verified vegan and Halal. Contains no animal fats, gelatin, or alcohol." to
+        "100 % végétal, végane et halal vérifié. Ne contient ni graisses animales, ni gélatine, ni alcool.",
+    "Certified 100% Vegan by the European Vegetarian Union. Free from alcohol, animal fats, or non-halal emulsifiers." to
+        "Certifié 100 % végane par l'Union européenne des végétariens. Sans alcool, graisses animales ni émulsifiants non halal.",
+    "Certified Kosher Dairy & Halal-compliant vegetable ingredients. No pork, gelatin or alcohol." to
+        "Laitier casher certifié et ingrédients végétaux conformes au halal. Pas de porc, de gélatine ni d'alcool.",
+    "Certified OU Kosher / Halal-compliant vegetable ingredients. No animal enzymes, gelatin or alcohol." to
+        "Ingrédients végétaux certifiés OU casher / conformes au halal. Pas d'enzymes animales, de gélatine ni d'alcool.",
+    "Contains no animal fats, gelatin or alcohol. Emulsifier is 100% plant-based soy/sunflower lecithin." to
+        "Ne contient ni graisses animales, ni gélatine, ni alcool. L'émulsifiant est de la lécithine de soja/tournesol 100 % végétale.",
+    "Contains no animal fats, pork derivatives or alcohol. Emulsifiers are plant based." to
+        "Ne contient ni graisses animales, ni dérivés du porc, ni alcool. Les émulsifiants sont végétaux.",
+    "Free from alcohol, animal fats or non-halal additives." to
+        "Sans alcool, graisses animales ni additifs non halal.",
+    "EU & German production uses Porcine Gelatin (Schweinegelatine / E441) derived from pig skin and bone collagen. In Islamic law, all pork derivatives are strictly prohibited (Haram)." to
+        "La production UE et allemande utilise de la gélatine de porc (E441) issue de la peau et des os du porc. En droit islamique, tous les dérivés du porc sont strictement interdits (Haram).",
+    "In the USA, Doritos uses cheese flavored with animal-derived enzymes from non-halal slaughtered calves/swine. Classified as Mushbooh / Doubtful unless certified." to
+        "Aux États-Unis, Doritos utilise un fromage aromatisé avec des enzymes d'origine animale issues de veaux ou porcs non abattus selon le halal. Classé Mushbooh / douteux sauf certification.",
+    "No prohibited or doubtful ingredients found in the standard formulation - no alcohol or animal-derived additives. This is an ingredient screening, not a third-party halal certification." to
+        "Aucun ingrédient interdit ou douteux dans la formule standard : ni alcool ni additif d'origine animale. Il s'agit d'un contrôle des ingrédients, et non d'une certification halal par un tiers.",
+    "Oreo cookies in Europe and USA are produced with 100% plant-based ingredients and vegetable oils. No gelatin, animal enzymes, or alcohol." to
+        "Les biscuits Oreo en Europe et aux États-Unis sont fabriqués avec 100 % d'ingrédients végétaux et d'huiles végétales. Sans gélatine, enzymes animales ni alcool.",
+    "Plant-based vegetable oils and soy lecithin only. Alcohol and pork-free." to
+        "Uniquement des huiles végétales et de la lécithine de soja. Sans alcool ni porc.",
+    "Reformulated in Europe and USA without animal gelatin or carmine (E120). Plant-based starch and natural beetroot red (E162) are used." to
+        "Recette reformulée en Europe et aux États-Unis sans gélatine animale ni carmin (E120). Amidon végétal et rouge de betterave naturel (E162).",
+    "Standard US Kraft Jet-Puffed Marshmallows are produced using pork-derived gelatin. Not permissible for Halal diet." to
+        "Les guimauves standard Kraft Jet-Puffed (États-Unis) sont fabriquées avec de la gélatine de porc. Non admissibles dans une alimentation halal.",
+    // Turkish originals
+    "Bitkisel içerikli ve süt ürünüdür. Domuz yağı, domuz jelatini ve alkol içermez. Emülgatör olarak bitkisel soya lesitini kullanılmıştır." to
+        "Ingrédients végétaux et produit laitier. Ne contient ni saindoux, ni gélatine de porc, ni alcool. Lécithine de soja végétale utilisée comme émulsifiant.",
+    "Domuz türevi ve alkol içermez. %100 bitkisel soya lesitini." to
+        "Ne contient ni dérivés du porc ni alcool. Lécithine de soja 100 % végétale.",
+    // German originals
+    "Zertifiziert vegetarisch und helal-konform. Enthält rein pflanzliches Sojalecithin (E322), keine tierischen Fette, keine Schweinegelatine, kein Alkohol." to
+        "Certifié végétarien et conforme au halal. Contient de la lécithine de soja purement végétale (E322), sans graisses animales, sans gélatine de porc, sans alcool.",
+    "Zertifiziert vegetarisch. 100% pflanzliches Sojalecithin." to
+        "Certifié végétarien. Lécithine de soja 100 % végétale.",
+    "Zertifiziert vegetarisch. Keine tierischen Fette, keine Schweinegelatine, kein Alkohol. 100% pflanzliches Sojalecithin." to
+        "Certifié végétarien. Sans graisses animales, sans gélatine de porc, sans alcool. Lécithine de soja 100 % végétale.",
+    // Italian original
+    "Senza ingredienti animali o alcol. 100% lecitina vegetale." to
+        "Sans ingrédients animaux ni alcool. 100 % lécithine végétale."
+)
+
 /** Returns the translation of a known sample text for the app language; otherwise the input unchanged. */
 fun localizeSampleText(text: String, language: AppLanguage): String {
     val table = when (language) {
         AppLanguage.AR -> ARABIC_SAMPLE_TEXT
         AppLanguage.TR -> TURKISH_SAMPLE_TEXT
         AppLanguage.DE -> GERMAN_SAMPLE_TEXT
+        AppLanguage.FR -> FRENCH_SAMPLE_TEXT
         else -> return text
     }
     return table[text] ?: text

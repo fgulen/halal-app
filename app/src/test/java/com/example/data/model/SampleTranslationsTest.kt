@@ -43,6 +43,15 @@ class SampleTranslationsTest {
     }
 
     @Test
+    fun englishSampleTextIsTranslatedForFrench() {
+        assertEquals(
+            "Ne contient ni graisses animales, ni gélatine, ni alcool. L'émulsifiant est de la lécithine de soja/tournesol 100 % végétale.",
+            localizeSampleText(englishReason, AppLanguage.FR)
+        )
+        assertEquals("Végétarien vérifié", localizeSampleText("Vegetarian Verified", AppLanguage.FR))
+    }
+
+    @Test
     fun unknownTextIsReturnedUnchanged() {
         val custom = "Kullanıcının kendi notu"
         assertEquals(custom, localizeSampleText(custom, AppLanguage.DE))
