@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import com.example.ui.theme.NeutralSlateBorder
+import com.example.ui.theme.NeutralSlateMid
+import com.example.ui.theme.NeutralSlateSubtle
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
@@ -497,10 +500,10 @@ fun HistoryProductCard(
             SuspiciousAmberDark
         )
         HalalStatus.BULUNAMADI -> Hexuple(
-            Color(0xFFF8FAFC),
-            Color(0xFFE2E8F0),
-            Color(0xFFE2E8F0),
-            Color(0xFF64748B),
+            NeutralSlateSubtle,
+            NeutralSlateBorder,
+            NeutralSlateBorder,
+            NeutralSlateMid,
             Icons.Default.HelpOutline,
             NaturalTextDark
         )

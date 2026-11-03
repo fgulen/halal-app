@@ -1,5 +1,6 @@
 package com.example.ui.theme
 
+import com.example.ui.theme.NeutralSlateBorder
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +39,7 @@ private val DarkColorScheme = darkColorScheme(
     background = DarkBackground,
     surface = DarkSurface,
     surfaceVariant = DarkSurfaceVariant,
-    onBackground = Color(0xFFE2E8F0),
+    onBackground = NeutralSlateBorder,
     onSurface = Color(0xFFF1F5F9),
     onSurfaceVariant = Color(0xFF94A3B8)
 )

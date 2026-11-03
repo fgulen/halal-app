@@ -67,3 +67,8 @@ val DarkSurfaceVariant = Color(0xFF25302B)
 val GoldAccent = Color(0xFFD97706)
 val GoldAccentLight = Color(0xFFFEF3C7)
 
+
+// Named one-off values that used to be inline hex literals in screens.
+val RatingStar = Color(0xFFF2B01E)
+val NeutralSlateSubtle = Color(0xFFF8FAFC)
+val NeutralSlateMid = Color(0xFF64748B)

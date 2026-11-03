@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import com.example.ui.theme.NeutralSlateMid
+import com.example.ui.theme.NeutralSlateSubtle
+import com.example.ui.theme.RatingStar
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
@@ -226,7 +229,7 @@ fun MainHalalScreen(
             NaturalBottomNavigation(
                 // The E-codes tab opens a sheet instead of switching screens, so mark it
                 // selected while that sheet is open.
-                selectedIndex = if (isEAdditivesOpen) 2 else selectedBottomNavIndex,
+                selectedIndex = bottomNavSelectedIndex(isEAdditivesOpen, selectedBottomNavIndex),
                 language = language,
                 onSelectIndex = { index ->
                     when (index) {
@@ -915,7 +918,7 @@ fun NaturalAppHeader(
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
-                        tint = Color(0xFFF2B01E),
+                        tint = RatingStar,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -1065,7 +1068,9 @@ fun NaturalStatItem(
                 fontWeight = FontWeight.SemiBold,
                 color = NaturalTextMuted,
                 textAlign = TextAlign.Center,
-                maxLines = 1
+                // Two lines max, so long German/Arabic labels wrap instead of running into the tile edge.
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -1219,10 +1224,10 @@ fun NaturalHistoryItemCard(
             SuspiciousAmberDark.copy(alpha = 0.9f)
         )
         HalalStatus.BULUNAMADI -> Septuple(
-            Color(0xFFF8FAFC),
+            NeutralSlateSubtle,
             NeutralSlateBorder,
             NeutralSlateBorder,
-            Color(0xFF64748B),
+            NeutralSlateMid,
             Icons.Default.HelpOutline,
             NaturalTextDark,
             NaturalTextMuted
@@ -1434,6 +1439,16 @@ fun NaturalEmptyHistoryCard(
         }
     }
 }
+
+/** Index of the E-codes tab. It opens a sheet rather than a screen, so it is never a real screen index. */
+internal const val E_CODES_NAV_INDEX = 2
+
+/**
+ * Which bottom-nav tab should look selected. While the E-codes sheet is open that tab is selected;
+ * otherwise the last real screen (home or history) stays selected.
+ */
+internal fun bottomNavSelectedIndex(isEAdditivesOpen: Boolean, selectedScreenIndex: Int): Int =
+    if (isEAdditivesOpen) E_CODES_NAV_INDEX else selectedScreenIndex
 
 @Composable
 fun NaturalBottomNavigation(

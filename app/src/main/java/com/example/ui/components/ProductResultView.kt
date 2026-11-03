@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.NeutralSlateMid
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
@@ -391,7 +392,7 @@ fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
             Icons.Default.Warning
         )
         HalalStatus.BULUNAMADI -> Pair(
-            Brush.verticalGradient(listOf(Color(0xFF64748B), Color(0xFF334155))),
+            Brush.verticalGradient(listOf(NeutralSlateMid, Color(0xFF334155))),
             Icons.Default.Info
         )
     }
@@ -434,7 +435,7 @@ fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
                                 HalalStatus.HELAL -> HalalGreen
                                 HalalStatus.HARAM -> HaramRed
                                 HalalStatus.SUPHELI -> SuspiciousAmber
-                                else -> Color(0xFF64748B)
+                                else -> NeutralSlateMid
                             },
                             modifier = Modifier.size(24.dp)
                         )

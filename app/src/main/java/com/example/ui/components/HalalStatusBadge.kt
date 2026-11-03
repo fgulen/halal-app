@@ -1,5 +1,7 @@
 package com.example.ui.components
 
+import com.example.ui.theme.NeutralSlate
+import com.example.ui.theme.NeutralSlateBorder
 import com.example.ui.theme.AppTextSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -64,8 +66,8 @@ fun HalalStatusBadge(
             Icons.Default.WarningAmber
         )
         HalalStatus.BULUNAMADI -> Triple(
-            Color(0xFFE2E8F0),
-            Color(0xFF475569),
+            NeutralSlateBorder,
+            NeutralSlate,
             Icons.Default.HelpOutline
         )
     }
