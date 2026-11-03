@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.data.model.localizeSampleText
 import com.example.ui.theme.NeutralSlateBorder
 import com.example.ui.theme.NeutralSlateMid
 import com.example.ui.theme.NeutralSlateSubtle
@@ -633,7 +634,7 @@ fun HistoryProductCard(
                 } else if (!product.halalCertificate.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "${AppStrings.getCertLabel(language)}: " + product.halalCertificate,
+                        text = "${AppStrings.getCertLabel(language)}: " + localizeSampleText(product.halalCertificate, language),
                         fontSize = AppTextSize.Caption,
                         fontWeight = FontWeight.SemiBold,
                         color = HalalGreenDark,

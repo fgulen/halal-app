@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.data.model.localizeSampleText
 import com.example.ui.theme.NeutralSlateMid
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
@@ -211,18 +212,22 @@ fun ProductResultBottomSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Surface(
-                        color = NaturalWarmSurface,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
-                        shape = CircleShape
-                    ) {
-                        Text(
-                            text = "${AppStrings.getShareBarcodeLabel(language)}: ${product.barcode}",
-                            fontSize = AppTextSize.Caption,
-                            fontWeight = FontWeight.SemiBold,
-                            color = NaturalTextMuted,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                        )
+                    // Only a real numeric barcode gets the "Barcode: …" pill. A name search stores the typed
+                    // text as the "barcode", which used to show up as "Barcode: pesto".
+                    if (product.barcode.isNotEmpty() && product.barcode.all { it.isDigit() }) {
+                        Surface(
+                            color = NaturalWarmSurface,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, NaturalWarmBorder),
+                            shape = CircleShape
+                        ) {
+                            Text(
+                                text = "${AppStrings.getShareBarcodeLabel(language)}: ${product.barcode}",
+                                fontSize = AppTextSize.Caption,
+                                fontWeight = FontWeight.SemiBold,
+                                color = NaturalTextMuted,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
                     }
 
                     Surface(
@@ -525,7 +530,7 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = cert,
+                            text = localizeSampleText(cert, language),
                             color = HalalGreenDark.copy(alpha = 0.85f),
                             fontSize = AppTextSize.Label
                         )
@@ -551,7 +556,7 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = linkifyUrls(product.reasonOrDetails),
+                        text = linkifyUrls(localizeSampleText(product.reasonOrDetails, language)),
                         fontSize = AppTextSize.Small,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
@@ -652,7 +657,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = linkifyUrls(product.reasonOrDetails),
+                        text = linkifyUrls(localizeSampleText(product.reasonOrDetails, language)),
                         fontSize = AppTextSize.Small,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
@@ -752,7 +757,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = linkifyUrls(product.reasonOrDetails),
+                        text = linkifyUrls(localizeSampleText(product.reasonOrDetails, language)),
                         fontSize = AppTextSize.Small,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
@@ -984,7 +989,7 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto:
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = linkifyUrls(product.reasonOrDetails),
+                        text = linkifyUrls(localizeSampleText(product.reasonOrDetails, language)),
                         fontSize = AppTextSize.Small,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp

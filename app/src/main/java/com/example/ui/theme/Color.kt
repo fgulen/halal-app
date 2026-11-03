@@ -2,20 +2,18 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Natural Tones - Organic Linen, Warm Emerald & Earthy Palettes
-// Bg is kept a visibly deeper linen tone than Surface (white) so cards/rows
-// separate from the page at a glance instead of relying on shadow alone.
-val NaturalWarmBg = Color(0xFFF3ECE2)
+// Neutral base, Apple-style: a cool, barely-green light grey page with pure white cards.
+// The earlier linen/beige page (F3ECE2) looked dirty next to the emerald and the verdict colours.
+// Page vs. card contrast comes from the grey step, not from a shadow.
+// (Names keep the old "Warm" prefix so the many call sites do not change.)
+val NaturalWarmBg = Color(0xFFF2F4F2)
 val NaturalWarmSurface = Color(0xFFFFFFFF)
-val NaturalWarmSurfaceVariant = Color(0xFFF5EFEA)
-// Was 0xFFEFE8E1, which measured ~1.02:1 against NaturalWarmBg and ~1.2:1 against white -
-// card/row outlines were effectively invisible. Still a soft warm line, just one you can see.
-val NaturalWarmBorder = Color(0xFFE3D8CA)
-// Outline for every dialog and bottom sheet. Popups use NaturalWarmBg - the same linen as the
-// page behind them - so without an edge they melted into the screen under the scrim.
-val PopupBorder = Color(0xFFD4C4AE)
+val NaturalWarmSurfaceVariant = Color(0xFFEEF2EF)
+val NaturalWarmBorder = Color(0xFFDFE5E1)
+// Outline for every dialog and bottom sheet, drawn a step darker than the card border.
+val PopupBorder = Color(0xFFCBD5CF)
 
-val NaturalTextDark = Color(0xFF1D1B1E)
+val NaturalTextDark = Color(0xFF111418)
 val NaturalTextMuted = Color(0xFF4B5563) // Crisp readable charcoal-gray
 val NaturalTextLight = Color(0xFF6B7280)
 val NaturalSearchPlaceholder = Color(0xFF4B5563)

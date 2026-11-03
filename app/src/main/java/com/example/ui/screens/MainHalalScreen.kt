@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.data.model.localizeSampleText
 import com.example.ui.theme.NeutralSlateMid
 import com.example.ui.theme.NeutralSlateSubtle
 import com.example.ui.theme.RatingStar
@@ -1319,7 +1320,7 @@ fun NaturalHistoryItemCard(
                             text = if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
                                 "${AppStrings.getProhibitedLabel(language)}: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
                             } else {
-                                product.reasonOrDetails.ifBlank { AppStrings.getContainsNonHalalDerivatives(language) }
+                                localizeSampleText(product.reasonOrDetails, language).ifBlank { AppStrings.getContainsNonHalalDerivatives(language) }
                             },
                             fontSize = AppTextSize.Label,
                             color = bodyTextColor,
@@ -1333,7 +1334,7 @@ fun NaturalHistoryItemCard(
                             text = if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) {
                                 "${AppStrings.getDoubtfulLabel(language)}: " + product.harmfulOrSuspiciousIngredients.joinToString(", ")
                             } else {
-                                product.reasonOrDetails.ifBlank { AppStrings.getContainsUnverifiedAdditives(language) }
+                                localizeSampleText(product.reasonOrDetails, language).ifBlank { AppStrings.getContainsUnverifiedAdditives(language) }
                             },
                             fontSize = AppTextSize.Label,
                             color = bodyTextColor,
@@ -1344,8 +1345,8 @@ fun NaturalHistoryItemCard(
                     }
                     HalalStatus.HELAL -> {
                         Text(
-                            text = product.halalCertificate?.let { "${AppStrings.getCertificationLabel(language)}: $it" }
-                                ?: product.reasonOrDetails.ifBlank { AppStrings.getNoProhibitedAdditives(language) },
+                            text = product.halalCertificate?.let { "${AppStrings.getCertificationLabel(language)}: ${localizeSampleText(it, language)}" }
+                                ?: localizeSampleText(product.reasonOrDetails, language).ifBlank { AppStrings.getNoProhibitedAdditives(language) },
                             fontSize = AppTextSize.Label,
                             color = bodyTextColor,
                             lineHeight = 16.sp,
