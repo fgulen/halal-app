@@ -22,8 +22,31 @@ class HalalAnalyzerAlcoholKeywordsTest {
 
     @Test
     fun `Turkish alcohol words are haram`() {
-        for (text in listOf("su, şeker, alkol", "ALKOL", "kırmızı şarap", "şarabı", "bira", "alkollü", "ETİL ALKOL", "aroma verici (etil alkolü)")) {
+        for (text in listOf("su, şeker, alkol", "ALKOL", "kırmızı şarap", "şarabı", "bira", "alkollü")) {
             assertEquals("'$text'", HalalStatus.HARAM, status(text))
+        }
+    }
+
+    // Changed 2026-11 from HARAM to SUPHELI. Source: Diyanet fetva 18.08.2017 (kurul.diyanet.gov.tr,
+    // "Üretim aşamalarında sentetik alkol kullanımının hükmü nedir?"): ethanol used as a solvent for
+    // aromatic substances is permissible; adding intoxicating drinks to food is haram.
+    @Test
+    fun `ethanol named as a flavour solvent is doubtful not haram`() {
+        for (text in listOf("ETİL ALKOL", "aroma verici (etil alkolü)", "ethanol", "Ethyl alcohol", "etanol", "etil-alkol")) {
+            assertEquals("'$text'", HalalStatus.SUPHELI, status(text))
+        }
+    }
+
+    @Test
+    fun `generic alcohol and drinks stay haram even next to ethanol`() {
+        assertEquals(HalalStatus.HARAM, status("etil alkol, alkol"))
+        assertEquals(HalalStatus.HARAM, status("aroma (etil alkol), rum"))
+    }
+
+    @Test
+    fun `alcohol-based vanilla extract is doubtful`() {
+        for (text in listOf("Vanilleextrakt", "vanilla extract", "Vanilya özü", "extrait de vanille")) {
+            assertEquals("'$text'", HalalStatus.SUPHELI, status(text))
         }
     }
 
@@ -40,7 +63,9 @@ class HalalAnalyzerAlcoholKeywordsTest {
 
     @Test
     fun `a negated item next to a real alcohol still flags the real one`() {
-        assertEquals(HalalStatus.HARAM, status("benzyl alcohol, ethyl alcohol"))
+        // "ethyl alcohol" is now Doubtful, not Haram (Diyanet 18.08.2017, solvent for aromas).
+        // The benzyl alcohol is non-beverage and stays clear; the ethanol is what gets flagged.
+        assertEquals(HalalStatus.SUPHELI, status("benzyl alcohol, ethyl alcohol"))
         assertEquals(HalalStatus.HARAM, status("polivinil alkol, şarap"))
         assertEquals(HalalStatus.HARAM, status("alkol içermez, bira"))
     }

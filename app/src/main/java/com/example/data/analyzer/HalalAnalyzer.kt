@@ -56,6 +56,17 @@ object HalalAnalyzer {
     private const val BARE_LAB_RULE_ID = "Unlabelled Rennet (Lab, Origin Unknown)"
     private const val BARE_LAB_KEYWORD = "\u0000bare-lab"
     private const val WHEY_RULE_ID = "Whey Powder / Whey Byproduct"
+    private const val ALCOHOL_HARAM_RULE_ID = "Alcohol / Liqueur / Wine Additive"
+    private const val ETHANOL_SOLVENT_RULE_ID = "Ethanol as Aroma Solvent"
+    private const val VANILLA_EXTRACT_RULE_ID = "Vanilla Extract (Alcohol-Based)"
+    // Diyanet Fetva (18.08.2017, "Üretim aşamalarında sentetik alkol kullanımının hükmü nedir?"):
+    // ethanol used as a solvent for aromatic substances is permissible; adding intoxicating drinks
+    // to food is haram; the fatwa recommends alternatives where possible to remove doubt.
+    private const val DIYANET_ALCOHOL_FATWA_URL =
+        "https://kurul.diyanet.gov.tr/Cevap-Ara/1373/uretim-asamalarinda-sentetik-alkol-kullaniminin-hukmu-nedir"
+    // Ethyl alcohol written by its name (not as a generic "alcohol" that could mean a drink).
+    // The Turkish suffix (etil alkolü, etanolün) is consumed too, so no stray "ü" is left behind.
+    private val ETHANOL_PHRASE = Regex("etil[ -]?alkol[a-zçğıöşü]*|ethyl[ -]?alcohol|ethylalkohol|ethanol|etanol[a-zçğıöşü]*|إيثانول")
     // Verdict-level suggestions and label lines, shown next to the (localized) flag cards.
     private val ALT_CERTIFIED_EQUIVALENTS = LocalizedText(
         en = "Halal Certified equivalents (IFANCA, GIMDES, HMC)",
@@ -323,19 +334,22 @@ object HalalAnalyzer {
             // "wine vinegar" trigger phrase) - see the wine-vinegar block in NEGATION_PHRASES
             // below for the fiqh rationale (istihala: the alcohol has fully converted to acetic
             // acid, so majority fiqh treats it as halal, not as wine).
-            keywords = listOf("alcohol", "ethanol", "ethyl alcohol", "ethylalkohol", "alkohol", "liqueur", "~likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake",
+            // Ethanol / ethyl alcohol are NOT listed here (2026-11): Diyanet (fetva 18.08.2017) permits
+            // ethanol used as a solvent for aromatic substances. They are handled by the Doubtful rule
+            // "Ethanol as Aroma Solvent" below, so they are only Doubtful, not Haram.
+            keywords = listOf("alcohol", "alkohol", "liqueur", "~likör", "rum", "rhum", "whiskey", "whisky", "vodka", "wine", "wein", "vin", "beer", "bier", "bière", "brandy", "cognac", "champagne", "amaretto", "cooking wine", "sherry", "mirin", "sake",
                 // Turkish (added 2026-10-07; before this a Turkish label saying "ALKOL"/"ŞARAP"
                 // came out Halal). Suffixes defeat the word-boundary check, so the inflected
                 // forms are listed - never prefix matching, or "bira" would hit "biraz".
                 // Deliberately no "rom"/"romlu": rum flavouring in cakes is a separate policy call.
-                "alkol", "alkollü", "alkolü", "etil alkol", "etanol",
+                "alkol", "alkollü", "alkolü",
                 "şarap", "şarabı", "şaraplı", "bira", "birası", "biralı",
                 // German wine compounds, listed in full: "wein" can't be a stem because of
                 // Weinsäure (tartaric acid), Weinstein (cream of tartar) and Weinessig.
                 "rotwein", "weißwein", "weisswein", "roséwein", "dessertwein", "glühwein", "portwein",
                 "schaumwein", "sekt", "weinbrand", "branntwein", "obstbrand",
                 // Arabic. "كحولي/كحولية" listed because suffixes defeat the end boundary.
-                "كحول", "كحولي", "كحولية", "إيثانول", "نبيذ", "خمر", "بيرة", "روم", "ويسكي", "فودكا",
+                "كحول", "كحولي", "كحولية", "نبيذ", "خمر", "بيرة", "روم", "ويسكي", "فودكا",
                 "براندي", "كونياك", "ليكيور"),
             id = "Alcohol / Liqueur / Wine Additive",
             name = LocalizedText(
@@ -423,6 +437,60 @@ object HalalAnalyzer {
     )
 
     internal val SUSPICIOUS_RULES = listOf(
+        // Diyanet permits ethanol as an aroma solvent (fatwa 18.08.2017), so it is Doubtful, not Haram.
+        SuspiciousRule(
+            keywords = listOf("etil alkol", "etil alkolü", "etil alkolu", "etil-alkol", "ethyl alcohol", "ethyl-alcohol", "ethylalkohol", "ethanol", "etanol", "etanolü", "إيثانول"),
+            id = ETHANOL_SOLVENT_RULE_ID,
+            name = LocalizedText(
+                en = "Ethanol as Aroma Solvent",
+                de = "Ethanol als Aroma-Lösungsmittel",
+                fr = "Éthanol comme solvant d'arôme",
+                tr = "Aroma çözücüsü olarak etil alkol",
+                ar = "إيثانول مذيباً للنكهات"
+            ),
+            reason = LocalizedText(
+                en = "Ethanol used as a solvent for flavours. Diyanet (fatwa 18.08.2017) allows it when it is not used as an intoxicant, but recommends alternatives to remove doubt. Source: $DIYANET_ALCOHOL_FATWA_URL",
+                de = "Ethanol als Lösungsmittel für Aromen. Das Diyanet (Fatwa 18.08.2017) erlaubt es, sofern es nicht als Rauschmittel dient, empfiehlt aber Alternativen, um Zweifel auszuräumen. Quelle: $DIYANET_ALCOHOL_FATWA_URL",
+                fr = "Éthanol utilisé comme solvant d'arômes. La Diyanet (fatwa du 18.08.2017) l'autorise s'il n'est pas utilisé comme enivrant, mais recommande des alternatives pour lever le doute. Source : $DIYANET_ALCOHOL_FATWA_URL",
+                tr = "Aromaların çözücüsü olarak kullanılan etil alkol. Diyanet (fetva 18.08.2017), sarhoş edici olarak kullanılmadığı sürece caiz görür; ancak şüpheyi gidermek için alternatif tercih edilmesini önerir. Kaynak: $DIYANET_ALCOHOL_FATWA_URL",
+                ar = "إيثانول مستخدم مذيباً للنكهات. تجيزه رئاسة الشؤون الدينية التركية (فتوى 18.08.2017) ما لم يُستعمل مسكراً، وتنصح بالبدائل لإزالة الشك. المصدر: $DIYANET_ALCOHOL_FATWA_URL"
+            ),
+            eCode = null,
+            origin = LocalizedText(
+                en = "Solvent (Ethanol)",
+                de = "Lösungsmittel (Ethanol)",
+                fr = "Solvant (éthanol)",
+                tr = "Çözücü (etil alkol)",
+                ar = "مذيب (إيثانول)"
+            )
+        ),
+        // Alcohol-based vanilla extract: the solvent is ethanol, which Diyanet permits, but doubt remains.
+        SuspiciousRule(
+            keywords = listOf("vanilleextrakt", "vanille-extrakt", "vanilla extract", "vanilla extrakt", "vanille extract", "extrait de vanille", "vanilya özü", "vanilya ekstresi", "vanilyaözü", "مستخلص الفانيليا", "خلاصة الفانيليا"),
+            id = VANILLA_EXTRACT_RULE_ID,
+            name = LocalizedText(
+                en = "Vanilla Extract (Alcohol-Based)",
+                de = "Vanilleextrakt (alkoholhaltig)",
+                fr = "Extrait de vanille (à base d'alcool)",
+                tr = "Vanilya özü (alkol bazlı)",
+                ar = "مستخلص الفانيليا (بقاعدة كحولية)"
+            ),
+            reason = LocalizedText(
+                en = "Usually made with ethanol as a solvent. Diyanet (fatwa 18.08.2017) allows ethanol used as an aroma solvent, but recommends alternatives to remove doubt. Source: $DIYANET_ALCOHOL_FATWA_URL",
+                de = "Meist mit Ethanol als Lösungsmittel hergestellt. Das Diyanet (Fatwa 18.08.2017) erlaubt Ethanol als Aroma-Lösungsmittel, empfiehlt aber Alternativen, um Zweifel auszuräumen. Quelle: $DIYANET_ALCOHOL_FATWA_URL",
+                fr = "Généralement fabriqué avec de l'éthanol comme solvant. La Diyanet (fatwa du 18.08.2017) autorise l'éthanol comme solvant d'arôme, mais recommande des alternatives pour lever le doute. Source : $DIYANET_ALCOHOL_FATWA_URL",
+                tr = "Genellikle çözücü olarak etil alkolle üretilir. Diyanet (fetva 18.08.2017), aroma çözücüsü olarak kullanılan etil alkolü caiz görür; ancak şüpheyi gidermek için alternatif tercih edilmesini önerir. Kaynak: $DIYANET_ALCOHOL_FATWA_URL",
+                ar = "يُصنع غالباً بالإيثانول مذيباً. تجيز رئاسة الشؤون الدينية التركية (فتوى 18.08.2017) الإيثانول مذيباً للنكهات، لكنها تنصح بالبدائل لإزالة الشك. المصدر: $DIYANET_ALCOHOL_FATWA_URL"
+            ),
+            eCode = null,
+            origin = LocalizedText(
+                en = "Alcohol-based flavouring",
+                de = "Alkoholhaltiger Aromaextrakt",
+                fr = "Extrait aromatique à base d'alcool",
+                tr = "Alkol bazlı aroma",
+                ar = "نكهة بقاعدة كحولية"
+            )
+        ),
         SuspiciousRule(
             keywords = listOf("e471", "mono- and diglycerides of fatty acids", "monoglycerides", "diglycerides", "mono- et diglycérides d'acides gras", "speisefettsäuren"),
             id = "E471 Mono- and Diglycerides",
@@ -879,8 +947,12 @@ object HalalAnalyzer {
         val haramRuleIds = mutableListOf<String>()
 
         // 1. Check for Haram rules (Strict)
+        // Ethanol named by its chemical name is judged by the Doubtful rule, not the Haram alcohol rule,
+        // so it is removed from the text the alcohol rule sees. Generic "alcohol" still matches.
+        val ingredientsWithoutEthanol = ingredientsLower.replace(ETHANOL_PHRASE, " ")
         for (rule in HARAM_RULES) {
-            val matchedInText = rule.keywords.any { kw -> containsKeyword(ingredientsLower, kw) }
+            val ruleText = if (rule.id == ALCOHOL_HARAM_RULE_ID) ingredientsWithoutEthanol else ingredientsLower
+            val matchedInText = rule.keywords.any { kw -> containsKeyword(ruleText, kw) }
             // containsKeyword (not tag.contains) so additive tag "e1200" doesn't false-match
             // keyword "e120" - a plain substring check treated E1200 (polydextrose) as E120 (carmine).
             val matchedInAdditives = rule.keywords.any { kw -> additiveTags.any { tag -> containsKeyword(tag, kw) } }

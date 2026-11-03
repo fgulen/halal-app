@@ -74,10 +74,10 @@ object DemoProducts {
             names = mapOf(EN to "Milk Chocolate", DE to "Vollmilchschokolade", FR to "Chocolat au lait", AR to "شوكولاتة بالحليب"),
             categories = mapOf(EN to "Chocolate", DE to "Schokolade", FR to "Chocolat", AR to "شوكولاتة"),
             ingredients = mapOf(
-                EN to "Sugar, cocoa butter, whole milk powder, cocoa mass, whey powder, emulsifier (soy lecithin), vanilla extract.",
-                DE to "Zucker, Kakaobutter, Vollmilchpulver, Kakaomasse, Süßmolkenpulver, Emulgator (Sojalecithin), Vanilleextrakt.",
-                FR to "Sucre, beurre de cacao, lait entier en poudre, pâte de cacao, lactosérum en poudre, émulsifiant (lécithine de soja), extrait de vanille.",
-                AR to "سكر، زبدة الكاكاو، حليب كامل الدسم مجفف، عجينة الكاكاو، مسحوق مصل اللبن، مستحلب (ليسيثين الصويا)، مستخلص الفانيليا."
+                EN to "Sugar, cocoa butter, whole milk powder, cocoa mass, whey powder, emulsifier (soy lecithin), vanillin.",
+                DE to "Zucker, Kakaobutter, Vollmilchpulver, Kakaomasse, Süßmolkenpulver, Emulgator (Sojalecithin), Vanillin.",
+                FR to "Sucre, beurre de cacao, lait entier en poudre, pâte de cacao, lactosérum en poudre, émulsifiant (lécithine de soja), vanilline.",
+                AR to "سكر، زبدة الكاكاو، حليب كامل الدسم مجفف، عجينة الكاكاو، مسحوق مصل اللبن، مستحلب (ليسيثين الصويا)، فانيلين."
             )
         ),
         DemoItem(
