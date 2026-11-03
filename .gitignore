@@ -28,3 +28,6 @@ RELEASE_KEYSTORE_INFO.txt
 /store_assets/video/renders/yt/
 /store_assets/video/promo-v2-*/
 /store_assets/screenshots_v2/out/pano_*
+
+# Verdict probe output (OFF data, ODbL; regenerate with tools/verdict_probe/run.ps1)
+tools/verdict_probe/out/
