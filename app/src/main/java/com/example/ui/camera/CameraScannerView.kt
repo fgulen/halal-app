@@ -1,5 +1,6 @@
 package com.example.ui.camera
 
+import com.example.ui.components.rememberReducedMotion
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import android.content.Context
@@ -348,16 +349,19 @@ fun CameraScannerView(
 
 @Composable
 fun ScannerReticleOverlay() {
-    val infiniteTransition = rememberInfiniteTransition(label = "laser_transition")
-    val laserProgress by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2200, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "laser_animation"
-    )
+    // With "Remove animations" on, the laser stays at the middle of the reticle instead of sweeping.
+    // The check is stable for the lifetime of this composable, so the conditional call is safe.
+    val laserProgress = if (rememberReducedMotion()) 0.5f else {
+        rememberInfiniteTransition(label = "laser_transition").animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(2200, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "laser_animation"
+        ).value
+    }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val width = maxWidth

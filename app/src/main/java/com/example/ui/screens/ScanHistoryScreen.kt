@@ -67,6 +67,7 @@ import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
+import com.example.ui.components.ClearHistoryDialog
 import com.example.ui.components.HalalStatusBadge
 import com.example.ui.components.SearchField
 import com.example.ui.components.SearchFieldClearButton
@@ -122,69 +123,13 @@ fun ScanHistoryScreen(
     }
 
     if (showClearDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearDialog = false },
-            title = {
-                Text(
-                    text = AppStrings.getClearHistory(language),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = AppTextSize.Title,
-                    color = NaturalTextDark
-                )
+        ClearHistoryDialog(
+            language = language,
+            onConfirm = {
+                onClearHistory()
+                showClearDialog = false
             },
-            text = {
-                Text(
-                    text = when (language) {
-                        AppLanguage.EN -> "Are you sure you want to clear your local scan history? This action cannot be undone."
-                        AppLanguage.DE -> "Möchten Sie Ihren gesamten Scan-Verlauf wirklich löschen?"
-                        AppLanguage.FR -> "Êtes-vous sûr de vouloir effacer l'historique des scans?"
-                        AppLanguage.TR -> "Tüm tarama geçmişinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
-                        AppLanguage.AR -> "هل أنت متأكد من رغبتك في مسح سجل الفحوصات كاملاً؟"
-                    },
-                    fontSize = AppTextSize.Body,
-                    color = NaturalTextMuted,
-                    lineHeight = 20.sp
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        onClearHistory()
-                        showClearDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = HaramRed),
-                    shape = CircleShape
-                ) {
-                    Text(
-                        text = when (language) {
-                            AppLanguage.EN -> "Yes, Clear"
-                            AppLanguage.DE -> "Ja, Löschen"
-                            AppLanguage.FR -> "Oui, Effacer"
-                            AppLanguage.TR -> "Evet, Temizle"
-                            AppLanguage.AR -> "نعم، احذف"
-                        },
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showClearDialog = false }) {
-                    Text(
-                        text = when (language) {
-                            AppLanguage.EN -> "Cancel"
-                            AppLanguage.DE -> "Abbrechen"
-                            AppLanguage.FR -> "Annuler"
-                            AppLanguage.TR -> "İptal"
-                            AppLanguage.AR -> "إلغاء"
-                        },
-                        color = NaturalTextMuted,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            },
-            containerColor = NaturalWarmSurface,
-            shape = RoundedCornerShape(AppRadius.Large),
-            modifier = Modifier.border(1.dp, PopupBorder, RoundedCornerShape(AppRadius.Large))
+            onDismiss = { showClearDialog = false }
         )
     }
 

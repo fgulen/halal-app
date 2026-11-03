@@ -19,7 +19,9 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
@@ -106,7 +108,9 @@ import com.example.data.model.HalalStatus
 import com.example.data.model.Madhhab
 import com.example.ui.camera.CameraScannerView
 import com.example.ui.camera.rememberPhotoIngredientsCaptureLauncher
+import com.example.ui.components.ClearHistoryDialog
 import com.example.ui.components.EAdditiveSheet
+import com.example.ui.components.pressScale
 import com.example.ui.components.HalalStatusBadge
 import com.example.ui.components.LanguageSelectionDialog
 import com.example.ui.components.MadhhabSelectionDialog
@@ -952,9 +956,11 @@ fun NaturalHeroScanButton(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
+            val scanInteraction = remember { MutableInteractionSource() }
             Box(
                 modifier = Modifier
                     .size(210.dp)
+                    .pressScale(scanInteraction)
                     .shadow(
                         elevation = 24.dp,
                         shape = CircleShape,
@@ -963,7 +969,7 @@ fun NaturalHeroScanButton(
                     )
                     .background(EmeraldPrimary, CircleShape)
                     .clip(CircleShape)
-                    .clickable(onClick = onScanClick)
+                    .clickable(interactionSource = scanInteraction, indication = LocalIndication.current, onClick = onScanClick)
                     .testTag("giant_scan_barcode_button"),
                 contentAlignment = Alignment.Center
             ) {
@@ -1085,6 +1091,18 @@ fun NaturalHistoryHeader(
     onSelectFilter: (HalalStatus?) -> Unit,
     onClearHistory: () -> Unit
 ) {
+    var showClearDialog by remember { mutableStateOf(false) }
+    if (showClearDialog) {
+        ClearHistoryDialog(
+            language = language,
+            onConfirm = {
+                onClearHistory()
+                showClearDialog = false
+            },
+            onDismiss = { showClearDialog = false }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1105,10 +1123,8 @@ fun NaturalHistoryHeader(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (historyCount > 0) {
-                    IconButton(
-                        onClick = onClearHistory,
-                        modifier = Modifier.size(28.dp)
-                    ) {
+                    // No size override: the default IconButton keeps a 48dp touch target around the 18dp icon.
+                    IconButton(onClick = { showClearDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.DeleteSweep,
                             contentDescription = AppStrings.getClearHistory(language),
