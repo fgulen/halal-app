@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -145,9 +146,11 @@ private fun NutriScoreGaugeContent(segment: Int) {
     // wrong E grade while it moved.
     val needle = (segment + 0.5f) / 5f
 
+    // The grade text below the gauge carries the meaning for TalkBack; the drawing itself is decorative.
     Canvas(modifier = Modifier
         .fillMaxWidth()
         .height(100.dp)
+        .clearAndSetSemantics { }
     ) {
         val strokePx = 16.dp.toPx()
         // Half-circle that fits the box: the arc's top sits at center.y - radius.
@@ -186,7 +189,8 @@ private fun NutriScoreGaugeContent(segment: Int) {
     }
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = "E", fontSize = AppTextSize.Label, fontWeight = FontWeight.Bold, color = NUTRI_SEGMENT_COLORS.first())
-        Text(text = "A", fontSize = AppTextSize.Label, fontWeight = FontWeight.Bold, color = NUTRI_SEGMENT_COLORS.last())
+        // Text stays in ink colours; the colour lives on the arc only (A green is ~3.3:1 on white).
+        Text(text = "E", fontSize = AppTextSize.Label, fontWeight = FontWeight.Bold, color = NaturalTextDark)
+        Text(text = "A", fontSize = AppTextSize.Label, fontWeight = FontWeight.Bold, color = NaturalTextDark)
     }
 }

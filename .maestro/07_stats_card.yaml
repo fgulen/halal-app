@@ -1,0 +1,9 @@
+appId: com.fatihgulen.helalrehberi
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertVisible: "Total Scans|Scans gesamt|Total des scans|Toplam Tarama"
+- assertVisible: "Haram / Doubtful|Haram / Zweifelhaft|Haram / Douteux|Haram veya şüpheli"
+- takeScreenshot: 07_stats_card
