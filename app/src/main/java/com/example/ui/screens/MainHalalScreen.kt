@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import android.Manifest
@@ -329,7 +330,7 @@ fun MainHalalScreen(
                                             AppLanguage.AR -> "بحث"
                                             AppLanguage.EN -> "Find"
                                         },
-                                        fontSize = 12.sp,
+                                        fontSize = AppTextSize.Label,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White
                                     )
@@ -386,7 +387,7 @@ fun MainHalalScreen(
                                                 AppLanguage.AR -> "بحث عالمي مباشر عن \"${homeSearchQuery.trim()}\""
                                                 AppLanguage.EN -> "Live Global Search for \"${homeSearchQuery.trim()}\""
                                             },
-                                            fontSize = 12.sp,
+                                            fontSize = AppTextSize.Label,
                                             fontWeight = FontWeight.Bold,
                                             color = EmeraldPrimary
                                         )
@@ -429,21 +430,21 @@ fun MainHalalScreen(
                                                 Column(modifier = Modifier.weight(1f)) {
                                                     Text(
                                                         text = match.name,
-                                                        fontSize = 13.sp,
+                                                        fontSize = AppTextSize.Small,
                                                         fontWeight = FontWeight.Bold,
                                                         color = NaturalTextDark,
                                                         maxLines = 1
                                                     )
                                                     Text(
                                                         text = "${match.brand} • ${match.barcode}",
-                                                        fontSize = 11.sp,
+                                                        fontSize = AppTextSize.Caption,
                                                         color = NaturalTextMuted
                                                     )
                                                 }
                                                 HalalStatusBadge(
                                                     status = match.status,
                                                     language = language,
-                                                    fontSize = 11.sp,
+                                                    fontSize = AppTextSize.Caption,
                                                     paddingHorizontal = 6.dp,
                                                     paddingVertical = 2.dp
                                                 )
@@ -644,7 +645,7 @@ fun MainHalalScreen(
                                 },
                                 fontWeight = FontWeight.Bold,
                                 color = NaturalTextDark,
-                                fontSize = 15.sp
+                                fontSize = AppTextSize.Subtitle
                             )
                             Text(
                                 text = when (language) {
@@ -655,7 +656,7 @@ fun MainHalalScreen(
                                     AppLanguage.EN -> "Verifying Halal compliance"
                                 },
                                 color = NaturalTextMuted,
-                                fontSize = 12.sp
+                                fontSize = AppTextSize.Label
                             )
                         }
                     }
@@ -673,7 +674,7 @@ fun MainHalalScreen(
                                 AppLanguage.AR -> "إلغاء"
                                 AppLanguage.EN -> "Cancel"
                             },
-                            fontSize = 13.sp,
+                            fontSize = AppTextSize.Small,
                             color = NaturalTextMuted
                         )
                     }
@@ -722,14 +723,14 @@ fun ScanErrorDialog(
                     Text(
                         text = if (isNetworkError) AppStrings.getNetworkErrorTitle(language) else AppStrings.getUnknownError(language),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
+                        fontSize = AppTextSize.BodyLarge,
                         color = NaturalTextDark
                     )
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = message,
-                    fontSize = 13.sp,
+                    fontSize = AppTextSize.Small,
                     color = NaturalTextMuted,
                     lineHeight = 18.sp
                 )
@@ -748,7 +749,7 @@ fun ScanErrorDialog(
                                 AppLanguage.AR -> "إغلاق"
                                 AppLanguage.EN -> "Close"
                             },
-                            fontSize = 13.sp,
+                            fontSize = AppTextSize.Small,
                             color = NaturalTextMuted
                         )
                     }
@@ -762,7 +763,7 @@ fun ScanErrorDialog(
                             Text(
                                 text = AppStrings.getRetryLabel(language),
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
+                                fontSize = AppTextSize.Small
                             )
                         }
                     }
@@ -800,7 +801,7 @@ fun NaturalAppHeader(
             Text(
                 text = AppStrings.getAppName(language),
                 color = NaturalTextDark,
-                fontSize = 24.sp,
+                fontSize = AppTextSize.Display,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = (-0.5).sp
             )
@@ -869,12 +870,12 @@ fun NaturalAppHeader(
                 ) {
                     Text(
                         text = language.flag,
-                        fontSize = 16.sp
+                        fontSize = AppTextSize.BodyLarge
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = language.code.uppercase(),
-                        fontSize = 12.sp,
+                        fontSize = AppTextSize.Label,
                         fontWeight = FontWeight.ExtraBold,
                         color = EmeraldPrimaryDeep
                     )
@@ -892,7 +893,7 @@ fun NaturalAppHeader(
                 Text(
                     text = AppStrings.getMadhhabChipLabel(madhhab, language),
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
-                    fontSize = 12.sp,
+                    fontSize = AppTextSize.Label,
                     fontWeight = FontWeight.ExtraBold,
                     color = EmeraldPrimaryDeep,
                     maxLines = 1
@@ -920,7 +921,7 @@ fun NaturalAppHeader(
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = AppStrings.getRateAppShort(language),
-                        fontSize = 12.sp,
+                        fontSize = AppTextSize.Label,
                         fontWeight = FontWeight.ExtraBold,
                         color = EmeraldPrimaryDeep,
                         maxLines = 1
@@ -978,7 +979,7 @@ fun NaturalHeroScanButton(
                     Text(
                         text = AppStrings.getScanBarcode(language),
                         color = Color.White,
-                        fontSize = 18.sp,
+                        fontSize = AppTextSize.Title,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp
                     )
@@ -1053,14 +1054,14 @@ fun NaturalStatItem(
         ) {
             Text(
                 text = count,
-                fontSize = 20.sp,
+                fontSize = AppTextSize.Headline,
                 fontWeight = FontWeight.Black,
                 color = color
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = label,
-                fontSize = 11.sp,
+                fontSize = AppTextSize.Caption,
                 fontWeight = FontWeight.SemiBold,
                 color = NaturalTextMuted,
                 textAlign = TextAlign.Center,
@@ -1090,7 +1091,7 @@ fun NaturalHistoryHeader(
         ) {
             Text(
                 text = AppStrings.getRecentScans(language),
-                fontSize = 12.sp,
+                fontSize = AppTextSize.Label,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp,
                 color = NaturalTextMuted
@@ -1128,7 +1129,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == null,
                 onClick = { onSelectFilter(null) },
-                label = { Text("${AppStrings.getAll(language)} ($historyCount)", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                label = { Text("${AppStrings.getAll(language)} ($historyCount)", fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = EmeraldPrimary,
@@ -1146,7 +1147,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.HARAM,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HARAM) null else HalalStatus.HARAM) },
-                label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = HaramRed,
@@ -1158,7 +1159,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.SUPHELI,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.SUPHELI) null else HalalStatus.SUPHELI) },
-                label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = SuspiciousAmber,
@@ -1170,7 +1171,7 @@ fun NaturalHistoryHeader(
             FilterChip(
                 selected = selectedFilter == HalalStatus.HELAL,
                 onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HELAL) null else HalalStatus.HELAL) },
-                label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = HalalGreenDark,
@@ -1288,7 +1289,7 @@ fun NaturalHistoryItemCard(
                 ) {
                     Text(
                         text = product.name,
-                        fontSize = 15.sp,
+                        fontSize = AppTextSize.Subtitle,
                         fontWeight = FontWeight.Bold,
                         color = titleColor,
                         maxLines = 1,
@@ -1299,7 +1300,7 @@ fun NaturalHistoryItemCard(
                     HalalStatusBadge(
                         status = product.status,
                         language = language,
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         paddingHorizontal = 8.dp,
                         paddingVertical = 2.dp
                     )
@@ -1315,7 +1316,7 @@ fun NaturalHistoryItemCard(
                             } else {
                                 product.reasonOrDetails.ifBlank { AppStrings.getContainsNonHalalDerivatives(language) }
                             },
-                            fontSize = 12.sp,
+                            fontSize = AppTextSize.Label,
                             color = bodyTextColor,
                             lineHeight = 16.sp,
                             maxLines = 2,
@@ -1329,7 +1330,7 @@ fun NaturalHistoryItemCard(
                             } else {
                                 product.reasonOrDetails.ifBlank { AppStrings.getContainsUnverifiedAdditives(language) }
                             },
-                            fontSize = 12.sp,
+                            fontSize = AppTextSize.Label,
                             color = bodyTextColor,
                             lineHeight = 16.sp,
                             maxLines = 2,
@@ -1340,7 +1341,7 @@ fun NaturalHistoryItemCard(
                         Text(
                             text = product.halalCertificate?.let { "${AppStrings.getCertificationLabel(language)}: $it" }
                                 ?: product.reasonOrDetails.ifBlank { AppStrings.getNoProhibitedAdditives(language) },
-                            fontSize = 12.sp,
+                            fontSize = AppTextSize.Label,
                             color = bodyTextColor,
                             lineHeight = 16.sp,
                             maxLines = 2,
@@ -1350,7 +1351,7 @@ fun NaturalHistoryItemCard(
                     HalalStatus.BULUNAMADI -> {
                         Text(
                             text = AppStrings.getBarcodeNotFoundInOff(language),
-                            fontSize = 12.sp,
+                            fontSize = AppTextSize.Label,
                             color = bodyTextColor,
                             lineHeight = 16.sp
                         )
@@ -1401,7 +1402,7 @@ fun NaturalEmptyHistoryCard(
                     AppLanguage.AR -> "لا توجد عمليات مسح حتى الآن"
                 },
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                fontSize = AppTextSize.Subtitle,
                 color = NaturalTextDark
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -1413,7 +1414,7 @@ fun NaturalEmptyHistoryCard(
                     AppLanguage.TR -> "Kamerayı açarak bir barkod okutun veya yukarıdaki hızlı test ürünlerini deneyin."
                     AppLanguage.AR -> "اضغط على زر المسح أعلاه أو جرب أحد الرموز السريعة."
                 },
-                fontSize = 12.sp,
+                fontSize = AppTextSize.Label,
                 color = NaturalTextMuted,
                 textAlign = TextAlign.Center,
                 lineHeight = 18.sp
@@ -1427,7 +1428,7 @@ fun NaturalEmptyHistoryCard(
                 Text(
                     text = AppStrings.getScanBarcode(language),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp
+                    fontSize = AppTextSize.Small
                 )
             }
         }
@@ -1465,7 +1466,7 @@ fun NaturalBottomNavigation(
                 label = {
                     Text(
                         text = label,
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                         maxLines = 1
                     )

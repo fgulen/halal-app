@@ -1,5 +1,6 @@
 package com.example.ui.camera
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import android.content.Context
 import android.os.Build
@@ -182,14 +183,14 @@ fun CameraScannerView(
                 Text(
                     text = AppStrings.getCameraPermissionError(language),
                     color = Color.White,
-                    fontSize = 16.sp,
+                    fontSize = AppTextSize.BodyLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = AppStrings.getCameraPermissionErrorDetail(language),
                     color = Color.White.copy(alpha = 0.75f),
-                    fontSize = 13.sp,
+                    fontSize = AppTextSize.Small,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 32.dp)
                 )
@@ -245,7 +246,7 @@ fun CameraScannerView(
                     Text(
                         text = AppStrings.getBarcodeScannerTitle(language),
                         color = Color.White,
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -301,7 +302,7 @@ fun CameraScannerView(
                     Text(
                         text = AppStrings.getAlignBarcode(language),
                         color = Color.White,
-                        fontSize = 13.sp,
+                        fontSize = AppTextSize.Small,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center
                     )
@@ -309,7 +310,7 @@ fun CameraScannerView(
                     Text(
                         text = AppStrings.getAutoScanHint(language),
                         color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -338,7 +339,7 @@ fun CameraScannerView(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(AppStrings.getEnterManually(language), fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                    Text(AppStrings.getEnterManually(language), fontSize = AppTextSize.Small, fontWeight = FontWeight.SemiBold)
                 }
             }
         }

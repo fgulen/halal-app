@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.foundation.background
@@ -82,7 +83,7 @@ fun LanguageSelectionDialog(
                     Text(
                         text = AppStrings.getLanguageSelection(currentLanguage),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontSize = AppTextSize.Title,
                         color = NaturalTextDark
                     )
                 }
@@ -124,13 +125,13 @@ fun LanguageSelectionDialog(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = lang.flag,
-                                    fontSize = 24.sp
+                                    fontSize = AppTextSize.Display
                                 )
                                 Spacer(modifier = Modifier.width(14.dp))
                                 Column {
                                     Text(
                                         text = lang.displayName,
-                                        fontSize = 15.sp,
+                                        fontSize = AppTextSize.Subtitle,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                         color = if (isSelected) EmeraldPrimaryDeep else NaturalTextDark
                                     )
@@ -142,7 +143,7 @@ fun LanguageSelectionDialog(
                                             AppLanguage.TR -> "Türkiye & Avrupa Türkleri"
                                             AppLanguage.AR -> "العالم العربي / الشرق الأوسط"
                                         },
-                                        fontSize = 11.sp,
+                                        fontSize = AppTextSize.Caption,
                                         color = NaturalTextMuted
                                     )
                                 }

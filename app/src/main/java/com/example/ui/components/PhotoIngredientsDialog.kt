@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.material3.BottomSheetDefaults
@@ -127,7 +128,7 @@ fun PhotoIngredientsDialog(
             ) {
                 Text(
                     text = AppStrings.getPhotoAnalysisDialogTitle(language),
-                    fontSize = 20.sp,
+                    fontSize = AppTextSize.Headline,
                     fontWeight = FontWeight.ExtraBold,
                     color = NaturalTextDark
                 )
@@ -144,7 +145,7 @@ fun PhotoIngredientsDialog(
 
             Text(
                 text = AppStrings.getPhotoAnalysisDialogSubtitle(language),
-                fontSize = 13.sp,
+                fontSize = AppTextSize.Small,
                 color = NaturalTextMuted
             )
 
@@ -168,7 +169,7 @@ fun PhotoIngredientsDialog(
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = AppStrings.getPhotoAnalysisEmptyOcrWarning(language),
-                            fontSize = 12.sp,
+                            fontSize = AppTextSize.Label,
                             color = SuspiciousAmberDark,
                             modifier = Modifier.weight(1f)
                         )
@@ -199,7 +200,7 @@ fun PhotoIngredientsDialog(
                     .fillMaxWidth()
                     .height(160.dp)
                     .testTag("photo_analysis_ingredients_field"),
-                textStyle = TextStyle(color = NaturalTextDark, fontSize = 14.sp),
+                textStyle = TextStyle(color = NaturalTextDark, fontSize = AppTextSize.Body),
                 label = { Text(AppStrings.getPhotoAnalysisIngredientsHint(language)) },
                 shape = RoundedCornerShape(AppRadius.Medium),
                 colors = photoDialogFieldColors()
@@ -209,7 +210,7 @@ fun PhotoIngredientsDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = AppStrings.getPhotoAnalysisIngredientsPreviewLabel(language),
-                    fontSize = 11.sp,
+                    fontSize = AppTextSize.Caption,
                     fontWeight = FontWeight.Bold,
                     color = NaturalTextMuted
                 )
@@ -235,7 +236,7 @@ fun PhotoIngredientsDialog(
                             Text(
                                 text = token,
                                 color = chipText,
-                                fontSize = 11.sp,
+                                fontSize = AppTextSize.Caption,
                                 fontWeight = FontWeight.Medium,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                             )
@@ -264,7 +265,7 @@ fun PhotoIngredientsDialog(
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = AppStrings.getPhotoAnalysisNutritionTableWarning(language),
-                            fontSize = 12.sp,
+                            fontSize = AppTextSize.Label,
                             color = SuspiciousAmberDark,
                             modifier = Modifier.weight(1f)
                         )

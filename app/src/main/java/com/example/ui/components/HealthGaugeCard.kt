@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -72,7 +73,7 @@ fun HealthGaugeCard(product: FoodProduct, language: AppLanguage, modifier: Modif
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = AppStrings.getHealthGaugeTitle(language),
-                fontSize = 14.sp,
+                fontSize = AppTextSize.Body,
                 fontWeight = FontWeight.Bold,
                 color = NaturalTextDark
             )
@@ -84,7 +85,7 @@ fun HealthGaugeCard(product: FoodProduct, language: AppLanguage, modifier: Modif
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = AppStrings.getNutriScorePlain(language, grade),
-                    fontSize = 15.sp,
+                    fontSize = AppTextSize.Subtitle,
                     fontWeight = FontWeight.Bold,
                     // Dark text: the light yellow/lime segment colours are too faint on white.
                     color = NaturalTextDark,
@@ -92,13 +93,13 @@ fun HealthGaugeCard(product: FoodProduct, language: AppLanguage, modifier: Modif
                 )
                 Text(
                     text = "Nutri-Score $grade",
-                    fontSize = 11.sp,
+                    fontSize = AppTextSize.Caption,
                     color = NaturalTextLight
                 )
             } else {
                 Text(
                     text = AppStrings.getHealthGaugeNoData(language),
-                    fontSize = 13.sp,
+                    fontSize = AppTextSize.Small,
                     color = NaturalTextMuted
                 )
             }
@@ -107,13 +108,13 @@ fun HealthGaugeCard(product: FoodProduct, language: AppLanguage, modifier: Modif
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = AppStrings.getNovaPlain(language, nova),
-                    fontSize = 14.sp,
+                    fontSize = AppTextSize.Body,
                     color = NaturalTextDark,
                     modifier = Modifier.testTag("health_gauge_nova")
                 )
                 Text(
                     text = "NOVA $nova",
-                    fontSize = 11.sp,
+                    fontSize = AppTextSize.Caption,
                     color = NaturalTextLight
                 )
             }
@@ -121,7 +122,7 @@ fun HealthGaugeCard(product: FoodProduct, language: AppLanguage, modifier: Modif
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = AppStrings.getHealthGaugeNote(language),
-                fontSize = 11.sp,
+                fontSize = AppTextSize.Caption,
                 color = NaturalTextLight
             )
         }
@@ -185,7 +186,7 @@ private fun NutriScoreGaugeContent(segment: Int) {
     }
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = "E", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = NUTRI_SEGMENT_COLORS.first())
-        Text(text = "A", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = NUTRI_SEGMENT_COLORS.last())
+        Text(text = "E", fontSize = AppTextSize.Label, fontWeight = FontWeight.Bold, color = NUTRI_SEGMENT_COLORS.first())
+        Text(text = "A", fontSize = AppTextSize.Label, fontWeight = FontWeight.Bold, color = NUTRI_SEGMENT_COLORS.last())
     }
 }

@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.material3.BottomSheetDefaults
@@ -190,7 +191,7 @@ fun ProductResultBottomSheet(
                 Text(
                     text = product.brand.uppercase(),
                     color = NaturalTextMuted,
-                    fontSize = 11.sp,
+                    fontSize = AppTextSize.Caption,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.5.sp
                 )
@@ -198,7 +199,7 @@ fun ProductResultBottomSheet(
                 Text(
                     text = product.name,
                     color = NaturalTextDark,
-                    fontSize = 22.sp,
+                    fontSize = AppTextSize.Headline,
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier.testTag("result_product_name")
                 )
@@ -216,7 +217,7 @@ fun ProductResultBottomSheet(
                     ) {
                         Text(
                             text = "${AppStrings.getShareBarcodeLabel(language)}: ${product.barcode}",
-                            fontSize = 11.sp,
+                            fontSize = AppTextSize.Caption,
                             fontWeight = FontWeight.SemiBold,
                             color = NaturalTextMuted,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
@@ -230,7 +231,7 @@ fun ProductResultBottomSheet(
                     ) {
                         Text(
                             text = product.category,
-                            fontSize = 11.sp,
+                            fontSize = AppTextSize.Caption,
                             fontWeight = FontWeight.SemiBold,
                             color = NaturalTextMuted,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
@@ -296,7 +297,7 @@ fun ProductResultBottomSheet(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = AppStrings.getScanAgain(language),
-                            fontSize = 14.sp,
+                            fontSize = AppTextSize.Body,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -445,7 +446,7 @@ fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
                 Text(
                     text = title,
                     color = Color.White,
-                    fontSize = 16.sp,
+                    fontSize = AppTextSize.BodyLarge,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 0.6.sp,
                     textAlign = TextAlign.Center
@@ -456,7 +457,7 @@ fun StatusHeaderCard(product: FoodProduct, language: AppLanguage) {
                 Text(
                     text = subtitle,
                     color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 11.sp,
+                    fontSize = AppTextSize.Caption,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 12.dp)
@@ -477,7 +478,7 @@ fun ShortDisclaimerLine(language: AppLanguage) {
             AppLanguage.AR -> "هذه ليست فتوى - تعتمد النتائج على بيانات Open Food Facts."
         },
         color = NaturalTextMuted,
-        fontSize = 11.sp,
+        fontSize = AppTextSize.Caption,
         fontWeight = FontWeight.Medium,
         textAlign = TextAlign.Center,
         modifier = Modifier
@@ -519,13 +520,13 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
                                 AppLanguage.AR -> "توثيق الحلال والنباتي"
                             },
                             color = HalalGreenDark,
-                            fontSize = 14.sp,
+                            fontSize = AppTextSize.Body,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = cert,
                             color = HalalGreenDark.copy(alpha = 0.85f),
-                            fontSize = 12.sp
+                            fontSize = AppTextSize.Label
                         )
                     }
                 }
@@ -544,13 +545,13 @@ fun HelalSuccessSection(product: FoodProduct, language: AppLanguage) {
                     Text(
                         text = AppStrings.getAnalysisReport(language),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         color = NaturalTextDark
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = linkifyUrls(product.reasonOrDetails),
-                        fontSize = 13.sp,
+                        fontSize = AppTextSize.Small,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
                     )
@@ -588,7 +589,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                     Text(
                         text = AppStrings.getProhibitedIngredientsHeader(language),
                         color = HaramRedDark,
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
@@ -623,7 +624,7 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                                 Text(
                                     text = itemText,
                                     color = HaramRedDark,
-                                    fontSize = 13.sp,
+                                    fontSize = AppTextSize.Small,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -645,13 +646,13 @@ fun HaramWarningSection(product: FoodProduct, language: AppLanguage) {
                     Text(
                         text = AppStrings.getAnalysisReport(language),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         color = NaturalTextDark
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = linkifyUrls(product.reasonOrDetails),
-                        fontSize = 13.sp,
+                        fontSize = AppTextSize.Small,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
                     )
@@ -689,7 +690,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
                     Text(
                         text = AppStrings.getSuspiciousIngredientsHeader(language),
                         color = SuspiciousAmberDark,
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
@@ -723,7 +724,7 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
                                 Text(
                                     text = itemText,
                                     color = SuspiciousAmberDark,
-                                    fontSize = 13.sp,
+                                    fontSize = AppTextSize.Small,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -745,13 +746,13 @@ fun SuspiciousWarningSection(product: FoodProduct, language: AppLanguage) {
                     Text(
                         text = AppStrings.getAnalysisReport(language),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         color = NaturalTextDark
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = linkifyUrls(product.reasonOrDetails),
-                        fontSize = 13.sp,
+                        fontSize = AppTextSize.Small,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
                     )
@@ -796,14 +797,14 @@ fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean, lan
                     Text(
                         text = flagged.name,
                         color = titleColor,
-                        fontSize = 13.sp,
+                        fontSize = AppTextSize.Small,
                         fontWeight = FontWeight.ExtraBold
                     )
                     flagged.origin?.let { origin ->
                         Text(
                             text = origin,
                             color = NaturalTextMuted,
-                            fontSize = 11.sp,
+                            fontSize = AppTextSize.Caption,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
@@ -818,7 +819,7 @@ fun FlaggedProblematicItemCard(flagged: FlaggedIngredient, isHaram: Boolean, lan
             Text(
                 text = "${AppStrings.getReasonLabel(language)}: " + flagged.reason,
                 color = NaturalTextDark.copy(alpha = 0.85f),
-                fontSize = 12.sp,
+                fontSize = AppTextSize.Label,
                 lineHeight = 16.sp,
                 modifier = Modifier.padding(start = 16.dp)
             )
@@ -849,7 +850,7 @@ fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage, mad
                 Text(
                     text = AppStrings.getIngredientsTitle(language),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = AppTextSize.Body,
                     color = NaturalTextDark
                 )
             }
@@ -875,7 +876,7 @@ fun IngredientsListCard(allIngredients: List<String>, language: AppLanguage, mad
                         Text(
                             text = ingredient,
                             color = chipText,
-                            fontSize = 11.sp,
+                            fontSize = AppTextSize.Caption,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                         )
@@ -916,7 +917,7 @@ fun LegalDisclaimerCard(language: AppLanguage) {
                         AppLanguage.TR -> "Önemli Fıkhi & Yasal Bilgilendirme"
                         AppLanguage.AR -> "تنويه وإخلاء مسؤولية مهم"
                     },
-                    fontSize = 12.sp,
+                    fontSize = AppTextSize.Label,
                     fontWeight = FontWeight.Bold,
                     color = EmeraldPrimaryDeep
                 )
@@ -929,7 +930,7 @@ fun LegalDisclaimerCard(language: AppLanguage) {
                         AppLanguage.TR -> "Bu uygulama kesin dini hüküm/fetva vermez. Sonuçlar ürün içeriği ve helal gıda kriterlerine göre açıklanır. Kaynağı belirsiz katkılar (E471 vb.) doğrudan haram sayılmayıp şüpheli olarak sınıflandırılır."
                         AppLanguage.AR -> "هذا التطبيق لا يقدم فتاوى دينية قطعية. تعتمد النتائج على مكونات المنتج والمعايير العامة. المضافات غير محددة المصدر تصنف كمشبوهة وليست محرمة مباشرة."
                     },
-                    fontSize = 11.sp,
+                    fontSize = AppTextSize.Caption,
                     color = NaturalTextMuted,
                     lineHeight = 15.sp
                 )
@@ -942,7 +943,7 @@ fun LegalDisclaimerCard(language: AppLanguage) {
                         AppLanguage.TR -> "Nasıl Çalışıyor? →"
                         AppLanguage.AR -> "كيف يعمل هذا؟ ←"
                     },
-                    fontSize = 11.sp,
+                    fontSize = AppTextSize.Caption,
                     fontWeight = FontWeight.Bold,
                     color = EmeraldPrimaryDeep,
                     modifier = Modifier
@@ -977,13 +978,13 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto:
                     Text(
                         text = AppStrings.getAnalysisReport(language),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         color = NaturalTextDark
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = linkifyUrls(product.reasonOrDetails),
-                        fontSize = 13.sp,
+                        fontSize = AppTextSize.Small,
                         color = NaturalTextMuted,
                         lineHeight = 18.sp
                     )
@@ -1007,7 +1008,7 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto:
                         AppLanguage.AR -> "كيف تفحص ملصق المكونات؟"
                     },
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = AppTextSize.Body,
                     color = NaturalTextDark
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -1019,7 +1020,7 @@ fun NotFoundSection(product: FoodProduct, language: AppLanguage, onAnalyzePhoto:
                         AppLanguage.TR -> "1. Ambalajın arkasındaki 'İçindekiler' bölümünü inceleyin.\n2. E471, E441 (Jelatin), E120 (Karmin) veya L-Sistein olup olmadığına bakın.\n3. Helal, Vegan veya Koşer logolarını arayın.\n4. E-Kodları rehberimizden şüpheli maddeleri kontrol edin."
                         AppLanguage.AR -> "1. راجع قائمة المكونات على الغلاف.\n2. ابحث عن E441 (جيلاتين)، E120 (كارمين) أو E471.\n3. ابحث عن شعار حلال أو نباتي.\n4. استخدم دليل أكواد E في التطبيق."
                     },
-                    fontSize = 13.sp,
+                    fontSize = AppTextSize.Small,
                     color = NaturalTextMuted,
                     lineHeight = 20.sp
                 )
@@ -1124,7 +1125,7 @@ fun ProductShowcaseImageCard(
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = productName,
-                                fontSize = 12.sp,
+                                fontSize = AppTextSize.Label,
                                 color = NaturalTextDark,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1
@@ -1132,7 +1133,7 @@ fun ProductShowcaseImageCard(
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = "${AppStrings.getImageLoadError(language)}: ${errorState.result.throwable.message ?: AppStrings.getUnknownError(language)}",
-                                fontSize = 11.sp,
+                                fontSize = AppTextSize.Caption,
                                 color = NaturalTextMuted,
                                 maxLines = 2,
                                 textAlign = TextAlign.Center
@@ -1172,7 +1173,7 @@ fun ProductShowcaseImageCard(
                             AppLanguage.TR -> "Open Food Facts Ürün Görseli"
                             AppLanguage.AR -> "صورة المنتج من Open Food Facts"
                         },
-                        fontSize = 12.sp,
+                        fontSize = AppTextSize.Label,
                         color = NaturalTextMuted,
                         fontWeight = FontWeight.Medium
                     )
@@ -1200,7 +1201,7 @@ fun ProductShowcaseImageCard(
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = "Open Food Facts (DE/EU/US)",
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         fontWeight = FontWeight.Bold,
                         color = NaturalTextDark
                     )

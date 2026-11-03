@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -114,7 +115,7 @@ fun EAdditiveSheet(
                 Column {
                     Text(
                         text = AppStrings.getEAdditivesTitle(language),
-                        fontSize = 20.sp,
+                        fontSize = AppTextSize.Headline,
                         fontWeight = FontWeight.ExtraBold,
                         color = NaturalTextDark
                     )
@@ -126,7 +127,7 @@ fun EAdditiveSheet(
                             AppLanguage.TR -> "Katkı maddesi veri tabanı ve helallik rehberi"
                             AppLanguage.AR -> "دليل شامل لأرقام E والمضافات الغذائية"
                         },
-                        fontSize = 12.sp,
+                        fontSize = AppTextSize.Label,
                         color = NaturalTextMuted
                     )
                 }
@@ -178,7 +179,7 @@ fun EAdditiveSheet(
                 FilterChip(
                     selected = selectedFilter == null,
                     onClick = { selectedFilter = null },
-                    label = { Text("${AppStrings.getAll(language)} (${InitialData.eAdditivesDirectory.size})", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text("${AppStrings.getAll(language)} (${InitialData.eAdditivesDirectory.size})", fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = EmeraldPrimary,
@@ -196,7 +197,7 @@ fun EAdditiveSheet(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HARAM,
                     onClick = { selectedFilter = if (selectedFilter == HalalStatus.HARAM) null else HalalStatus.HARAM },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HaramRed,
@@ -208,7 +209,7 @@ fun EAdditiveSheet(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.SUPHELI,
                     onClick = { selectedFilter = if (selectedFilter == HalalStatus.SUPHELI) null else HalalStatus.SUPHELI },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = SuspiciousAmber,
@@ -220,7 +221,7 @@ fun EAdditiveSheet(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HELAL,
                     onClick = { selectedFilter = if (selectedFilter == HalalStatus.HELAL) null else HalalStatus.HELAL },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HalalGreenDark,
@@ -275,7 +276,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                 ) {
                     Text(
                         text = item.code,
-                        fontSize = 15.sp,
+                        fontSize = AppTextSize.Subtitle,
                         fontWeight = FontWeight.ExtraBold,
                         color = when (item.status) {
                             HalalStatus.HELAL -> HalalGreenDark
@@ -286,7 +287,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = item.name.get(language),
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         fontWeight = FontWeight.Bold,
                         color = NaturalTextDark,
                         maxLines = 1,
@@ -295,14 +296,14 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                HalalStatusBadge(status = item.status, language = language, fontSize = 11.sp, paddingHorizontal = 8.dp, paddingVertical = 2.dp)
+                HalalStatusBadge(status = item.status, language = language, fontSize = AppTextSize.Caption, paddingHorizontal = 8.dp, paddingVertical = 2.dp)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "${AppStrings.getOriginLabel(language)}: ${item.origin.get(language)}",
-                fontSize = 12.sp,
+                fontSize = AppTextSize.Label,
                 fontWeight = FontWeight.Bold,
                 color = EmeraldPrimaryDeep
             )
@@ -311,7 +312,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
 
             Text(
                 text = item.description.get(language),
-                fontSize = 12.sp,
+                fontSize = AppTextSize.Label,
                 color = NaturalTextDark.copy(alpha = 0.85f),
                 lineHeight = 16.sp
             )
@@ -321,13 +322,13 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
                 Row(verticalAlignment = Alignment.Top) {
                     Text(
                         text = AppStrings.getAlternateNamesLabel(language),
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         fontWeight = FontWeight.Bold,
                         color = NaturalTextMuted
                     )
                     Text(
                         text = item.alternateNames.joinToString(", "),
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         color = NaturalTextMuted,
                         lineHeight = 15.sp,
                         modifier = Modifier.weight(1f)
@@ -339,7 +340,7 @@ fun EAdditiveCard(item: EAdditive, language: AppLanguage) {
 
             Text(
                 text = "${AppStrings.getCommonUsageLabel(language)}: ${item.commonUsage.get(language)}",
-                fontSize = 11.sp,
+                fontSize = AppTextSize.Caption,
                 color = NaturalTextMuted
             )
         }

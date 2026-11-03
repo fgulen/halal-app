@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,13 +52,13 @@ fun SearchField(
         modifier = testTag?.let { modifier.testTag(it) } ?: modifier,
         textStyle = TextStyle(
             color = NaturalTextDark,
-            fontSize = 14.sp,
+            fontSize = AppTextSize.Body,
             fontWeight = FontWeight.Medium
         ),
         placeholder = {
             Text(
                 text = placeholder,
-                fontSize = 13.sp,
+                fontSize = AppTextSize.Small,
                 fontWeight = FontWeight.Normal,
                 color = NaturalSearchPlaceholder,
                 maxLines = 1,

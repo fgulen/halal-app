@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -41,7 +42,7 @@ fun HalalStatusBadge(
     status: HalalStatus,
     language: AppLanguage,
     modifier: Modifier = Modifier,
-    fontSize: TextUnit = 11.sp,
+    fontSize: TextUnit = AppTextSize.Caption,
     iconSize: Dp = 13.dp,
     paddingHorizontal: Dp = 8.dp,
     paddingVertical: Dp = 3.dp

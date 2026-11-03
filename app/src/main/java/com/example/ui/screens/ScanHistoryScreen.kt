@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.foundation.border
@@ -123,7 +124,7 @@ fun ScanHistoryScreen(
                 Text(
                     text = AppStrings.getClearHistory(language),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    fontSize = AppTextSize.Title,
                     color = NaturalTextDark
                 )
             },
@@ -136,7 +137,7 @@ fun ScanHistoryScreen(
                         AppLanguage.TR -> "Tüm tarama geçmişinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
                         AppLanguage.AR -> "هل أنت متأكد من رغبتك في مسح سجل الفحوصات كاملاً؟"
                     },
-                    fontSize = 14.sp,
+                    fontSize = AppTextSize.Body,
                     color = NaturalTextMuted,
                     lineHeight = 20.sp
                 )
@@ -209,7 +210,7 @@ fun ScanHistoryScreen(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = AppStrings.getOnDeviceStorage(language),
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldPrimaryDeep,
                         letterSpacing = 1.8.sp
@@ -218,7 +219,7 @@ fun ScanHistoryScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = AppStrings.getHistoryTitle(language),
-                            fontSize = 24.sp,
+                            fontSize = AppTextSize.Display,
                             fontWeight = FontWeight.ExtraBold,
                             color = NaturalTextDark,
                             letterSpacing = (-0.5).sp,
@@ -232,7 +233,7 @@ fun ScanHistoryScreen(
                         ) {
                             Text(
                                 text = "${scanHistory.size} ${AppStrings.getItemsSuffix(language)}",
-                                fontSize = 11.sp,
+                                fontSize = AppTextSize.Caption,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldPrimaryDeep,
                                 maxLines = 1,
@@ -271,7 +272,7 @@ fun ScanHistoryScreen(
                                     AppLanguage.TR -> "Temizle"
                                     AppLanguage.AR -> "مسح"
                                 },
-                                fontSize = 11.sp,
+                                fontSize = AppTextSize.Caption,
                                 fontWeight = FontWeight.Bold,
                                 color = HaramRed,
                                 maxLines = 1,
@@ -315,7 +316,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == null,
                     onClick = { onSelectFilter(null) },
-                    label = { Text("${AppStrings.getAll(language)} (${scanHistory.size})", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text("${AppStrings.getAll(language)} (${scanHistory.size})", fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = EmeraldPrimary,
@@ -333,7 +334,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HELAL,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HELAL) null else HalalStatus.HELAL) },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HELAL, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HalalGreenDark,
@@ -345,7 +346,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.SUPHELI,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.SUPHELI) null else HalalStatus.SUPHELI) },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.SUPHELI, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = SuspiciousAmber,
@@ -357,7 +358,7 @@ fun ScanHistoryScreen(
                 FilterChip(
                     selected = selectedFilter == HalalStatus.HARAM,
                     onClick = { onSelectFilter(if (selectedFilter == HalalStatus.HARAM) null else HalalStatus.HARAM) },
-                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    label = { Text(AppStrings.getStatusLabel(HalalStatus.HARAM, language), fontSize = AppTextSize.Caption, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = HaramRed,
@@ -404,14 +405,14 @@ fun ScanHistoryScreen(
                         Text(
                             text = if (searchQuery.isNotBlank() || selectedFilter != null) "No matching products found" else "No Scanned Products Yet",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
+                            fontSize = AppTextSize.BodyLarge,
                             color = NaturalTextDark,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = if (searchQuery.isNotBlank() || selectedFilter != null) "Try adjusting filters or searching a different term." else "Your scanned products and their halal status will be stored here in chronological order.",
-                            fontSize = 13.sp,
+                            fontSize = AppTextSize.Small,
                             color = NaturalTextMuted,
                             textAlign = TextAlign.Center,
                             lineHeight = 18.sp
@@ -425,7 +426,7 @@ fun ScanHistoryScreen(
                         ) {
                             Icon(imageVector = Icons.Default.QrCodeScanner, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(AppStrings.getScanBarcode(language), fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text(AppStrings.getScanBarcode(language), fontWeight = FontWeight.Bold, fontSize = AppTextSize.Small)
                         }
                     }
                 }
@@ -441,7 +442,7 @@ fun ScanHistoryScreen(
                 item {
                     Text(
                         text = AppStrings.getChronologicalHistory(language),
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.2.sp,
                         color = NaturalTextMuted,
@@ -572,7 +573,7 @@ fun HistoryProductCard(
                 ) {
                     Text(
                         text = product.name,
-                        fontSize = 15.sp,
+                        fontSize = AppTextSize.Subtitle,
                         fontWeight = FontWeight.Bold,
                         color = titleColor,
                         maxLines = 1,
@@ -583,7 +584,7 @@ fun HistoryProductCard(
                     HalalStatusBadge(
                         status = product.status,
                         language = language,
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         paddingHorizontal = 8.dp,
                         paddingVertical = 2.dp
                     )
@@ -598,7 +599,7 @@ fun HistoryProductCard(
                 ) {
                     Text(
                         text = "${product.brand} • ${product.barcode}",
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         color = NaturalTextMuted,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -607,7 +608,7 @@ fun HistoryProductCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = formattedDate,
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         fontWeight = FontWeight.SemiBold,
                         color = NaturalTextLight,
                         maxLines = 1,
@@ -620,7 +621,7 @@ fun HistoryProductCard(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "${AppStrings.getFlaggedLabel(language)}: " + product.harmfulOrSuspiciousIngredients.first(),
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         fontWeight = FontWeight.SemiBold,
                         color = if (product.status == HalalStatus.HARAM) HaramRedDark else SuspiciousAmberDark,
                         maxLines = 1,
@@ -630,7 +631,7 @@ fun HistoryProductCard(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "${AppStrings.getCertLabel(language)}: " + product.halalCertificate,
-                        fontSize = 11.sp,
+                        fontSize = AppTextSize.Caption,
                         fontWeight = FontWeight.SemiBold,
                         color = HalalGreenDark,
                         maxLines = 1,

@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.foundation.border
@@ -80,7 +81,7 @@ fun MadhhabSelectionDialog(
                     Text(
                         text = AppStrings.getMadhhabSelection(language),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontSize = AppTextSize.Title,
                         color = NaturalTextDark
                     )
                 }
@@ -96,7 +97,7 @@ fun MadhhabSelectionDialog(
             ) {
                 Text(
                     text = AppStrings.getMadhhabSelectionHint(language),
-                    fontSize = 12.sp,
+                    fontSize = AppTextSize.Label,
                     color = NaturalTextMuted
                 )
                 Madhhab.values().forEach { madhhab ->
@@ -126,7 +127,7 @@ fun MadhhabSelectionDialog(
                         ) {
                             Text(
                                 text = AppStrings.getMadhhabName(madhhab, language),
-                                fontSize = 15.sp,
+                                fontSize = AppTextSize.Subtitle,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                 color = if (isSelected) EmeraldPrimaryDeep else NaturalTextDark
                             )

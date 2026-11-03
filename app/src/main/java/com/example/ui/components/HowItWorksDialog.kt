@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.material3.BottomSheetDefaults
@@ -79,7 +80,7 @@ fun HowItWorksDialog(language: AppLanguage, onDismiss: () -> Unit) {
                         AppLanguage.AR -> "كيف يعمل هذا؟"
                     },
                     color = NaturalTextDark,
-                    fontSize = 20.sp,
+                    fontSize = AppTextSize.Headline,
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
@@ -176,7 +177,7 @@ private fun HowItWorksSourcesSection(language: AppLanguage) {
                     AppLanguage.AR -> "المصادر والإسناد"
                 },
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                fontSize = AppTextSize.Subtitle,
                 color = NaturalTextDark
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -188,7 +189,7 @@ private fun HowItWorksSourcesSection(language: AppLanguage) {
                     AppLanguage.TR -> "Ürün verileri, Open Database License (ODbL) altında lisanslanan Open Food Facts tarafından sağlanmaktadır."
                     AppLanguage.AR -> "بيانات المنتج مقدمة من Open Food Facts، مرخصة بموجب رخصة قاعدة البيانات المفتوحة (ODbL)."
                 },
-                fontSize = 13.sp,
+                fontSize = AppTextSize.Small,
                 color = NaturalTextMuted,
                 lineHeight = 19.sp
             )
@@ -204,7 +205,7 @@ private fun HowItWorksSourcesSection(language: AppLanguage) {
                     AppLanguage.TR -> "Madde ve katkı sınıflandırmaları, aşağıdaki halk sağlığı ve gıda güvenliği kurumlarının yayınladığı tanımlarla karşılaştırılarak doğrulanır:"
                     AppLanguage.AR -> "يتم التحقق من تصنيفات المكونات والإضافات مقابل التعريفات التي تنشرها هيئات الصحة العامة وسلامة الغذاء التالية:"
                 },
-                fontSize = 13.sp,
+                fontSize = AppTextSize.Small,
                 color = NaturalTextMuted,
                 lineHeight = 19.sp
             )
@@ -226,7 +227,7 @@ private fun HowItWorksSourcesSection(language: AppLanguage) {
                     AppLanguage.TR -> "Mezhep ayarı: Şimdilik uygulanan tek fark, Hanefi görüşüne (Ebû Hanîfe) göre peynir mayasıdır; peyniraltı suyu çıkarımla onu takip eder. Kaynaklar:"
                     AppLanguage.AR -> "إعداد المذهب: الاختلاف الوحيد المطبّق حتى الآن هو الإنفحة وفق الرأي الحنفي (أبو حنيفة)؛ ومصل اللبن يتبعها استنتاجاً. المصادر:"
                 },
-                fontSize = 13.sp,
+                fontSize = AppTextSize.Small,
                 color = NaturalTextMuted,
                 lineHeight = 19.sp
             )
@@ -250,7 +251,7 @@ private fun HowItWorksLinkRow(label: String, url: String) {
     val uriHandler = LocalUriHandler.current
     Text(
         text = "• $label",
-        fontSize = 12.sp,
+        fontSize = AppTextSize.Label,
         fontWeight = FontWeight.SemiBold,
         color = EmeraldPrimaryDeep,
         modifier = Modifier
@@ -272,13 +273,13 @@ private fun HowItWorksSection(title: String, body: String) {
             Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                fontSize = AppTextSize.Subtitle,
                 color = NaturalTextDark
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = body,
-                fontSize = 13.sp,
+                fontSize = AppTextSize.Small,
                 color = NaturalTextMuted,
                 lineHeight = 19.sp
             )

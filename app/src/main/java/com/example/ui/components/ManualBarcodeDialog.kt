@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
 import androidx.compose.material3.BottomSheetDefaults
@@ -95,7 +96,7 @@ fun ManualBarcodeDialog(
             ) {
                 Text(
                     text = AppStrings.getManualBarcodeTitle(language),
-                    fontSize = 20.sp,
+                    fontSize = AppTextSize.Headline,
                     fontWeight = FontWeight.ExtraBold,
                     color = NaturalTextDark
                 )
@@ -118,7 +119,7 @@ fun ManualBarcodeDialog(
                     AppLanguage.TR -> "Barkod numarasını (örn. 4008400404127) veya ürün adını girin:"
                     AppLanguage.AR -> "أدخل رقم الباركود (مثل 4008400404127) أو اسم المنتج:"
                 },
-                fontSize = 13.sp,
+                fontSize = AppTextSize.Small,
                 color = NaturalTextMuted
             )
 
@@ -132,7 +133,7 @@ fun ManualBarcodeDialog(
                     .testTag("manual_barcode_text_field"),
                 textStyle = androidx.compose.ui.text.TextStyle(
                     color = NaturalTextDark,
-                    fontSize = 15.sp,
+                    fontSize = AppTextSize.Subtitle,
                     fontWeight = FontWeight.Medium
                 ),
                 placeholder = {
@@ -144,7 +145,7 @@ fun ManualBarcodeDialog(
                             AppLanguage.AR -> "مثل 4008400404127 أو اسم المنتج..."
                             AppLanguage.EN -> "e.g. 4008400404127 or product name..."
                         },
-                        fontSize = 14.sp,
+                        fontSize = AppTextSize.Body,
                         fontWeight = FontWeight.Normal,
                         color = NaturalSearchPlaceholder
                     )
@@ -221,7 +222,7 @@ fun ManualBarcodeDialog(
 
             Text(
                 text = AppStrings.getQuickTestTitle(language),
-                fontSize = 12.sp,
+                fontSize = AppTextSize.Label,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
                 color = NaturalTextMuted
@@ -283,7 +284,7 @@ fun ManualBarcodeDialog(
                                         AppLanguage.TR -> "Canlı Küresel Arama: \"${barcodeInput.trim()}\""
                                         AppLanguage.AR -> "بحث عالمي مباشر عن \"${barcodeInput.trim()}\""
                                     },
-                                    fontSize = 13.sp,
+                                    fontSize = AppTextSize.Small,
                                     fontWeight = FontWeight.Bold,
                                     color = EmeraldPrimary
                                 )
@@ -295,7 +296,7 @@ fun ManualBarcodeDialog(
                                         AppLanguage.TR -> "Tüm dünya veri tabanından canlı sorgula"
                                         AppLanguage.AR -> "ابحث في ملايين المنتجات حول العالم"
                                     },
-                                    fontSize = 11.sp,
+                                    fontSize = AppTextSize.Caption,
                                     color = NaturalTextMuted
                                 )
                             }
@@ -341,14 +342,14 @@ fun ManualBarcodeDialog(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = sample.name,
-                                    fontSize = 13.sp,
+                                    fontSize = AppTextSize.Small,
                                     fontWeight = FontWeight.Bold,
                                     color = NaturalTextDark,
                                     maxLines = 1
                                 )
                                 Text(
                                     text = "${sample.brand} • ${sample.barcode}",
-                                    fontSize = 11.sp,
+                                    fontSize = AppTextSize.Caption,
                                     color = NaturalTextMuted
                                 )
                             }
