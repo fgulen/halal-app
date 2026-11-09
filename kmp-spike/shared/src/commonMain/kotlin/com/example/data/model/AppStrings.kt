@@ -1,0 +1,971 @@
+package com.example.data.model
+
+object AppStrings {
+
+    fun getAppName(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Halal Checker"
+        AppLanguage.DE -> "Halal Prüfer"
+        AppLanguage.FR -> "Contrôle Halal"
+        AppLanguage.TR -> "Helal Rehberi"
+        AppLanguage.AR -> "دليل الحلال"
+    }
+
+    fun getScanBarcode(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Scan Barcode"
+        AppLanguage.DE -> "Barcode Scannen"
+        AppLanguage.FR -> "Scanner le code"
+        AppLanguage.TR -> "Barkod Okut"
+        AppLanguage.AR -> "مسح الباركود"
+    }
+
+    fun getScanSubtitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Verify products from anywhere in the world"
+        AppLanguage.DE -> "Produkte weltweit in Sekunden prüfen"
+        AppLanguage.FR -> "Vérifiez des produits du monde entier"
+        AppLanguage.TR -> "Dünya genelindeki ürünleri anında sorgulayın"
+        AppLanguage.AR -> "تحقق من منتجات من جميع أنحاء العالم"
+    }
+
+    fun getQuickTestTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "SUGGESTED PRODUCTS"
+        AppLanguage.DE -> "VORGESCHLAGENE PRODUKTE"
+        AppLanguage.FR -> "PRODUITS SUGGÉRÉS"
+        AppLanguage.TR -> "ÖNE ÇIKAN ÜRÜNLER"
+        AppLanguage.AR -> "منتجات مقترحة"
+    }
+
+    fun getTotalScans(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Total Scans"
+        AppLanguage.DE -> "Scans gesamt"
+        AppLanguage.FR -> "Total des scans"
+        AppLanguage.TR -> "Toplam Tarama"
+        AppLanguage.AR -> "إجمالي الفحوصات"
+    }
+
+    fun getHalalProducts(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Halal"
+        AppLanguage.DE -> "Halal"
+        AppLanguage.FR -> "Halal"
+        AppLanguage.TR -> "Helal"
+        AppLanguage.AR -> "حلال"
+    }
+
+    fun getHaramOrDoubtful(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Haram / Doubtful"
+        AppLanguage.DE -> "Haram / Zweifelhaft"
+        AppLanguage.FR -> "Haram / Douteux"
+        AppLanguage.TR -> "Haram / Şüpheli"
+        AppLanguage.AR -> "حرام / مشبوه"
+    }
+
+    fun getRecentScans(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "RECENT SCANS"
+        AppLanguage.DE -> "LETZTE SCANS"
+        AppLanguage.FR -> "SCANS RÉCENTS"
+        AppLanguage.TR -> "SON SORGULAMALAR"
+        AppLanguage.AR -> "الفحوصات الأخيرة"
+    }
+
+    fun getAll(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "All"
+        AppLanguage.DE -> "Alle"
+        AppLanguage.FR -> "Tous"
+        AppLanguage.TR -> "Tümü"
+        AppLanguage.AR -> "الكل"
+    }
+
+    fun getStatusLabel(status: HalalStatus, lang: AppLanguage): String = when (status) {
+        HalalStatus.HELAL -> when (lang) {
+            AppLanguage.EN -> "HALAL"
+            AppLanguage.DE -> "HALAL"
+            AppLanguage.FR -> "HALAL"
+            AppLanguage.TR -> "HELAL"
+            AppLanguage.AR -> "حلال"
+        }
+        HalalStatus.HARAM -> when (lang) {
+            AppLanguage.EN -> "HARAM"
+            AppLanguage.DE -> "HARAM"
+            AppLanguage.FR -> "HARAM"
+            AppLanguage.TR -> "HARAM"
+            AppLanguage.AR -> "حرام"
+        }
+        HalalStatus.SUPHELI -> when (lang) {
+            AppLanguage.EN -> "DOUBTFUL"
+            AppLanguage.DE -> "ZWEIFELHAFT"
+            AppLanguage.FR -> "DOUTEUX"
+            AppLanguage.TR -> "ŞÜPHELİ"
+            AppLanguage.AR -> "مشبوه"
+        }
+        HalalStatus.BULUNAMADI -> when (lang) {
+            AppLanguage.EN -> "NOT FOUND"
+            AppLanguage.DE -> "NICHT GEFUNDEN"
+            AppLanguage.FR -> "NON TROUVÉ"
+            AppLanguage.TR -> "BULUNAMADI"
+            AppLanguage.AR -> "غير موجود"
+        }
+    }
+
+    fun getStatusCardTitle(status: HalalStatus, lang: AppLanguage): String = when (status) {
+        HalalStatus.HELAL -> when (lang) {
+            AppLanguage.EN -> "NO FLAGGED INGREDIENTS"
+            AppLanguage.DE -> "KEINE BEDENKLICHEN ZUTATEN"
+            AppLanguage.FR -> "AUCUN INGRÉDIENT PROBLÉMATIQUE"
+            AppLanguage.TR -> "SAKINCALI MADDE BULUNAMADI"
+            AppLanguage.AR -> "لا توجد مكونات مثيرة للقلق"
+        }
+        HalalStatus.HARAM -> when (lang) {
+            AppLanguage.EN -> "HARAM - PROHIBITED"
+            AppLanguage.DE -> "HARAM - UNZULÄSSIG"
+            AppLanguage.FR -> "HARAM - INTERDIT"
+            AppLanguage.TR -> "HARAM ÜRÜN"
+            AppLanguage.AR -> "حرام - غير مباح"
+        }
+        HalalStatus.SUPHELI -> when (lang) {
+            AppLanguage.EN -> "DOUBTFUL / MUSHBOOH"
+            AppLanguage.DE -> "ZWEIFELHAFTE ZUTATEN"
+            AppLanguage.FR -> "INGRÉDIENTS DOUTEUX"
+            AppLanguage.TR -> "ŞÜPHELİ ÜRÜN"
+            AppLanguage.AR -> "مشبوه - يرجى الحذر"
+        }
+        HalalStatus.BULUNAMADI -> when (lang) {
+            AppLanguage.EN -> "NO INGREDIENTS RECORD"
+            AppLanguage.DE -> "KEINE ZUTATENLISTE"
+            AppLanguage.FR -> "AUCUNE DONNÉE D'INGRÉDIENTS"
+            AppLanguage.TR -> "İÇERİK BULUNAMADI"
+            AppLanguage.AR -> "لا توجد قائمة مكونات"
+        }
+    }
+
+    fun getStatusCardSubtitle(status: HalalStatus, lang: AppLanguage): String = when (status) {
+        HalalStatus.HELAL -> when (lang) {
+            AppLanguage.EN -> "Safe for Muslim consumption. Free of pork and non-halal animal additives."
+            AppLanguage.DE -> "Frei von Schweinefleisch, Alkohol und nicht-halal tierischen Zusätzen."
+            AppLanguage.FR -> "Sans porc, alcool ni dérivés animaux non autorisés."
+            AppLanguage.TR -> "Güvenle tüketebilirsiniz. Domuz, alkol ve sakıncalı katkı içermez."
+            AppLanguage.AR -> "خالٍ من مشتقات الخنزير والكحول والإضافات المحرمة."
+        }
+        HalalStatus.HARAM -> when (lang) {
+            AppLanguage.EN -> "Contains prohibited ingredients (Pork derivatives, alcohol, or insect carmine)."
+            AppLanguage.DE -> "Enthält verbotene Inhaltsstoffe (Schweinegelatine, Alkohol, Karmin E120)."
+            AppLanguage.FR -> "Contient des ingrédients interdits (Porc, gélatine porcine, alcool, carmin E120)."
+            AppLanguage.TR -> "Tüketilmesi uygun değildir! Sakıncalı maddeler (Domuz, alkol, E120) tespit edildi."
+            AppLanguage.AR -> "يحتوي على مكونات محرمة (مشتقات الخنزير، كحول، أو كارمين E120)."
+        }
+        HalalStatus.SUPHELI -> when (lang) {
+            AppLanguage.EN -> "Contains additives of unverified origin (Animal vs. Plant mono/diglycerides, uncertified enzymes)."
+            AppLanguage.DE -> "Enthält Zusätze mit unklarer Herkunft (Tierische vs. Pflanzliche Emulgatoren E471)."
+            AppLanguage.FR -> "Contient des additifs d'origine inconnue (émulsifiants E471, présure)."
+            AppLanguage.TR -> "Katkı maddelerinin kaynağı belirsizdir (Hayvansal/Bitkisel yağ emülgatörleri E471)."
+            AppLanguage.AR -> "يحتوي على إضافات غير مؤكدة المصدر (نباتي أو حيواني مثل E471)."
+        }
+        HalalStatus.BULUNAMADI -> when (lang) {
+            AppLanguage.EN -> "Barcode found in Open Food Facts, but ingredients text is empty. Please inspect the label."
+            AppLanguage.DE -> "Produkt gefunden, aber Zutatenliste in Open Food Facts ist leer. Bitte Etikett prüfen."
+            AppLanguage.FR -> "Code-barres indexé mais la liste d'ingrédients est vide. Vérifiez l'emballage."
+            AppLanguage.TR -> "Ürün kaydı mevcut fakat içindekiler listesi henüz girilmemiş. Lütfen paketi inceleyin."
+            AppLanguage.AR -> "المنتج مسجل ولكن قائمة المكونات فارغة، يرجى فحص الغلاف."
+        }
+    }
+
+    // Lead-in phrase for the status banner subtitle when we have the actual flagged ingredient
+    // name(s) to append (e.g. "Contains: E471 Mono- and Diglycerides"). Used instead of
+    // getStatusCardSubtitle's generic per-status text so the banner names what was really found
+    // in *this* product rather than a fixed example compound (previously always "E471"/"E120"
+    // regardless of what actually triggered the flag).
+    fun getSubtitleContainsPrefix(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Contains"
+        AppLanguage.DE -> "Enthält"
+        AppLanguage.FR -> "Contient"
+        AppLanguage.TR -> "İçeriyor"
+        AppLanguage.AR -> "يحتوي على"
+    }
+
+    fun getProhibitedIngredientsHeader(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Prohibited / Flagged Ingredients"
+        AppLanguage.DE -> "Verbotene / Riskante Inhaltsstoffe"
+        AppLanguage.FR -> "Ingrédients interdits détectés"
+        AppLanguage.TR -> "İçerikteki Sakıncalı / Haram Maddeler"
+        AppLanguage.AR -> "المكونات المحظورة أو المشبوهة"
+    }
+
+    fun getSuspiciousIngredientsHeader(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Doubtful Ingredients (Source Unverified)"
+        AppLanguage.DE -> "Zweifelhafte Zusatzstoffe (Herkunft unklar)"
+        AppLanguage.FR -> "Additifs douteux (Origine non spécifiée)"
+        AppLanguage.TR -> "Şüpheli Görülen Katkı Maddeleri"
+        AppLanguage.AR -> "مكونات تحتاج للتحقق من المصدر"
+    }
+
+    fun getAnalysisReport(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Analysis & Verification Details"
+        AppLanguage.DE -> "Prüfungsbericht & Details"
+        AppLanguage.FR -> "Rapport d'analyse et détails"
+        AppLanguage.TR -> "Kontrol Raporu ve Detaylar"
+        AppLanguage.AR -> "تقرير التحليل والتفاصيل"
+    }
+
+    fun getHalalAlternatives(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Halal & Clean Alternatives"
+        AppLanguage.DE -> "Halal & Saubere Alternativen"
+        AppLanguage.FR -> "Alternatives Halal Recommandées"
+        AppLanguage.TR -> "Helal ve Güvenli Alternatif Tavsiyeleri"
+        AppLanguage.AR -> "بدائل حلال ونظيفة موصى بها"
+    }
+
+    fun getIngredientsTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Product Ingredients"
+        AppLanguage.DE -> "Zutatenliste"
+        AppLanguage.FR -> "Ingrédients du produit"
+        AppLanguage.TR -> "Ürün İçindekiler Listesi"
+        AppLanguage.AR -> "مكونات المنتج"
+    }
+
+    fun getScanAgain(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Scan Another Product"
+        AppLanguage.DE -> "Weiteres Produkt scannen"
+        AppLanguage.FR -> "Scanner un autre produit"
+        AppLanguage.TR -> "Tekrar Barkod Tara"
+        AppLanguage.AR -> "مسح منتج آخر"
+    }
+
+    fun getManualBarcodeTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Manual Barcode Entry"
+        AppLanguage.DE -> "Barcode manuell eingeben"
+        AppLanguage.FR -> "Saisie manuelle du code-barres"
+        AppLanguage.TR -> "Manuel Barkod Girişi"
+        AppLanguage.AR -> "إدخال الباركود يدوياً"
+    }
+
+    fun getEAdditivesTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "E-Codes & Additives Guide"
+        AppLanguage.DE -> "E-Nummern & Zusatzstoff-Recherche"
+        AppLanguage.FR -> "Guide des Additifs & Codes E"
+        AppLanguage.TR -> "E-Kodları & Katkı Rehberi"
+        AppLanguage.AR -> "دليل الأرقام والإضافات E"
+    }
+
+    fun getHistoryTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Scan History"
+        AppLanguage.DE -> "Scan-Verlauf"
+        AppLanguage.FR -> "Historique des scans"
+        AppLanguage.TR -> "Tarama Geçmişi"
+        AppLanguage.AR -> "سجل الفحوصات"
+    }
+
+    fun getNavHome(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Home"
+        AppLanguage.DE -> "Start"
+        AppLanguage.FR -> "Accueil"
+        AppLanguage.TR -> "Ana Sayfa"
+        AppLanguage.AR -> "الرئيسية"
+    }
+
+    fun getNavHistory(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "History"
+        AppLanguage.DE -> "Verlauf"
+        AppLanguage.FR -> "Historique"
+        AppLanguage.TR -> "Geçmiş"
+        AppLanguage.AR -> "السجل"
+    }
+
+    fun getNavECodes(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "E-Codes"
+        AppLanguage.DE -> "E-Nummern"
+        AppLanguage.FR -> "Codes-E"
+        AppLanguage.TR -> "E-Kodları"
+        AppLanguage.AR -> "أكواد E"
+    }
+
+    fun getClearHistory(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Clear History"
+        AppLanguage.DE -> "Verlauf löschen"
+        AppLanguage.FR -> "Effacer l'historique"
+        AppLanguage.TR -> "Geçmişi Temizle"
+        AppLanguage.AR -> "مسح السجل"
+    }
+
+    fun getSearchPlaceholder(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Search product, brand or barcode..."
+        AppLanguage.DE -> "Produkt, Marke oder Barcode suchen..."
+        AppLanguage.FR -> "Rechercher produit, marque ou code..."
+        AppLanguage.TR -> "Ürün, marka veya barkod ara..."
+        AppLanguage.AR -> "ابحث عن منتج، علامة تجارية أو باركود..."
+    }
+
+    fun getOriginLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Source"
+        AppLanguage.DE -> "Herkunft"
+        AppLanguage.FR -> "Origine"
+        AppLanguage.TR -> "Kaynak"
+        AppLanguage.AR -> "المصدر"
+    }
+
+    fun getAlternateNamesLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Alternative Names: "
+        AppLanguage.DE -> "Alternative Namen: "
+        AppLanguage.FR -> "Noms alternatifs : "
+        AppLanguage.TR -> "Alternatif İsimler: "
+        AppLanguage.AR -> "أسماء بديلة: "
+    }
+
+    fun getCommonUsageLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Common Usage"
+        AppLanguage.DE -> "Verwendung"
+        AppLanguage.FR -> "Utilisation courante"
+        AppLanguage.TR -> "Kullanım Alanı"
+        AppLanguage.AR -> "الاستخدام الشائع"
+    }
+
+    fun getCameraPermissionError(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Camera unavailable"
+        AppLanguage.DE -> "Kamera nicht verfügbar"
+        AppLanguage.FR -> "Caméra indisponible"
+        AppLanguage.TR -> "Kameraya erişilemedi"
+        AppLanguage.AR -> "لا يمكن الوصول إلى الكاميرا"
+    }
+
+    fun getCameraPermissionErrorDetail(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Camera permission was not granted, or the camera may be in use by another app. Please check permissions and try again."
+        AppLanguage.DE -> "Kamerazugriff wurde nicht gewährt oder die Kamera wird von einer anderen App verwendet. Bitte Berechtigungen prüfen und erneut versuchen."
+        AppLanguage.FR -> "L'autorisation de la caméra n'a pas été accordée, ou la caméra est peut-être utilisée par une autre application. Veuillez vérifier les autorisations et réessayer."
+        AppLanguage.TR -> "Kamera izni verilmemiş veya kamera başka bir uygulama tarafından kullanılıyor olabilir. Lütfen izinleri kontrol edip tekrar deneyin."
+        AppLanguage.AR -> "لم يتم منح إذن الكاميرا، أو قد تكون الكاميرا قيد الاستخدام من قبل تطبيق آخر. يرجى التحقق من الأذونات والمحاولة مرة أخرى."
+    }
+
+    fun getBackButton(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Back"
+        AppLanguage.DE -> "Zurück"
+        AppLanguage.FR -> "Retour"
+        AppLanguage.TR -> "Geri Dön"
+        AppLanguage.AR -> "رجوع"
+    }
+
+    fun getBarcodeScannerTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Barcode Scanner"
+        AppLanguage.DE -> "Barcode-Scanner"
+        AppLanguage.FR -> "Scanner de code-barres"
+        AppLanguage.TR -> "Barkod Tarayıcı"
+        AppLanguage.AR -> "ماسح الباركود"
+    }
+
+    fun getFlash(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Flash"
+        AppLanguage.DE -> "Blitz"
+        AppLanguage.FR -> "Flash"
+        AppLanguage.TR -> "Flaş"
+        AppLanguage.AR -> "الفلاش"
+    }
+
+    fun getAlignBarcode(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Align the barcode within the frame"
+        AppLanguage.DE -> "Barcode im Rahmen ausrichten"
+        AppLanguage.FR -> "Alignez le code-barres dans le cadre"
+        AppLanguage.TR -> "Barkodu çerçevenin ortasına hizalayın"
+        AppLanguage.AR -> "قم بمحاذاة الباركود داخل الإطار"
+    }
+
+    fun getAutoScanHint(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "It will be scanned and looked up automatically"
+        AppLanguage.DE -> "Wird automatisch gescannt und nachgeschlagen"
+        AppLanguage.FR -> "Il sera scanné et recherché automatiquement"
+        AppLanguage.TR -> "Otomatik olarak taranıp veritabanından sorgulanacaktır"
+        AppLanguage.AR -> "سيتم مسحه والبحث عنه تلقائياً"
+    }
+
+    fun getEnterManually(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Enter Barcode Manually"
+        AppLanguage.DE -> "Barcode manuell eingeben"
+        AppLanguage.FR -> "Saisir le code-barres"
+        AppLanguage.TR -> "Barkodu Elle Gir"
+        AppLanguage.AR -> "إدخال الباركود يدوياً"
+    }
+
+    fun getShareSubjectPrefix(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Halal Food Check"
+        AppLanguage.DE -> "Halal Lebensmittelprüfung"
+        AppLanguage.FR -> "Contrôle alimentaire Halal"
+        AppLanguage.TR -> "Helal Gıda Kontrolü"
+        AppLanguage.AR -> "فحص الطعام الحلال"
+    }
+
+    fun getShareResultHeader(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Halal Food Check Result"
+        AppLanguage.DE -> "Ergebnis der Halal-Prüfung"
+        AppLanguage.FR -> "Résultat du contrôle Halal"
+        AppLanguage.TR -> "Helal Gıda Kontrol Sonucu"
+        AppLanguage.AR -> "نتيجة فحص الطعام الحلال"
+    }
+
+    fun getShareProductLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Product"
+        AppLanguage.DE -> "Produkt"
+        AppLanguage.FR -> "Produit"
+        AppLanguage.TR -> "Ürün"
+        AppLanguage.AR -> "المنتج"
+    }
+
+    fun getShareBarcodeLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Barcode"
+        AppLanguage.DE -> "Barcode"
+        AppLanguage.FR -> "Code-barres"
+        AppLanguage.TR -> "Barkod"
+        AppLanguage.AR -> "الباركود"
+    }
+
+    fun getShareStatusLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Status"
+        AppLanguage.DE -> "Status"
+        AppLanguage.FR -> "Statut"
+        AppLanguage.TR -> "Durum"
+        AppLanguage.AR -> "الحالة"
+    }
+
+    fun getShareFlaggedIngredientsLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Flagged/Suspicious Ingredients"
+        AppLanguage.DE -> "Bedenkliche/Zweifelhafte Inhaltsstoffe"
+        AppLanguage.FR -> "Ingrédients problématiques/douteux"
+        AppLanguage.TR -> "Sakıncalı/Şüpheli Maddeler"
+        AppLanguage.AR -> "مكونات محظورة/مشبوهة"
+    }
+
+    fun getShareChooserTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Share Result"
+        AppLanguage.DE -> "Ergebnis teilen"
+        AppLanguage.FR -> "Partager le résultat"
+        AppLanguage.TR -> "Sonucu Paylaş"
+        AppLanguage.AR -> "مشاركة النتيجة"
+    }
+
+    fun getReportError(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Report Error"
+        AppLanguage.DE -> "Fehler melden"
+        AppLanguage.FR -> "Signaler une erreur"
+        AppLanguage.TR -> "Hata Bildir"
+        AppLanguage.AR -> "الإبلاغ عن خطأ"
+    }
+
+    fun getReportErrorEmailSubject(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Incorrect Result Report"
+        AppLanguage.DE -> "Meldung eines falschen Ergebnisses"
+        AppLanguage.FR -> "Signalement d'un résultat incorrect"
+        AppLanguage.TR -> "Hatalı Sonuç Bildirimi"
+        AppLanguage.AR -> "الإبلاغ عن نتيجة غير صحيحة"
+    }
+
+    fun getReportErrorPromptLine(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Please describe what's incorrect and what the correct classification should be:"
+        AppLanguage.DE -> "Bitte beschreiben Sie, was falsch ist und wie die richtige Einstufung lauten sollte:"
+        AppLanguage.FR -> "Merci de décrire ce qui est incorrect et quelle devrait être la bonne classification :"
+        AppLanguage.TR -> "Lütfen neyin yanlış olduğunu ve doğru sınıflandırmanın ne olması gerektiğini açıklayın:"
+        AppLanguage.AR -> "يرجى وصف الخطأ وما ينبغي أن يكون التصنيف الصحيح:"
+    }
+
+    fun getNoEmailAppFound(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "No email app found. Please write to"
+        AppLanguage.DE -> "Keine E-Mail-App gefunden. Bitte schreiben Sie an"
+        AppLanguage.FR -> "Aucune application e-mail trouvée. Merci d'écrire à"
+        AppLanguage.TR -> "E-posta uygulaması bulunamadı. Lütfen şu adrese yazın"
+        AppLanguage.AR -> "لم يتم العثور على تطبيق بريد إلكتروني. يرجى الكتابة إلى"
+    }
+
+    fun getImageLoadError(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Failed to load image"
+        AppLanguage.DE -> "Bild konnte nicht geladen werden"
+        AppLanguage.FR -> "Échec du chargement de l'image"
+        AppLanguage.TR -> "Görsel yüklenemedi"
+        AppLanguage.AR -> "فشل تحميل الصورة"
+    }
+
+    fun getUnknownError(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "unknown error"
+        AppLanguage.DE -> "unbekannter Fehler"
+        AppLanguage.FR -> "erreur inconnue"
+        AppLanguage.TR -> "bilinmeyen hata"
+        AppLanguage.AR -> "خطأ غير معروف"
+    }
+
+    fun getUnexpectedError(lang: AppLanguage, details: String): String = when (lang) {
+        AppLanguage.EN -> "An unexpected error occurred: $details. Please try again."
+        AppLanguage.DE -> "Ein unerwarteter Fehler ist aufgetreten: $details. Bitte versuchen Sie es erneut."
+        AppLanguage.FR -> "Une erreur inattendue s'est produite : $details. Veuillez réessayer."
+        AppLanguage.TR -> "Beklenmeyen bir hata oluştu: $details. Lütfen tekrar deneyin."
+        AppLanguage.AR -> "حدث خطأ غير متوقع: $details. يرجى المحاولة مرة أخرى."
+    }
+
+    fun getNetworkErrorTitle(lang: AppLanguage): String = when (lang) {
+        // Not "No Connection": this also fires when the device is online but Open Food Facts
+        // itself is down or rate-limiting (HTTP 5xx/429), where blaming the user's connection
+        // would be wrong.
+        AppLanguage.EN -> "Couldn't Check Right Now"
+        AppLanguage.DE -> "Prüfung gerade nicht möglich"
+        AppLanguage.FR -> "Vérification impossible pour le moment"
+        AppLanguage.TR -> "Şu An Kontrol Edilemedi"
+        AppLanguage.AR -> "تعذر التحقق الآن"
+    }
+
+    fun getNetworkErrorMessage(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Couldn't reach Open Food Facts to check this product. This doesn't mean it's unregistered — check your internet connection, or try again in a moment."
+        AppLanguage.DE -> "Open Food Facts konnte nicht erreicht werden, um dieses Produkt zu prüfen. Das heißt nicht, dass es nicht registriert ist — bitte Internetverbindung prüfen oder es gleich noch einmal versuchen."
+        AppLanguage.FR -> "Impossible de contacter Open Food Facts pour vérifier ce produit. Cela ne signifie pas qu'il n'est pas répertorié — vérifiez votre connexion internet ou réessayez dans un instant."
+        AppLanguage.TR -> "Bu ürünü kontrol etmek için Open Food Facts'e ulaşılamadı. Bu, ürünün sistemde kayıtlı olmadığı anlamına gelmez — internet bağlantınızı kontrol edin ya da biraz sonra tekrar deneyin."
+        AppLanguage.AR -> "تعذر الوصول إلى Open Food Facts للتحقق من هذا المنتج. هذا لا يعني أنه غير مسجل — تحقق من اتصال الإنترنت أو حاول مرة أخرى بعد قليل."
+    }
+
+    fun getRetryLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Try Again"
+        AppLanguage.DE -> "Erneut versuchen"
+        AppLanguage.FR -> "Réessayer"
+        AppLanguage.TR -> "Tekrar Dene"
+        AppLanguage.AR -> "إعادة المحاولة"
+    }
+
+    fun getReasonLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Reason"
+        AppLanguage.DE -> "Grund"
+        AppLanguage.FR -> "Raison"
+        AppLanguage.TR -> "Sebep"
+        AppLanguage.AR -> "السبب"
+    }
+
+    fun getOnDeviceStorage(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "ON-DEVICE STORAGE"
+        AppLanguage.DE -> "LOKALER SPEICHER"
+        AppLanguage.FR -> "STOCKAGE LOCAL"
+        AppLanguage.TR -> "CİHAZ ÜZERİNDE SAKLAMA"
+        AppLanguage.AR -> "التخزين على الجهاز"
+    }
+
+    fun getItemsSuffix(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Items"
+        AppLanguage.DE -> "Einträge"
+        AppLanguage.FR -> "Éléments"
+        AppLanguage.TR -> "Öğe"
+        AppLanguage.AR -> "عناصر"
+    }
+
+    fun getChronologicalHistory(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "CHRONOLOGICAL HISTORY (NEWEST FIRST)"
+        AppLanguage.DE -> "CHRONOLOGISCHER VERLAUF (NEUESTE ZUERST)"
+        AppLanguage.FR -> "HISTORIQUE CHRONOLOGIQUE (PLUS RÉCENT D'ABORD)"
+        AppLanguage.TR -> "KRONOLOJİK GEÇMİŞ (EN YENİ ÖNCE)"
+        AppLanguage.AR -> "السجل الزمني (الأحدث أولاً)"
+    }
+
+    fun getFlaggedLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Flagged"
+        AppLanguage.DE -> "Markiert"
+        AppLanguage.FR -> "Signalé"
+        AppLanguage.TR -> "İşaretlenen"
+        AppLanguage.AR -> "تم الإبلاغ عنه"
+    }
+
+    fun getHealthGaugeTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Health indicator"
+        AppLanguage.DE -> "Gesundheitsindikator"
+        AppLanguage.FR -> "Indicateur santé"
+        AppLanguage.TR -> "Sağlık göstergesi"
+        AppLanguage.AR -> "مؤشر الصحة"
+    }
+
+    fun getHealthGaugeNoData(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "This product has no nutrition score"
+        AppLanguage.DE -> "Für dieses Produkt gibt es keine Nährwertbewertung"
+        AppLanguage.FR -> "Ce produit n'a pas de score nutritionnel"
+        AppLanguage.TR -> "Bu ürünün besin puanı yok"
+        AppLanguage.AR -> "لا توجد نقاط تغذية لهذا المنتج"
+    }
+
+    fun getHealthGaugeNote(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Source: Open Food Facts (Nutri-Score A–E, NOVA). This is not a halal verdict."
+        AppLanguage.DE -> "Quelle: Open Food Facts (Nutri-Score A–E, NOVA). Keine Halal-Entscheidung."
+        AppLanguage.FR -> "Source : Open Food Facts (Nutri-Score A–E, NOVA). Ce n'est pas un verdict halal."
+        AppLanguage.TR -> "Kaynak: Open Food Facts (Nutri-Score A–E, NOVA). Helal kararı değildir."
+        AppLanguage.AR -> "المصدر: Open Food Facts (Nutri-Score من A إلى E، وNOVA). ليس حكماً حلالاً."
+    }
+
+    // NOVA 1 = unprocessed ... 4 = ultra-processed.
+    // Plain-language meaning of a NOVA group (1..4). Descriptive only, no health judgement.
+    // Unknown group returns "" instead of crashing; the card never passes one.
+    fun getNovaPlain(lang: AppLanguage, group: Int): String = when (lang) {
+        AppLanguage.EN -> when (group) {
+            1 -> "Natural or barely processed"
+            2 -> "Kitchen ingredient (oil, sugar, salt…)"
+            3 -> "Processed food (bread, cheese, canned…)"
+            4 -> "Ultra-processed ready product (e.g. packaged snacks, soft drinks)"
+            else -> ""
+        }
+        AppLanguage.DE -> when (group) {
+            1 -> "Natürlich oder kaum verarbeitet"
+            2 -> "Küchenzutat (Öl, Zucker, Salz …)"
+            3 -> "Verarbeitetes Lebensmittel (Brot, Käse, Konserven …)"
+            4 -> "Stark verarbeitetes Fertigprodukt (z. B. Snacks, Softdrinks)"
+            else -> ""
+        }
+        AppLanguage.FR -> when (group) {
+            1 -> "Naturel ou très peu transformé"
+            2 -> "Ingrédient culinaire (huile, sucre, sel…)"
+            3 -> "Aliment transformé (pain, fromage, conserve…)"
+            4 -> "Produit ultra-transformé (ex. snacks emballés, boissons gazeuses)"
+            else -> ""
+        }
+        AppLanguage.TR -> when (group) {
+            1 -> "Doğal veya çok az işlenmiş"
+            2 -> "Mutfak malzemesi (yağ, şeker, tuz gibi)"
+            3 -> "İşlenmiş gıda (ekmek, peynir, konserve gibi)"
+            4 -> "Çok işlenmiş hazır ürün (paketli atıştırmalık, gazlı içecek gibi)"
+            else -> ""
+        }
+        AppLanguage.AR -> when (group) {
+            1 -> "طبيعي أو قليل التصنيع"
+            2 -> "مكوّن للطهي (زيت، سكر، ملح…)"
+            3 -> "غذاء مصنّع (خبز، جبن، معلّبات…)"
+            4 -> "منتج جاهز فائق التصنيع (مثل الوجبات الخفيفة المعبأة والمشروبات الغازية)"
+            else -> ""
+        }
+    }
+
+    // Plain-language meaning of a Nutri-Score grade (A..E). Describes the nutritional value only.
+    fun getNutriScorePlain(lang: AppLanguage, grade: String): String = when (lang) {
+        AppLanguage.EN -> when (grade) {
+            "A" -> "Very good nutritional value"
+            "B" -> "Good nutritional value"
+            "C" -> "Average nutritional value"
+            "D" -> "Low nutritional value"
+            "E" -> "Very low nutritional value"
+            else -> ""
+        }
+        AppLanguage.DE -> when (grade) {
+            "A" -> "Sehr gute Nährwerte"
+            "B" -> "Gute Nährwerte"
+            "C" -> "Mittlere Nährwerte"
+            "D" -> "Niedrige Nährwerte"
+            "E" -> "Sehr niedrige Nährwerte"
+            else -> ""
+        }
+        AppLanguage.FR -> when (grade) {
+            "A" -> "Très bonne valeur nutritionnelle"
+            "B" -> "Bonne valeur nutritionnelle"
+            "C" -> "Valeur nutritionnelle moyenne"
+            "D" -> "Faible valeur nutritionnelle"
+            "E" -> "Très faible valeur nutritionnelle"
+            else -> ""
+        }
+        AppLanguage.TR -> when (grade) {
+            "A" -> "Besin değeri çok iyi"
+            "B" -> "Besin değeri iyi"
+            "C" -> "Besin değeri orta"
+            "D" -> "Besin değeri düşük"
+            "E" -> "Besin değeri çok düşük"
+            else -> ""
+        }
+        AppLanguage.AR -> when (grade) {
+            "A" -> "قيمة غذائية ممتازة"
+            "B" -> "قيمة غذائية جيدة"
+            "C" -> "قيمة غذائية متوسطة"
+            "D" -> "قيمة غذائية منخفضة"
+            "E" -> "قيمة غذائية منخفضة جداً"
+            else -> ""
+        }
+    }
+
+    fun getCertLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Cert"
+        AppLanguage.DE -> "Zertifikat"
+        AppLanguage.FR -> "Certif."
+        AppLanguage.TR -> "Sertifika"
+        AppLanguage.AR -> "شهادة"
+    }
+
+    fun getBarcodeNotFoundInOff(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Barcode not found in Open Food Facts."
+        AppLanguage.DE -> "Barcode nicht in Open Food Facts gefunden."
+        AppLanguage.FR -> "Code-barres introuvable dans Open Food Facts."
+        AppLanguage.TR -> "Barkod Open Food Facts'ta bulunamadı."
+        AppLanguage.AR -> "لم يتم العثور على الباركود في Open Food Facts."
+    }
+
+    fun getProhibitedLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Prohibited"
+        AppLanguage.DE -> "Verboten"
+        AppLanguage.FR -> "Interdit"
+        AppLanguage.TR -> "Yasaklı"
+        AppLanguage.AR -> "محظور"
+    }
+
+    fun getDoubtfulLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Doubtful"
+        AppLanguage.DE -> "Zweifelhaft"
+        AppLanguage.FR -> "Douteux"
+        AppLanguage.TR -> "Şüpheli"
+        AppLanguage.AR -> "مشبوه"
+    }
+
+    fun getCertificationLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Certification"
+        AppLanguage.DE -> "Zertifizierung"
+        AppLanguage.FR -> "Certification"
+        AppLanguage.TR -> "Sertifikasyon"
+        AppLanguage.AR -> "الشهادة"
+    }
+
+    fun getNoProhibitedAdditives(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "No prohibited additives. Safe and verified."
+        AppLanguage.DE -> "Keine verbotenen Zusatzstoffe. Sicher und geprüft."
+        AppLanguage.FR -> "Aucun additif interdit. Sûr et vérifié."
+        AppLanguage.TR -> "Yasaklı katkı maddesi yok. Güvenli ve doğrulanmış."
+        AppLanguage.AR -> "لا توجد إضافات محظورة. آمن وموثق."
+    }
+
+    fun getContainsNonHalalDerivatives(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Contains non-halal animal or alcohol derivatives."
+        AppLanguage.DE -> "Enthält nicht-halal tierische oder alkoholische Bestandteile."
+        AppLanguage.FR -> "Contient des dérivés animaux ou d'alcool non halal."
+        AppLanguage.TR -> "Helal olmayan hayvansal veya alkol türevleri içerir."
+        AppLanguage.AR -> "يحتوي على مشتقات حيوانية أو كحولية غير حلال."
+    }
+
+    fun getContainsUnverifiedAdditives(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Contains additives of unverified origin."
+        AppLanguage.DE -> "Enthält Zusatzstoffe mit unklarer Herkunft."
+        AppLanguage.FR -> "Contient des additifs d'origine non vérifiée."
+        AppLanguage.TR -> "Kaynağı doğrulanmamış katkı maddeleri içerir."
+        AppLanguage.AR -> "يحتوي على إضافات غير مؤكدة المصدر."
+    }
+
+    fun getClose(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Close"
+        AppLanguage.DE -> "Schließen"
+        AppLanguage.FR -> "Fermer"
+        AppLanguage.TR -> "Kapat"
+        AppLanguage.AR -> "إغلاق"
+    }
+
+    fun getSearch(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Search"
+        AppLanguage.DE -> "Suchen"
+        AppLanguage.FR -> "Rechercher"
+        AppLanguage.TR -> "Ara"
+        AppLanguage.AR -> "بحث"
+    }
+
+    fun getClear(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Clear"
+        AppLanguage.DE -> "Löschen"
+        AppLanguage.FR -> "Effacer"
+        AppLanguage.TR -> "Temizle"
+        AppLanguage.AR -> "مسح"
+    }
+
+    fun getClearAll(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Clear All"
+        AppLanguage.DE -> "Alle löschen"
+        AppLanguage.FR -> "Tout effacer"
+        AppLanguage.TR -> "Tümünü Temizle"
+        AppLanguage.AR -> "مسح الكل"
+    }
+
+    fun getSelected(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Selected"
+        AppLanguage.DE -> "Ausgewählt"
+        AppLanguage.FR -> "Sélectionné"
+        AppLanguage.TR -> "Seçili"
+        AppLanguage.AR -> "محدد"
+    }
+
+    fun getDetails(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Details"
+        AppLanguage.DE -> "Details"
+        AppLanguage.FR -> "Détails"
+        AppLanguage.TR -> "Detaylar"
+        AppLanguage.AR -> "التفاصيل"
+    }
+
+    fun getShare(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Share"
+        AppLanguage.DE -> "Teilen"
+        AppLanguage.FR -> "Partager"
+        AppLanguage.TR -> "Paylaş"
+        AppLanguage.AR -> "مشاركة"
+    }
+
+    fun getShareApp(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Share App"
+        AppLanguage.DE -> "App teilen"
+        AppLanguage.FR -> "Partager l'app"
+        AppLanguage.TR -> "Uygulamayı Paylaş"
+        AppLanguage.AR -> "مشاركة التطبيق"
+    }
+
+    fun getRateAppShort(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Rate us"
+        AppLanguage.DE -> "Bewerten"
+        AppLanguage.FR -> "Noter"
+        AppLanguage.TR -> "Değerlendir"
+        AppLanguage.AR -> "قيّمنا"
+    }
+
+    fun getShareAppMessage(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Check out Halal Checker — scan any barcode to instantly see if a product is halal, haram, or doubtful: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+        AppLanguage.DE -> "Schau dir Halal Prüfer an — scanne einen Barcode und sieh sofort, ob ein Produkt halal, haram oder zweifelhaft ist: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+        AppLanguage.FR -> "Découvrez Contrôle Halal — scannez un code-barres pour savoir instantanément si un produit est halal, haram ou douteux : https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+        AppLanguage.TR -> "Helal Rehberi'ni dene — barkod okutarak bir ürünün helal mi, haram mı, yoksa şüpheli mi olduğunu anında öğren: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+        AppLanguage.AR -> "جرّب دليل الحلال — امسح أي باركود لتعرف فوراً إن كان المنتج حلالاً أم حراماً أم مشبوهاً: https://play.google.com/store/apps/details?id=com.fatihgulen.helalrehberi"
+    }
+
+    fun getLanguageSelection(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Select Language"
+        AppLanguage.DE -> "Sprache wählen"
+        AppLanguage.FR -> "Choisir la langue"
+        AppLanguage.TR -> "Dil Seçimi"
+        AppLanguage.AR -> "اختر اللغة"
+    }
+
+    fun getAnalyzePhotoButton(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Analyze from a Photo"
+        AppLanguage.DE -> "Per Foto analysieren"
+        AppLanguage.FR -> "Analyser depuis une photo"
+        AppLanguage.TR -> "Fotoğraf Çekerek Analiz Et"
+        AppLanguage.AR -> "التحليل من صورة"
+    }
+
+    fun getPhotoAnalysisDialogTitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Confirm Ingredients Text"
+        AppLanguage.DE -> "Zutatentext bestätigen"
+        AppLanguage.FR -> "Confirmer le texte des ingrédients"
+        AppLanguage.TR -> "İçindekiler Metnini Onayla"
+        AppLanguage.AR -> "تأكيد نص المكونات"
+    }
+
+    fun getPhotoAnalysisDialogSubtitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Check the text below and fix any misread words before analyzing."
+        AppLanguage.DE -> "Prüfen Sie den Text unten und korrigieren Sie falsch erkannte Wörter vor der Analyse."
+        AppLanguage.FR -> "Vérifiez le texte ci-dessous et corrigez les mots mal reconnus avant d'analyser."
+        AppLanguage.TR -> "Analiz etmeden önce aşağıdaki metni kontrol edin, yanlış okunan kelimeleri düzeltin."
+        AppLanguage.AR -> "راجع النص أدناه وصحّح أي كلمات قُرئت بشكل خاطئ قبل التحليل."
+    }
+
+    fun getPhotoAnalysisProductNameHint(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Product name (optional)"
+        AppLanguage.DE -> "Produktname (optional)"
+        AppLanguage.FR -> "Nom du produit (facultatif)"
+        AppLanguage.TR -> "Ürün adı (opsiyonel)"
+        AppLanguage.AR -> "اسم المنتج (اختياري)"
+    }
+
+    fun getPhotoAnalysisIngredientsHint(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Ingredients text"
+        AppLanguage.DE -> "Zutatentext"
+        AppLanguage.FR -> "Texte des ingrédients"
+        AppLanguage.TR -> "İçindekiler metni"
+        AppLanguage.AR -> "نص المكونات"
+    }
+
+    fun getPhotoAnalysisIngredientsPreviewLabel(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Detected items (preview)"
+        AppLanguage.DE -> "Erkannte Bestandteile (Vorschau)"
+        AppLanguage.FR -> "Éléments détectés (aperçu)"
+        AppLanguage.TR -> "Tespit edilen maddeler (önizleme)"
+        AppLanguage.AR -> "العناصر المكتشفة (معاينة)"
+    }
+
+    fun getPhotoAnalysisNutritionTableWarning(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "This looks like the nutrition facts panel, not the ingredients list. Additives can't be checked from it - retake a photo of the 'Ingredients' section instead."
+        AppLanguage.DE -> "Das sieht nach der Nährwerttabelle aus, nicht nach der Zutatenliste. Zusatzstoffe lassen sich daraus nicht prüfen - fotografieren Sie stattdessen den Abschnitt 'Zutaten'."
+        AppLanguage.FR -> "Ceci ressemble au tableau nutritionnel, pas à la liste des ingrédients. Les additifs ne peuvent pas être vérifiés à partir de ce texte - reprenez une photo de la section « Ingrédients »."
+        AppLanguage.TR -> "Bu, içindekiler listesine değil besin değerleri tablosuna benziyor. Bundan katkı maddeleri kontrol edilemez - bunun yerine 'İçindekiler' bölümünün fotoğrafını çekin."
+        AppLanguage.AR -> "يبدو هذا كجدول القيم الغذائية وليس قائمة المكونات. لا يمكن التحقق من الإضافات منه - أعد تصوير قسم 'المكونات' بدلاً من ذلك."
+    }
+
+    fun getPhotoAnalysisEmptyOcrWarning(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "No text was detected in the photo. You can type the ingredients manually below."
+        AppLanguage.DE -> "Im Foto wurde kein Text erkannt. Sie können die Zutaten unten manuell eingeben."
+        AppLanguage.FR -> "Aucun texte détecté sur la photo. Vous pouvez saisir les ingrédients manuellement ci-dessous."
+        AppLanguage.TR -> "Fotoğrafta metin tespit edilemedi. Aşağıya içindekileri elle yazabilirsiniz."
+        AppLanguage.AR -> "لم يتم العثور على نص في الصورة. يمكنك كتابة المكونات يدوياً أدناه."
+    }
+
+    fun getPhotoAnalysisAnalyzeButton(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Analyze"
+        AppLanguage.DE -> "Analysieren"
+        AppLanguage.FR -> "Analyser"
+        AppLanguage.TR -> "Analiz Et"
+        AppLanguage.AR -> "تحليل"
+    }
+
+    fun getPhotoAnalysisDefaultName(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Photo Analysis"
+        AppLanguage.DE -> "Fotoanalyse"
+        AppLanguage.FR -> "Analyse photo"
+        AppLanguage.TR -> "Fotoğraftan Analiz"
+        AppLanguage.AR -> "تحليل من صورة"
+    }
+
+    fun getMadhhabSelection(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Choose Madhhab"
+        AppLanguage.DE -> "Rechtsschule wählen"
+        AppLanguage.FR -> "Choisir l'école juridique"
+        AppLanguage.TR -> "Mezhep Seçimi"
+        AppLanguage.AR -> "اختيار المذهب"
+    }
+
+    fun getMadhhabSelectionHint(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Only changes a result where the schools differ on a sourced point. Not specified = the cautious default."
+        AppLanguage.DE -> "Ändert ein Ergebnis nur dort, wo die Rechtsschulen bei einem belegten Punkt abweichen. Nicht angegeben = vorsichtige Standardeinstellung."
+        AppLanguage.FR -> "Ne modifie un résultat que là où les écoles divergent sur un point sourcé. Non précisé = réglage prudent par défaut."
+        AppLanguage.TR -> "Sonucu yalnızca mezheplerin kaynaklı bir konuda ayrıştığı yerde değiştirir. Belirtme = ihtiyatlı varsayılan."
+        AppLanguage.AR -> "يغيّر النتيجة فقط حيث تختلف المذاهب في مسألة موثّقة. غير محدد = الإعداد الاحتياطي الافتراضي."
+    }
+
+    fun getMadhhabName(madhhab: Madhhab, lang: AppLanguage): String = when (madhhab) {
+        Madhhab.UNSPECIFIED -> when (lang) {
+            AppLanguage.EN -> "Not specified (cautious)"
+            AppLanguage.DE -> "Nicht angegeben (vorsichtig)"
+            AppLanguage.FR -> "Non précisé (prudent)"
+            AppLanguage.TR -> "Belirtme (ihtiyatlı)"
+            AppLanguage.AR -> "غير محدد (احتياطي)"
+        }
+        Madhhab.HANAFI -> when (lang) {
+            AppLanguage.EN -> "Hanafi"
+            AppLanguage.DE -> "Hanafitisch"
+            AppLanguage.FR -> "Hanafite"
+            AppLanguage.TR -> "Hanefi"
+            AppLanguage.AR -> "حنفي"
+        }
+        Madhhab.SHAFII -> when (lang) {
+            AppLanguage.EN -> "Shafi'i"
+            AppLanguage.DE -> "Schafiitisch"
+            AppLanguage.FR -> "Chaféite"
+            AppLanguage.TR -> "Şafii"
+            AppLanguage.AR -> "شافعي"
+        }
+        Madhhab.MALIKI -> when (lang) {
+            AppLanguage.EN -> "Maliki"
+            AppLanguage.DE -> "Malikitisch"
+            AppLanguage.FR -> "Malékite"
+            AppLanguage.TR -> "Maliki"
+            AppLanguage.AR -> "مالكي"
+        }
+        Madhhab.HANBALI -> when (lang) {
+            AppLanguage.EN -> "Hanbali"
+            AppLanguage.DE -> "Hanbalitisch"
+            AppLanguage.FR -> "Hanbalite"
+            AppLanguage.TR -> "Hanbeli"
+            AppLanguage.AR -> "حنبلي"
+        }
+    }
+
+    // Header chip label: the bare word "Madhhab" while nothing is chosen (a "Not specified
+    // (cautious)" label is far too long for the chip), otherwise the school's name.
+    fun getMadhhabChipLabel(madhhab: Madhhab, lang: AppLanguage): String =
+        if (madhhab == Madhhab.UNSPECIFIED) {
+            when (lang) {
+                AppLanguage.EN -> "Madhhab"
+                AppLanguage.DE -> "Madhhab"
+                AppLanguage.FR -> "Madhhab"
+                AppLanguage.TR -> "Mezhep"
+                AppLanguage.AR -> "المذهب"
+            }
+        } else {
+            getMadhhabName(madhhab, lang)
+        }
+}
