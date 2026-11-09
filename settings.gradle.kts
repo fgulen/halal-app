@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "Helal Kontrol"
 
 include(":app")
+include(":shared")

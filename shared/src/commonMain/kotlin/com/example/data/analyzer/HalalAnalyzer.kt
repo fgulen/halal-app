@@ -7,7 +7,7 @@ import com.example.data.model.HalalStatus
 import com.example.data.model.LocalizedText
 import com.example.data.model.Madhhab
 import com.example.data.remote.OffProduct
-import java.util.Locale
+import com.example.data.util.newConcurrentStringMap
 
 object HalalAnalyzer {
 
@@ -127,15 +127,15 @@ object HalalAnalyzer {
     // downloading the page and finding the quoted ruling verbatim (source table in
     // docs/superpowers/plans/2026-10-07-madhhab-setting-and-off-5xx-fix.md):
     // - Diyanet DİYK fatwa (15.09.2020): Diyanet's own ruling only - no slaughter condition, pork excluded.
-    internal const val DIYANET_RENNET_FATWA_URL =
+    const val DIYANET_RENNET_FATWA_URL =
         "https://kurul.diyanet.gov.tr/tr/fetva/peynir-yapiminda-kullanilan-mayalarin-dini-hukmu-nedir/0193c42d-aa60-7126-92d8-9c538f6b513b"
     // - The Hanafi split: Abu Hanifa (pure) vs. his students Abu Yusuf and Muhammad (consumption haram).
-    internal const val HANAFI_RENNET_SOURCE_URL = "https://thehalallife.co.uk/animal-rennet/"
+    const val HANAFI_RENNET_SOURCE_URL = "https://thehalallife.co.uk/animal-rennet/"
     // - The other schools: "majority of scholars among the Malikis, Shafi'is and Hanbalis... impure (najis)".
-    internal const val OTHER_MADHHABS_RENNET_SOURCE_URL = "https://islamqa.info/en/answers/2841"
+    const val OTHER_MADHHABS_RENNET_SOURCE_URL = "https://islamqa.info/en/answers/2841"
     // - Arabic UI (user decision): the Arabic edition of the same IslamQA answer, which states both
     //   "قول أبي حنيفة وهو إحدى الروايتين عن أحمد بطهارة الإنفحة من الميتة" and the majority (najis) view.
-    internal const val ARABIC_RENNET_SOURCE_URL = "https://islamqa.info/ar/answers/2841"
+    const val ARABIC_RENNET_SOURCE_URL = "https://islamqa.info/ar/answers/2841"
 
     /**
      * A sourced, user-approved madhhab difference. It applies only when EVERY keyword of [ruleId]
@@ -237,7 +237,7 @@ object HalalAnalyzer {
         "sığır eti", "dana eti", "kuzu eti", "tavuk eti", "hindi eti", "ördek eti", "et suyu", "et özütü"
     )
 
-    internal val HARAM_RULES = listOf(
+    val HARAM_RULES = listOf(
         HaramRule(
             keywords = listOf("e441", "pork gelatin", "porcine gelatin", "schweinegelatine", "gelatine de porc", "gélatine de porc", "porc gelatine", "varkensgelatine", "domuz jelatini",
                 "جيلاتين خنزير", "جيلاتين الخنزير", "جلاتين خنزير"),
@@ -436,7 +436,7 @@ object HalalAnalyzer {
         )
     )
 
-    internal val SUSPICIOUS_RULES = listOf(
+    val SUSPICIOUS_RULES = listOf(
         // Diyanet permits ethanol as an aroma solvent (fatwa 18.08.2017), so it is Doubtful, not Haram.
         SuspiciousRule(
             keywords = listOf("etil alkol", "etil alkolü", "etil alkolu", "etil-alkol", "ethyl alcohol", "ethyl-alcohol", "ethylalkohol", "ethanol", "etanol", "etanolü", "إيثانول"),
@@ -912,7 +912,7 @@ object HalalAnalyzer {
             offProduct.ingredientsTextTr,
             offProduct.ingredientsTextAr,
             offProduct.ingredientsText
-        ).distinctBy { it.trim().lowercase(Locale.ROOT) }
+        ).distinctBy { it.trim().lowercase() }
             .joinToString(" ")
 
         // Strip negated compounds ("alcohol-free", "non-alcoholic") before matching, so a
@@ -920,8 +920,8 @@ object HalalAnalyzer {
         // word-boundary check in containsKeyword treats '-' as a boundary, not as glue.
         val ingredientsLower = stripNegatedPhrases(normalizeForMatching(ingredientsRaw))
         val additiveTags = offProduct.additivesTags?.map { normalizeForMatching(it).replace("en:", "") } ?: emptyList()
-        val labelsTags = offProduct.labelsTags?.map { it.lowercase(Locale.ROOT).replace("en:", "") } ?: emptyList()
-        val analysisTags = offProduct.ingredientsAnalysisTags?.map { it.lowercase(Locale.ROOT) } ?: emptyList()
+        val labelsTags = offProduct.labelsTags?.map { it.lowercase().replace("en:", "") } ?: emptyList()
+        val analysisTags = offProduct.ingredientsAnalysisTags?.map { it.lowercase() } ?: emptyList()
 
         // Computed early (moved ahead of rule matching) so the meat rule below can suppress
         // itself on products that already carry an explicit halal claim/label.
@@ -1057,7 +1057,7 @@ object HalalAnalyzer {
                 .filter { it.isNotBlank() && it.length > 1 }
                 .take(40)
         } else {
-            additiveTags.map { it.uppercase(Locale.ROOT) }
+            additiveTags.map { it.uppercase() }
         }
 
         val status: HalalStatus
@@ -1272,7 +1272,7 @@ object HalalAnalyzer {
     // Rule keywords and phrases are static, but classifyIngredientToken runs per chip on every
     // recomposition, so their normalized forms are computed once. Thread-safe: the analyzer runs on
     // IO while chips render on the main thread. Raw keywords stay the identities used elsewhere.
-    private val normalizedKeywordCache = java.util.concurrent.ConcurrentHashMap<String, String>()
+    private val normalizedKeywordCache = newConcurrentStringMap()
     private fun normalizedKeyword(keyword: String): String =
         normalizedKeywordCache.getOrPut(keyword) { normalizeForMatching(keyword) }
     private val NORMALIZED_NEGATION_PHRASES by lazy { NEGATION_PHRASES.map(::normalizeForMatching) }
@@ -1297,8 +1297,8 @@ object HalalAnalyzer {
      * combining dot and folding "ı" to "i" makes "PEYNİR MAYASI", "peynir mayası" and the keyword
      * all compare equal. Not Locale("tr"): that lowercases "I" to "ı" and breaks caps English.
      */
-    internal fun normalizeForMatching(text: String): String =
-        text.lowercase(Locale.ROOT).replace("\u0307", "").replace('ı', 'i')
+    fun normalizeForMatching(text: String): String =
+        text.lowercase().replace("\u0307", "").replace('ı', 'i')
             // Arabic: labels mix hamza-alif spellings ("إنفحة"/"انفحة"), alif maqsura/ya ("خالى"/
             // "خالي") and optional vowel marks/tatweel, all of which are the same word.
             .replace(ARABIC_MARKS, "")
@@ -1454,14 +1454,14 @@ object HalalAnalyzer {
     // internal (not private): PhotoIngredientCapture.kt reuses these same word lists to locate
     // the ingredients block among a photo's OCR text blocks, so both layers agree on what
     // "looks like an ingredients section" vs "looks like a nutrition table" means.
-    internal val NUTRITION_TABLE_MARKERS = listOf(
+    val NUTRITION_TABLE_MARKERS = listOf(
         "nährwerte", "brennwert", "energie", "eiweiß", "kohlenhydrate", "gesättigte fettsäuren",
         "nutrition facts", "energy value", "calories", "protein", "carbohydrate", "saturated fat", "sodium",
         "valeur nutritionnelle", "valeur énergétique", "glucides", "protéines", "matières grasses", "lipides",
         "besin değerleri", "enerji", "karbonhidrat", "kkal", "doymuş yağ",
         "القيم الغذائية", "السعرات", "البروتين", "الدهون المشبعة"
     )
-    internal val INGREDIENT_SECTION_MARKERS = listOf(
+    val INGREDIENT_SECTION_MARKERS = listOf(
         "zutaten", "ingredients", "içindekiler", "ingrédients", "ingredientes", "المكونات"
     )
 
