@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.local.AppDatabase
-import com.example.data.local.UserPreferences
+import com.example.data.local.createUserPreferences
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
@@ -35,7 +35,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private val repository: ProductRepository
-    private val userPreferences = UserPreferences(application)
+    private val userPreferences = createUserPreferences(application)
 
     private val _selectedLanguage = MutableStateFlow(AppLanguage.EN)
     val selectedLanguage: StateFlow<AppLanguage> = _selectedLanguage.asStateFlow()

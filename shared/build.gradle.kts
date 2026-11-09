@@ -3,8 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 // Ortak iş mantığı (analyzer, model, veri katmanı). Hedefler:
 // - android: uygulama ve Room (P2d) için
 // - jvm: birim testleri Windows'ta çalışsın diye
-// - iOS/native: Windows'ta derlenmez (ignoreDisabledTargets); commonMain'in
-//   JVM dışı API kullanmadığını mingwX64 ile Windows'ta kontrol ederiz.
+// - iOS: Windows'ta derlenmez (ignoreDisabledTargets); gerçek derleme CI'da (P4).
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -23,6 +22,15 @@ kotlin {
   }
   iosArm64()
   iosSimulatorArm64()
-  // Windows native derleme kontrolü: commonMain JVM dışı API sızıntısını yakalar.
-  mingwX64()
+
+  // Hedefler tanımlandıktan SONRA source set'lere dokunulmalı (jvmTest yapılandırma çakışması).
+  sourceSets {
+    commonMain.dependencies {
+      implementation(libs.androidx.datastore.preferences.core)
+      implementation(libs.kotlinx.coroutines.core)
+    }
+    jvmTest.dependencies {
+      implementation(kotlin("test"))
+    }
+  }
 }
