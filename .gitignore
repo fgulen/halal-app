@@ -31,3 +31,6 @@ RELEASE_KEYSTORE_INFO.txt
 
 # Verdict probe output (OFF data, ODbL; regenerate with tools/verdict_probe/run.ps1)
 tools/verdict_probe/out/
+
+# KMP shared modülü çıktıları
+/shared/build/
