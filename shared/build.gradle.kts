@@ -41,6 +41,7 @@ kotlin {
       implementation(compose.material3)
       implementation(compose.ui)
       implementation(compose.materialIconsExtended)
+      implementation(libs.kmp.lifecycle.viewmodel)
     }
     jvmTest.dependencies {
       implementation(kotlin("test"))

@@ -9,3 +9,7 @@ actual fun logDebug(tag: String, message: String) {
 actual fun logWarn(tag: String, message: String) {
     Log.w(tag, message)
 }
+
+actual fun logError(tag: String, message: String) {
+    Log.e(tag, message)
+}

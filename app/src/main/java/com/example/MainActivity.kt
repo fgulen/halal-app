@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.screens.MainHalalScreen
 import com.example.ui.theme.HalalKontrolTheme
 import com.example.ui.viewmodel.HalalScannerViewModel
+import com.example.ui.viewmodel.HalalScannerViewModelFactory
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
@@ -28,7 +29,7 @@ import com.google.android.play.core.review.ReviewManagerFactory
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: HalalScannerViewModel by viewModels()
+    private val viewModel: HalalScannerViewModel by viewModels { HalalScannerViewModelFactory(application) }
 
     // Play In-App Update (testing-only scaffolding, safe to remove after closed testing wraps
     // up): testers install from the Play testing-track link and previously only found out about

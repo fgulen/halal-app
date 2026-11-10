@@ -1,12 +1,10 @@
 package com.example.ui.viewmodel
 
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.local.getAppDatabase
-import com.example.data.repository.androidIsOnline
-import com.example.data.local.createUserPreferences
+import com.example.data.local.UserPreferences
+import com.example.data.util.logError
+import com.example.data.util.logWarn
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
@@ -28,15 +26,15 @@ sealed class ScanError {
     data class Unexpected(val message: String) : ScanError()
 }
 
-class HalalScannerViewModel(application: Application) : AndroidViewModel(application) {
+class HalalScannerViewModel(
+    private val repository: ProductRepository,
+    private val userPreferences: UserPreferences,
+) : ViewModel() {
 
     private companion object {
         // Successful scans after which closing a result asks for a Play review (each at most once).
         val REVIEW_PROMPT_THRESHOLDS = listOf(3, 20, 50)
     }
-
-    private val repository: ProductRepository
-    private val userPreferences = createUserPreferences(application)
 
     private val _selectedLanguage = MutableStateFlow(AppLanguage.EN)
     val selectedLanguage: StateFlow<AppLanguage> = _selectedLanguage.asStateFlow()
@@ -92,8 +90,6 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
     private var scanJob: Job? = null
 
     init {
-        val database = getAppDatabase(application)
-        repository = ProductRepository(database.productDao(), isOnlineCheck = { androidIsOnline(application) })
         viewModelScope.launch {
             _selectedLanguage.value = userPreferences.selectedLanguage.first()
         }
@@ -104,7 +100,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
                 val stored = userPreferences.selectedMadhhab.first()
                 if (!madhhabChosenThisSession) _selectedMadhhab.value = stored
             } catch (e: Exception) {
-                Log.w("HalalScannerViewModel", "Couldn't load madhhab preference, using default", e)
+                logWarn("HalalScannerViewModel", "Couldn't load madhhab preference, using default: ${e.message}")
             } finally {
                 madhhabLoaded.complete(Unit)
             }
@@ -190,7 +186,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             try {
                 if (userPreferences.claimReviewPrompt(REVIEW_PROMPT_THRESHOLDS)) _reviewRequest.value = true
             } catch (e: Exception) {
-                Log.w("HalalScannerViewModel", "Couldn't check review prompt", e)
+                logWarn("HalalScannerViewModel", "Couldn't check review prompt: ${e.message}")
             }
         }
     }
@@ -206,7 +202,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
             try {
                 userPreferences.recordSuccessfulScan()
             } catch (e: Exception) {
-                Log.w("HalalScannerViewModel", "Couldn't record successful scan", e)
+                logWarn("HalalScannerViewModel", "Couldn't record successful scan: ${e.message}")
             }
         }
         _activeProduct.value = product
@@ -233,10 +229,10 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
                 val product = repository.checkBarcode(barcode, _selectedLanguage.value, _selectedMadhhab.value)
                 showScanResult(product)
             } catch (e: ProductRepository.NetworkUnavailableException) {
-                Log.w("HalalScannerViewModel", "Network unavailable while checking '$barcode'")
+                logWarn("HalalScannerViewModel", "Network unavailable while checking '$barcode'")
                 _scanError.value = ScanError.NetworkUnavailable(barcode)
             } catch (e: Exception) {
-                Log.e("HalalScannerViewModel", "checkBarcode failed for '$barcode'", e)
+                logError("HalalScannerViewModel", "checkBarcode failed for '$barcode': ${e.message}")
                 _scanError.value = ScanError.Unexpected(
                     AppStrings.getUnexpectedError(_selectedLanguage.value, e.message ?: AppStrings.getUnknownError(_selectedLanguage.value))
                 )
