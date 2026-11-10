@@ -1,6 +1,6 @@
 package com.example.ui.camera
 
-import com.example.ui.components.rememberReducedMotion
+import com.example.ui.platform.rememberReducedMotion
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import android.content.Context

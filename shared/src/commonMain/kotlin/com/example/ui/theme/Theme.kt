@@ -1,18 +1,16 @@
 package com.example.ui.theme
 
 import com.example.ui.theme.NeutralSlateBorder
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
+import com.example.ui.platform.isTabletLayout
+import com.example.ui.platform.platformDynamicColorScheme
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 
@@ -24,7 +22,6 @@ import androidx.compose.ui.unit.Density
 // smallestScreenWidthDp >= 600 (Android's own sw600dp tablet breakpoint) so on phones boost == 1f and
 // the resulting Density is bit-identical to before this change.
 private const val TABLET_FONT_SCALE_BOOST = 1.15f
-private const val TABLET_MIN_SMALLEST_WIDTH_DP = 600
 
 private val DarkColorScheme = darkColorScheme(
     primary = EmeraldGreenPrimary,
@@ -62,22 +59,18 @@ private val LightColorScheme = lightColorScheme(
     onSurfaceVariant = NaturalTextMuted
 )
 
+private fun fallbackScheme(darkTheme: Boolean): ColorScheme =
+    if (darkTheme) DarkColorScheme else LightColorScheme
+
 @Composable
 fun HalalKontrolTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false, // Use our brand colors for cohesive Halal identity
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = if (dynamicColor) platformDynamicColorScheme(darkTheme) ?: fallbackScheme(darkTheme) else fallbackScheme(darkTheme)
 
-    val isTablet = LocalConfiguration.current.smallestScreenWidthDp >= TABLET_MIN_SMALLEST_WIDTH_DP
+    val isTablet = isTabletLayout()
     val baseDensity = LocalDensity.current
     val boostedDensity = if (isTablet) {
         Density(baseDensity.density, baseDensity.fontScale * TABLET_FONT_SCALE_BOOST)
