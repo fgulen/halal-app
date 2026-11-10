@@ -1,9 +1,5 @@
 package com.example.data.repository
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.util.Log
 import com.example.data.analyzer.HalalAnalyzer
 import com.example.data.local.InitialData
 import com.example.data.local.ProductDao
@@ -16,7 +12,11 @@ import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.data.model.Madhhab
 import com.example.data.remote.OpenFoodFactsApi
+import com.example.data.util.logDebug
+import com.example.data.util.logWarn
+import com.example.data.util.nowEpochMillis
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ private const val TAG = "ProductRepository"
 class ProductRepository(
     private val productDao: ProductDao,
     private val openFoodFactsApi: OpenFoodFactsApi = OpenFoodFactsApi.create(),
-    private val appContext: Context? = null
+    private val isOnlineCheck: () -> Boolean = { true },
 ) {
 
     /**
@@ -36,15 +36,8 @@ class ProductRepository(
      */
     class NetworkUnavailableException(val query: String) : Exception("No network reachable while checking '$query'")
 
-    private fun isOnline(): Boolean {
-        val context = appContext ?: return true
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-            ?: return true
-        val network = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-            capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-    }
+    // Platform bağlantı kontrolü (Android: ConnectivityManager) dışarıdan verilir.
+    private fun isOnline(): Boolean = isOnlineCheck()
 
     // The Nutella shortcut and curated InitialData samples below return fixed verdicts that don't
     // depend on the madhhab, so they keep their own UNSPECIFIED stamp rather than the requested one.
@@ -159,7 +152,7 @@ class ProductRepository(
                             language,
                             madhhab
                         )
-                        Log.d(TAG, "Resolved barcode=$digitsOnly name=${analyzedProduct.name} image=${analyzedProduct.imageUrl}")
+                        logDebug(TAG, "Resolved barcode=$digitsOnly name=${analyzedProduct.name} image=${analyzedProduct.imageUrl}")
                         productDao.insertProduct(analyzedProduct.toEntity())
                         recordScan(analyzedProduct)
                         return@withContext analyzedProduct
@@ -171,7 +164,7 @@ class ProductRepository(
                         hadNetworkError = true
                     }
                 } catch (e: Exception) {
-                    Log.w(TAG, "Open Food Facts lookup failed for barcode=$digitsOnly: ${e.message}")
+                    logWarn(TAG, "Open Food Facts lookup failed for barcode=$digitsOnly: ${e.message}")
                     hadNetworkError = true
                 }
             }
@@ -231,7 +224,7 @@ class ProductRepository(
                     return@withContext analyzedProduct
                 }
             } catch (e: Exception) {
-                Log.w(TAG, "Open Food Facts name search failed for '$query': ${e.message}")
+                logWarn(TAG, "Open Food Facts name search failed for '$query': ${e.message}")
                 hadNetworkError = true
             }
         }
@@ -308,7 +301,7 @@ class ProductRepository(
         language: AppLanguage,
         madhhab: Madhhab = Madhhab.UNSPECIFIED
     ): FoodProduct = withContext(Dispatchers.IO) {
-        val barcode = "PHOTO-${System.currentTimeMillis()}"
+        val barcode = "PHOTO-${nowEpochMillis()}"
         val analyzed = HalalAnalyzer.analyzeIngredientsText(
             productName = productName.ifBlank { AppStrings.getPhotoAnalysisDefaultName(language) },
             ingredientsText = ingredientsText,

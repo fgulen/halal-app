@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.local.getAppDatabase
+import com.example.data.repository.androidIsOnline
 import com.example.data.local.createUserPreferences
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
@@ -92,7 +93,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
 
     init {
         val database = getAppDatabase(application)
-        repository = ProductRepository(database.productDao(), appContext = application)
+        repository = ProductRepository(database.productDao(), isOnlineCheck = { androidIsOnline(application) })
         viewModelScope.launch {
             _selectedLanguage.value = userPreferences.selectedLanguage.first()
         }
