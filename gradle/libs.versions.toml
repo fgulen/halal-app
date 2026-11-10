@@ -23,6 +23,7 @@ retrofit = "2.12.0"
 converterMoshi = "2.12.0"
 kotlinxCoroutinesAndroid = "1.10.2"
 kotlinxCoroutinesCore = "1.10.2"
+composeMultiplatform = "1.11.1"
 ktor = "3.5.1"
 kotlinxSerializationJson = "1.9.0"
 accompanistPermissions = "0.37.3"
@@ -121,6 +122,7 @@ android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "googleDevtoolsKsp" }
 androidx-room = { id = "androidx.room", version.ref = "roomRuntime" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }

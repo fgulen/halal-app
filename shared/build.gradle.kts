@@ -10,6 +10,8 @@ plugins {
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.androidx.room)
   alias(libs.plugins.kotlinx.serialization)
+  alias(libs.plugins.kotlin.compose)
+  alias(libs.plugins.compose.multiplatform)
 }
 
 kotlin {
@@ -34,6 +36,11 @@ kotlin {
       implementation(libs.ktor.client.core)
       implementation(libs.kotlinx.serialization.json)
       implementation(libs.kotlinx.coroutines.core)
+      implementation(compose.runtime)
+      implementation(compose.foundation)
+      implementation(compose.material3)
+      implementation(compose.ui)
+      implementation(compose.materialIconsExtended)
     }
     jvmTest.dependencies {
       implementation(kotlin("test"))

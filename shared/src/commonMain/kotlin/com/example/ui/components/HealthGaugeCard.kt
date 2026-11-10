@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import kotlin.math.PI
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import androidx.compose.foundation.BorderStroke
@@ -50,7 +51,7 @@ private val NUTRI_SEGMENT_COLORS = listOf(
 )
 
 /** Position on the gauge, 0 = E (leftmost) .. 4 = A (rightmost). Null for a missing or unknown grade. */
-internal fun nutriScoreSegmentIndex(grade: String?): Int? {
+fun nutriScoreSegmentIndex(grade: String?): Int? {
     val normalized = grade?.trim()?.uppercase() ?: return null
     if (normalized.length != 1) return null
     val index = "EDCBA".indexOf(normalized[0])
@@ -173,7 +174,7 @@ private fun NutriScoreGaugeContent(segment: Int) {
         }
 
         // Needle angle follows the animated fraction (180° at E .. 360° at A).
-        val angleRad = Math.toRadians(180.0 + needle * 180.0)
+        val angleRad = (180.0 + needle * 180.0) * PI / 180.0
         val tip = Offset(
             x = center.x + (radius * 0.8f) * cos(angleRad).toFloat(),
             y = center.y + (radius * 0.8f) * sin(angleRad).toFloat()

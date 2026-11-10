@@ -24,6 +24,8 @@ class CommonMainPurityTest {
         Regex("""@JvmStatic|@JvmName|@Throws"""),
         Regex("""\bandroid\."""),
         Regex("""\borg\.json\b"""),
+        Regex("""\bcom\.example\.R\b"""),
+        Regex("""\bLocalContext\b"""),
     )
 
     @Test
