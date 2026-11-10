@@ -2,16 +2,15 @@ package com.example.ui.screens
 
 import com.example.ui.platform.RemoteImage
 import com.example.data.model.localizeSampleText
+import com.example.ui.platform.CameraPermission
+import com.example.ui.platform.LocalSharer
+import com.example.ui.platform.rememberCameraPermission
 import com.example.ui.theme.NeutralSlateMid
 import com.example.ui.theme.NeutralSlateSubtle
 import com.example.ui.theme.RatingStar
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
-import android.Manifest
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -90,7 +89,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.testTag
@@ -100,15 +98,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.data.model.Madhhab
-import com.example.ui.camera.CameraScannerView
-import com.example.ui.camera.rememberPhotoIngredientsCaptureLauncher
 import com.example.ui.components.ClearHistoryDialog
 import com.example.ui.components.EAdditiveSheet
 import com.example.ui.components.pressScale
@@ -151,14 +145,17 @@ import com.example.ui.theme.SuspiciousAmberBorder
 import com.example.ui.theme.SuspiciousAmberDark
 import com.example.ui.viewmodel.HalalScannerViewModel
 import com.example.ui.viewmodel.ScanError
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainHalalScreen(
     viewModel: HalalScannerViewModel,
+    photoCaptureLauncher: () -> Unit,
+    cameraScanner: @Composable (
+        language: AppLanguage,
+        onBarcodeScanned: (String) -> Unit,
+        onCloseScanner: () -> Unit,
+        onOpenManualEntry: () -> Unit
+    ) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val language by viewModel.selectedLanguage.collectAsState()
@@ -174,36 +171,32 @@ fun MainHalalScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val scanError by viewModel.scanError.collectAsState()
 
-    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+    val cameraPermissionState = rememberCameraPermission()
     val photoIngredientsReview by viewModel.photoIngredientsReview.collectAsState()
-    val photoCaptureLauncher = rememberPhotoIngredientsCaptureLauncher(
-        onTextRecognized = { text -> viewModel.onPhotoTextRecognized(text) },
-        onCancelled = {}
-    )
-    var photoCapturePending by remember { mutableStateOf(false) }
-    LaunchedEffect(cameraPermissionState.status.isGranted) {
-        if (photoCapturePending && cameraPermissionState.status.isGranted) {
+        var photoCapturePending by remember { mutableStateOf(false) }
+    LaunchedEffect(cameraPermissionState.isGranted) {
+        if (photoCapturePending && cameraPermissionState.isGranted) {
             photoCapturePending = false
             photoCaptureLauncher()
         }
     }
     val onTriggerPhotoCapture = {
-        if (cameraPermissionState.status.isGranted) {
+        if (cameraPermissionState.isGranted) {
             photoCaptureLauncher()
         } else {
             photoCapturePending = true
-            cameraPermissionState.launchPermissionRequest()
+            cameraPermissionState.launchRequest()
         }
     }
     var selectedBottomNavIndex by remember { mutableIntStateOf(0) }
-    val context = LocalContext.current
+    val sharer = LocalSharer.current
 
     // Opening the scanner immediately after launchPermissionRequest() raced the async
     // permission dialog and mounted the camera before permission was actually granted,
     // which failed and showed a broken/black preview. Wait for the granted state instead.
     var scannerOpenPending by remember { mutableStateOf(false) }
-    LaunchedEffect(cameraPermissionState.status.isGranted) {
-        if (scannerOpenPending && cameraPermissionState.status.isGranted) {
+    LaunchedEffect(cameraPermissionState.isGranted) {
+        if (scannerOpenPending && cameraPermissionState.isGranted) {
             scannerOpenPending = false
             viewModel.openScanner()
         }
@@ -215,14 +208,14 @@ fun MainHalalScreen(
     // so this checks at the tap site instead) means the user answered the dialog and said no,
     // so the second tap routes to manual entry rather than doing nothing.
     val onTriggerScanner = {
-        if (cameraPermissionState.status.isGranted) {
+        if (cameraPermissionState.isGranted) {
             viewModel.openScanner()
         } else if (scannerOpenPending) {
             scannerOpenPending = false
             viewModel.openManualEntry()
         } else {
             scannerOpenPending = true
-            cameraPermissionState.launchPermissionRequest()
+            cameraPermissionState.launchRequest()
         }
     }
 
@@ -276,25 +269,15 @@ fun MainHalalScreen(
                         onMadhhabClick = { viewModel.openMadhhabDialog() },
                         onECodesClick = { viewModel.openEAdditives() },
                         onShareAppClick = {
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, AppStrings.getShareAppMessage(language))
-                            }
-                            context.startActivity(Intent.createChooser(shareIntent, AppStrings.getShareApp(language)))
+                            sharer.shareText(
+                                subject = null,
+                                text = AppStrings.getShareAppMessage(language),
+                                chooserTitle = AppStrings.getShareApp(language)
+                            )
+
                         },
-                        onRateAppClick = {
-                            // Opens our Play Store page (always works, unlike the quota-limited in-app review flow)
-                            val packageName = context.packageName
-                            try {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
-                            } catch (e: ActivityNotFoundException) {
-                                // No Play Store: fall back to the web page; with no browser either, do nothing
-                                try {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
-                                } catch (_: ActivityNotFoundException) {
-                                }
-                            }
-                        }
+                        onRateAppClick = { sharer.openAppStore() }
+
                     )
                 }
 
@@ -536,19 +519,16 @@ fun MainHalalScreen(
 
     // Camera Scanner Overlay
     if (isScannerOpen) {
-        CameraScannerView(
-            language = language,
-            onBarcodeScanned = { barcode ->
-                viewModel.onBarcodeScanned(barcode)
-            },
-            onCloseScanner = {
-                viewModel.closeScanner()
-            },
-            onOpenManualEntry = {
+        cameraScanner(
+            language,
+            { barcode -> viewModel.onBarcodeScanned(barcode) },
+            { viewModel.closeScanner() },
+            {
                 viewModel.closeScanner()
                 viewModel.openManualEntry()
             }
         )
+
     }
 
     // One light haptic tick when a verdict appears, so the result feels confirmed without a visual cue alone.

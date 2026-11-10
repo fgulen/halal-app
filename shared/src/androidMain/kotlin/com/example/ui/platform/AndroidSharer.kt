@@ -9,10 +9,10 @@ import com.example.data.platform.Sharer
 
 class AndroidSharer(private val context: Context) : Sharer {
 
-    override fun shareText(subject: String, text: String, chooserTitle: String) {
+    override fun shareText(subject: String?, text: String, chooserTitle: String) {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, subject)
+            if (subject != null) putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_TEXT, text)
         }
         context.startActivity(Intent.createChooser(shareIntent, chooserTitle))
@@ -30,6 +30,21 @@ class AndroidSharer(private val context: Context) : Sharer {
             true
         } catch (_: ActivityNotFoundException) {
             false
+        }
+    }
+
+    override fun openAppStore() {
+        val packageName = context.packageName
+        try {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+        } catch (_: ActivityNotFoundException) {
+            // Play Store yoksa web sayfası; tarayıcı da yoksa sessizce vazgeç.
+            try {
+                context.startActivity(
+                    Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
+                )
+            } catch (_: ActivityNotFoundException) {
+            }
         }
     }
 

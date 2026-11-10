@@ -20,6 +20,8 @@ import com.example.ui.screens.MainHalalScreen
 import com.example.ui.theme.HalalKontrolTheme
 import com.example.ui.platform.LocalSharer
 import com.example.ui.platform.AndroidSharer
+import com.example.ui.camera.CameraScannerView
+import com.example.ui.camera.rememberPhotoIngredientsCaptureLauncher
 import androidx.compose.runtime.CompositionLocalProvider
 import com.example.ui.viewmodel.HalalScannerViewModel
 import com.example.ui.viewmodel.HalalScannerViewModelFactory
@@ -59,7 +61,23 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(LocalSharer provides AndroidSharer(this)) {
             HalalKontrolTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    MainHalalScreen(viewModel = viewModel)
+                    val photoCaptureLauncher = rememberPhotoIngredientsCaptureLauncher(
+                        onTextRecognized = { text -> viewModel.onPhotoTextRecognized(text) },
+                        onCancelled = {}
+                    )
+                    MainHalalScreen(
+                        viewModel = viewModel,
+                        photoCaptureLauncher = photoCaptureLauncher,
+                        cameraScanner = { language, onBarcodeScanned, onCloseScanner, onOpenManualEntry ->
+                            CameraScannerView(
+                                language = language,
+                                onBarcodeScanned = onBarcodeScanned,
+                                onCloseScanner = onCloseScanner,
+                                onOpenManualEntry = onOpenManualEntry
+                            )
+                        }
+                    )
+
                 }
                 val reviewRequested by viewModel.reviewRequest.collectAsStateWithLifecycle()
                 LaunchedEffect(reviewRequested) {

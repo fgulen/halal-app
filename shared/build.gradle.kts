@@ -49,6 +49,7 @@ kotlin {
     androidMain.dependencies {
       implementation(libs.ktor.client.okhttp)
       implementation(libs.coil.compose)
+      implementation(libs.accompanist.permissions)
     }
     jvmMain.dependencies {
       implementation(libs.ktor.client.okhttp)

@@ -9,7 +9,7 @@ import platform.UIKit.UIApplication
 // Uyarı: Bu dosya yalnızca iOS hedefinde derlenir; Windows'ta doğrulanamaz, CI'da kontrol edilir.
 class IosSharer : Sharer {
 
-    override fun shareText(subject: String, text: String, chooserTitle: String) {
+    override fun shareText(subject: String?, text: String, chooserTitle: String) {
         val controller = UIActivityViewController(activityItems = listOf(text), applicationActivities = null)
         UIApplication.sharedApplication.keyWindow?.rootViewController
             ?.presentViewController(controller, animated = true, completion = null)
@@ -23,6 +23,9 @@ class IosSharer : Sharer {
         return true
     }
 
-    // iOS'ta Toast yok; şimdilik sessiz. Gerekirse UIAlertController ile değiştirilir.
+    // iOS'ta mağaza kimliği henüz yok; sessiz no-op.
+    override fun openAppStore() = Unit
+
+    // iOS'ta Toast yok; şimdilik sessiz.
     override fun showToast(message: String) = Unit
 }
