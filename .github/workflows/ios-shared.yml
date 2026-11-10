@@ -1,0 +1,30 @@
+name: iOS compile check (shared)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/kmp-p2-data]
+    paths:
+      - 'shared/**'
+      - 'gradle/libs.versions.toml'
+      - '.github/workflows/ios-shared.yml'
+
+jobs:
+  ios-shared:
+    name: Compile shared for iOS simulator
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 21
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Compile iOS simulator target and run KSP
+        run: ./gradlew :shared:compileKotlinIosSimulatorArm64 :shared:kspKotlinIosSimulatorArm64 --console=plain --stacktrace
