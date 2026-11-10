@@ -70,7 +70,9 @@ class IosTextRecognizer : TextRecognizer {
             request.recognitionLevel = VNRequestTextRecognitionLevelAccurate
             request.recognitionLanguages = listOf("tr", "de", "fr", "en")
             val handler = VNImageRequestHandler(data = data, options = emptyMap<Any?, Any>())
-            handler.performRequests(listOf(request), null)
+            val performed = handler.performRequests(listOf(request), null)
+            // Vision işi başlatamazsa completion hiç çağrılmaz; askıda kalmasın diye boş sonuçla dön.
+            if (!performed) continuation.resume("")
         }
     }
 }

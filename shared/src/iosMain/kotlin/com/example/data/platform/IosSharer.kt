@@ -11,8 +11,13 @@ class IosSharer : Sharer {
 
     override fun shareText(subject: String?, text: String, chooserTitle: String) {
         val controller = UIActivityViewController(activityItems = listOf(text), applicationActivities = null)
-        UIApplication.sharedApplication.keyWindow?.rootViewController
-            ?.presentViewController(controller, animated = true, completion = null)
+        val root = UIApplication.sharedApplication.keyWindow?.rootViewController ?: return
+        // iPad'de popover kaynağı zorunlu; yoksa UIKit NSInvalidArgumentException ile çöker.
+        controller.popoverPresentationController?.let { popover ->
+            popover.sourceView = root.view
+            popover.sourceRect = root.view.bounds
+        }
+        root.presentViewController(controller, animated = true, completion = null)
     }
 
     override fun sendEmail(address: String, subject: String, body: String): Boolean {

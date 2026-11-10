@@ -7,6 +7,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
+import io.ktor.http.Url
 import io.ktor.http.encodeURLParameter
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.CancellationException
@@ -120,7 +121,7 @@ class OpenFoodFactsApi(
                         append(HttpHeaders.Accept, "application/json")
                     }
                 }
-                if (response.call.request.url.host == "world.openfoodfacts.org" &&
+                if (Url(url).host == "world.openfoodfacts.org" &&
                     (response.status.isSuccess() || response.status.value == 404)
                 ) {
                     offGaveDefiniteAnswer = true
@@ -254,7 +255,8 @@ class OpenFoodFactsApi(
         return results
     }
 
-    private fun parseJsonObject(body: String): JsonObject = Json.parseToJsonElement(body).jsonObject
+    // org.json gevşekti (tek tırnak, tırnaksız anahtar); aynı davranış için lenient parser.
+    private fun parseJsonObject(body: String): JsonObject = Json { isLenient = true }.parseToJsonElement(body).jsonObject
 
     private fun parseOffResponse(json: JsonObject, fallbackCode: String): OffResponse? {
         val statusEl = json["status"]

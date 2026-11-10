@@ -80,11 +80,9 @@ fun IosCameraOverlay(
 private class ScannerHolder {
     private var session: AVCaptureSession? = null
     private var delegate: MetadataDelegate? = null
-    private var container: PreviewContainer? = null
 
     fun create(onCode: (String) -> Unit): UIView {
         val view = PreviewContainer()
-        container = view
         val device = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) ?: return view
         val input = AVCaptureDeviceInput.deviceInputWithDevice(device, null) ?: return view
         val captureSession = AVCaptureSession()
@@ -113,7 +111,6 @@ private class ScannerHolder {
         session?.stopRunning()
         session = null
         delegate = null
-        container = null
     }
 }
 
