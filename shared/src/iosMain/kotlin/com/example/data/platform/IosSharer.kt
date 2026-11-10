@@ -1,6 +1,7 @@
 package com.example.data.platform
 
 import io.ktor.http.encodeURLParameter
+import platform.Foundation.NSObject
 import platform.Foundation.NSURL
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
@@ -13,10 +14,9 @@ class IosSharer : Sharer {
         val controller = UIActivityViewController(activityItems = listOf(text), applicationActivities = null)
         val root = UIApplication.sharedApplication.keyWindow?.rootViewController ?: return
         // iPad'de popover kaynağı zorunlu; yoksa UIKit NSInvalidArgumentException ile çöker.
-        controller.popoverPresentationController?.let { popover ->
-            popover.sourceView = root.view
-            popover.sourceRect = root.view.bounds
-        }
+        // Binding'de tip olarak değil KVC ile erişilir (iPhone'da popover nil döner).
+        (controller.valueForKey("popoverPresentationController") as? NSObject)
+            ?.setValue(root.view, forKey = "sourceView")
         root.presentViewController(controller, animated = true, completion = null)
     }
 

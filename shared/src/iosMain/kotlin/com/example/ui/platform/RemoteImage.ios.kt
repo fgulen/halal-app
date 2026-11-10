@@ -8,7 +8,6 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageScope
-import coil3.network.NetworkHeaders
 import coil3.request.ImageRequest
 
 // iOS görseli: Coil 3 (ağ: Ktor). Ağ yükleyici IosRoot'ta kurulur.
@@ -25,9 +24,6 @@ actual fun RemoteImage(
 ) {
     val request = ImageRequest.Builder(LocalPlatformContext.current)
         .data(url)
-        .apply {
-            if (userAgent != null) httpHeaders(NetworkHeaders.Builder().set("User-Agent", userAgent).build())
-        }
         .build()
     if (loading == null && error == null) {
         AsyncImage(
