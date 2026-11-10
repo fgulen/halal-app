@@ -1,8 +1,8 @@
 package com.example.data.remote
 
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.example.data.local.AppDatabase
+import com.example.data.local.createInMemoryAppDatabase
 import com.example.data.repository.ProductRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -77,10 +77,7 @@ class OpenFoodFactsApiServerErrorTest {
 
     @Test
     fun `repository surfaces OFF 502 as NetworkUnavailable and records no history`() = runTest {
-        val database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            AppDatabase::class.java
-        ).allowMainThreadQueries().build()
+        val database = createInMemoryAppDatabase(ApplicationProvider.getApplicationContext())
         try {
             val repository = ProductRepository(
                 database.productDao(),

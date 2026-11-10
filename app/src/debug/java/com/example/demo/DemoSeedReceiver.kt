@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.example.data.local.AppDatabase
+import com.example.data.local.getAppDatabase
 import com.example.data.local.ScanHistoryEntity
 import com.example.data.local.toEntity
 import com.example.data.model.AppLanguage
@@ -30,7 +30,7 @@ class DemoSeedReceiver : BroadcastReceiver() {
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val dao = AppDatabase.getDatabase(context).productDao()
+                val dao = getAppDatabase(context).productDao()
                 dao.clearScanHistory()
                 val now = System.currentTimeMillis()
                 // Oldest first, so the first catalogue item ends up at the top of "Recent scans".

@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.kotlin.multiplatform.library)
+  alias(libs.plugins.google.devtools.ksp)
+  alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -27,10 +29,23 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(libs.androidx.datastore.preferences.core)
+      implementation(libs.androidx.room.runtime)
       implementation(libs.kotlinx.coroutines.core)
     }
     jvmTest.dependencies {
       implementation(kotlin("test"))
     }
   }
+}
+
+// Room KMP derleyicisi: her hedef için ayrı KSP yapılandırması (iOS yalnız CI'da üretilir).
+dependencies {
+  add("kspAndroid", libs.androidx.room.compiler)
+  add("kspJvm", libs.androidx.room.compiler)
+  add("kspIosArm64", libs.androidx.room.compiler)
+  add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+}
+
+room {
+  schemaDirectory("$projectDir/schemas")
 }

@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import com.example.data.model.FoodProduct
 import com.example.data.model.HalalStatus
 import com.example.data.model.Madhhab
+import com.example.data.util.nowEpochMillis
 
 @Entity(tableName = "scan_history")
 data class ScanHistoryEntity(
@@ -20,7 +21,7 @@ data class ScanHistoryEntity(
     val reasonOrDetails: String,
     val alternatives: List<String>,
     val imageUrl: String?,
-    val scannedAt: Long = System.currentTimeMillis(),
+    val scannedAt: Long = nowEpochMillis(),
     // Madhhab the verdict was computed under (v5), so history re-renders consistently.
     val madhhab: Madhhab = Madhhab.UNSPECIFIED,
     // Health indicators (v7). Old history rows stay null and show no gauge.
@@ -61,7 +62,7 @@ data class ScanHistoryEntity(
                 reasonOrDetails = product.reasonOrDetails,
                 alternatives = product.alternatives,
                 imageUrl = product.imageUrl,
-                scannedAt = System.currentTimeMillis(),
+                scannedAt = nowEpochMillis(),
                 madhhab = product.madhhab,
                 nutriScore = product.nutriScore,
                 novaGroup = product.novaGroup

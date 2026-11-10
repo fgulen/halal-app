@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.local.AppDatabase
+import com.example.data.local.getAppDatabase
 import com.example.data.local.createUserPreferences
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
@@ -91,7 +91,7 @@ class HalalScannerViewModel(application: Application) : AndroidViewModel(applica
     private var scanJob: Job? = null
 
     init {
-        val database = AppDatabase.getDatabase(application)
+        val database = getAppDatabase(application)
         repository = ProductRepository(database.productDao(), appContext = application)
         viewModelScope.launch {
             _selectedLanguage.value = userPreferences.selectedLanguage.first()

@@ -1,8 +1,8 @@
 package com.example.data.repository
 
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.example.data.local.AppDatabase
+import com.example.data.local.createInMemoryAppDatabase
 import com.example.data.local.ProductEntity
 import com.example.data.model.AppLanguage
 import com.example.data.model.HalalStatus
@@ -59,10 +59,7 @@ class ProductRepositoryMadhhabTest {
 
     @Before
     fun setUp() {
-        database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            AppDatabase::class.java
-        ).allowMainThreadQueries().build()
+        database = createInMemoryAppDatabase(ApplicationProvider.getApplicationContext())
     }
 
     @After

@@ -90,7 +90,7 @@ class AppDatabaseMigrationTest {
     fun `upgrading v5 to current drops non-English cache rows and keeps history`() = runTest {
         createVersion5Database()
 
-        database = AppDatabase.build(context, dbName)
+        database = createAppDatabase(context, dbName)
 
         assertEquals(null, database!!.productDao().getProductByBarcode("4001686301265"))
         // v8 clears the products cache (see MIGRATION_7_8); scan_history is what survives.
@@ -106,7 +106,7 @@ class AppDatabaseMigrationTest {
     fun `upgrading v4 to current clears the products cache but keeps history`() = runTest {
         createVersion4Database()
 
-        database = AppDatabase.build(context, dbName)
+        database = createAppDatabase(context, dbName)
 
         assertEquals(null, database!!.productDao().getProductByBarcode("8690000000001"))
         assertEquals(1, database!!.productDao().getScanHistory().first().size)
@@ -116,7 +116,7 @@ class AppDatabaseMigrationTest {
     fun `upgrading v4 to current keeps scan history and defaults madhhab to UNSPECIFIED`() = runTest {
         createVersion4Database()
 
-        database = AppDatabase.build(context, dbName)
+        database = createAppDatabase(context, dbName)
         val history = database!!.productDao().getScanHistory().first()
 
         assertEquals(1, history.size)
@@ -135,7 +135,7 @@ class AppDatabaseMigrationTest {
         db.version = 6
         db.close()
 
-        database = AppDatabase.build(context, dbName)
+        database = createAppDatabase(context, dbName)
 
         // v8 clears the products cache (see MIGRATION_7_8); scan_history is what survives.
         assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
@@ -153,7 +153,7 @@ class AppDatabaseMigrationTest {
         db.version = 6
         db.close()
         // The fixture is at v6 schema; the production builder runs 6->7 and then 7->8.
-        database = AppDatabase.build(context, dbName)
+        database = createAppDatabase(context, dbName)
 
         assertEquals(null, database!!.productDao().getProductByBarcode("0021000612803"))
         assertEquals(1, database!!.productDao().getScanHistory().first().size)
