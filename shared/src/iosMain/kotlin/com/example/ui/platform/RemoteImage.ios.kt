@@ -24,7 +24,6 @@ actual fun RemoteImage(
 ) {
     val request = ImageRequest.Builder(LocalPlatformContext.current)
         .data(url)
-        .crossfade(crossfade)
         .build()
     if (loading == null && error == null) {
         AsyncImage(

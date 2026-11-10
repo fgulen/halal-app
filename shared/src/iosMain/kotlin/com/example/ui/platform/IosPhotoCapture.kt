@@ -3,6 +3,7 @@
 package com.example.ui.platform
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -26,6 +27,7 @@ import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.UIKit.UIViewController
 import platform.Vision.VNImageRequestHandler
 import platform.Vision.VNRecognizeTextRequest
+import platform.Vision.VNRecognizedText
 import platform.Vision.VNRecognizedTextObservation
 import platform.Vision.VNRequestTextRecognitionLevelAccurate
 import platform.darwin.NSObject
@@ -62,7 +64,7 @@ class IosTextRecognizer : TextRecognizer {
             val request = VNRecognizeTextRequest { request, _ ->
                 val lines = (request?.results ?: emptyList<Any?>())
                     .filterIsInstance<VNRecognizedTextObservation>()
-                    .mapNotNull { it.topCandidates(1u).firstOrNull()?.string }
+                    .mapNotNull { observation -> (observation.topCandidates(1u).firstOrNull() as? VNRecognizedText)?.string }
                 continuation.resume(lines.joinToString("\n"))
             }
             request.recognitionLevel = VNRequestTextRecognitionLevelAccurate

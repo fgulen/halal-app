@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package com.example.data.local
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import kotlinx.cinterop.ExperimentalForeignApi
 import okio.Path.Companion.toPath
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSHomeDirectory
