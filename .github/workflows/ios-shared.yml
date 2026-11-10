@@ -1,4 +1,4 @@
-name: iOS compile check (shared)
+name: iOS build (shared + app)
 
 on:
   workflow_dispatch:
@@ -6,12 +6,13 @@ on:
     branches: [feat/kmp-p2-data]
     paths:
       - 'shared/**'
+      - 'iosApp/**'
       - 'gradle/libs.versions.toml'
       - '.github/workflows/ios-shared.yml'
 
 jobs:
-  ios-shared:
-    name: Compile shared for iOS simulator
+  ios:
+    name: Compile shared and build unsigned IPA
     runs-on: macos-latest
     steps:
       - name: Check out code
@@ -28,3 +29,27 @@ jobs:
 
       - name: Compile iOS simulator target and run KSP
         run: ./gradlew :shared:compileKotlinIosSimulatorArm64 :shared:kspKotlinIosSimulatorArm64 --console=plain --stacktrace
+
+      - name: Archive iOS app (unsigned)
+        working-directory: iosApp
+        run: |
+          xcodebuild -project iosApp.xcodeproj -scheme iosApp \
+            -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/iosApp.xcarchive" \
+            archive CODE_SIGNING_ALLOWED=NO
+
+      - name: Package IPA
+        run: |
+          APP=$(find "$RUNNER_TEMP/iosApp.xcarchive/Products/Applications" -maxdepth 1 -name "*.app" | head -n 1)
+          echo "App bundle: $APP"
+          mkdir -p Payload
+          cp -R "$APP" Payload/
+          zip -qr halal-checker-unsigned.ipa Payload
+          rm -rf Payload
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: halal-checker-unsigned-ipa
+          path: halal-checker-unsigned.ipa
+          retention-days: 14

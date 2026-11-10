@@ -25,8 +25,12 @@ kotlin {
   jvm {
     compilerOptions { jvmTarget.set(JvmTarget.JVM_11) }
   }
-  iosArm64()
-  iosSimulatorArm64()
+  listOf(iosArm64(), iosSimulatorArm64()).forEach { target ->
+    target.binaries.framework {
+      baseName = "Shared"
+      isStatic = true
+    }
+  }
 
   // Hedefler tanımlandıktan SONRA source set'lere dokunulmalı (jvmTest yapılandırma çakışması).
   sourceSets {
@@ -56,6 +60,9 @@ kotlin {
     }
     iosMain.dependencies {
       implementation(libs.ktor.client.darwin)
+      implementation(libs.coil3.compose)
+      implementation(libs.coil3.network.ktor3)
+      implementation(libs.androidx.sqlite.bundled)
     }
   }
 }
