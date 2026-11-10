@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.platform.RemoteImage
 import com.example.data.model.localizeSampleText
 import com.example.ui.theme.NeutralSlateMid
 import com.example.ui.theme.NeutralSlateSubtle
@@ -422,12 +423,9 @@ fun MainHalalScreen(
                                                         border = androidx.compose.foundation.BorderStroke(0.8.dp, NaturalWarmBorder),
                                                         modifier = Modifier.size(36.dp)
                                                     ) {
-                                                        AsyncImage(
-                                                            model = ImageRequest.Builder(LocalContext.current)
-                                                                .data(match.imageUrl)
-                                                                .setHeader("User-Agent", "HalalFoodChecker/1.0 (Android; OpenFoodFacts-Viewer)")
-                                                                .crossfade(true)
-                                                                .build(),
+                                                        RemoteImage(
+                                                            url = match.imageUrl,
+                                                            userAgent = "HalalFoodChecker/1.0 (Android; OpenFoodFacts-Viewer)",
                                                             contentDescription = match.name,
                                                             contentScale = ContentScale.Fit,
                                                             modifier = Modifier.fillMaxSize().padding(2.dp)
@@ -1273,11 +1271,8 @@ fun NaturalHistoryItemCard(
                     border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
                     modifier = Modifier.size(48.dp)
                 ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(product.imageUrl)
-                            .crossfade(true)
-                            .build(),
+                    RemoteImage(
+                        url = product.imageUrl,
                         contentDescription = product.name,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier

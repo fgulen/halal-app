@@ -48,6 +48,7 @@ kotlin {
     }
     androidMain.dependencies {
       implementation(libs.ktor.client.okhttp)
+      implementation(libs.coil.compose)
     }
     jvmMain.dependencies {
       implementation(libs.ktor.client.okhttp)

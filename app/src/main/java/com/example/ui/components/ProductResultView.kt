@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.platform.RemoteImage
 import com.example.data.model.localizeSampleText
 import com.example.ui.theme.NeutralSlateMid
 import com.example.ui.theme.AppTextSize
@@ -1085,12 +1086,9 @@ fun ProductShowcaseImageCard(
             contentAlignment = Alignment.Center
         ) {
             if (!imageUrl.isNullOrBlank()) {
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(imageUrl)
-                        .setHeader("User-Agent", "HalalGlobalFoodScanner/1.0 (Android; Linux; OpenFoodFacts-Viewer)")
-                        .crossfade(true)
-                        .build(),
+                RemoteImage(
+                    url = imageUrl,
+                    userAgent = "HalalGlobalFoodScanner/1.0 (Android; Linux; OpenFoodFacts-Viewer)",
                     contentDescription = productName,
                     contentScale = ContentScale.Fit,
                     loading = {
@@ -1105,10 +1103,10 @@ fun ProductShowcaseImageCard(
                             )
                         }
                     },
-                    error = { errorState ->
+                    error = { throwable ->
                         android.util.Log.w(
                             "ProductShowcaseImage",
-                            "Failed to load image for '$productName' from $imageUrl: ${errorState.result.throwable.message}"
+                            "Failed to load image for '$productName' from $imageUrl: ${throwable?.message}"
                         )
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -1138,7 +1136,7 @@ fun ProductShowcaseImageCard(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "${AppStrings.getImageLoadError(language)}: ${errorState.result.throwable.message ?: AppStrings.getUnknownError(language)}",
+                                text = "${AppStrings.getImageLoadError(language)}: ${throwable?.message ?: AppStrings.getUnknownError(language)}",
                                 fontSize = AppTextSize.Caption,
                                 color = NaturalTextMuted,
                                 maxLines = 2,

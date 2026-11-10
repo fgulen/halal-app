@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.platform.RemoteImage
 import com.example.data.model.localizeSampleText
 import com.example.ui.theme.NeutralSlateBorder
 import com.example.ui.theme.NeutralSlateMid
@@ -483,11 +484,8 @@ fun HistoryProductCard(
                     border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder),
                     modifier = Modifier.size(50.dp)
                 ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(product.imageUrl)
-                            .crossfade(true)
-                            .build(),
+                    RemoteImage(
+                        url = product.imageUrl,
                         contentDescription = product.name,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier

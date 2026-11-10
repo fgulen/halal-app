@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import com.example.ui.platform.RemoteImage
 import com.example.ui.theme.AppTextSize
 import com.example.ui.theme.AppRadius
 import com.example.ui.theme.PopupBorder
@@ -328,9 +329,10 @@ fun ManualBarcodeDialog(
                                     border = androidx.compose.foundation.BorderStroke(0.8.dp, NaturalWarmBorder),
                                     modifier = Modifier.size(44.dp)
                                 ) {
-                                    AsyncImage(
-                                        model = sample.imageUrl,
+                                    RemoteImage(
+                                        url = sample.imageUrl,
                                         contentDescription = sample.name,
+                                        crossfade = false,
                                         contentScale = ContentScale.Fit,
                                         modifier = Modifier
                                             .fillMaxSize()
