@@ -1,7 +1,7 @@
 package com.example.data.platform
 
-// Platforma özel yetenekler için ortak sözleşmeler. Android uygulaması bunları henüz kullanmıyor
-// (ekranlar P3'te ortak koda taşınınca bağlanır). iOS gerçekleştirmeleri CI'da derlenir.
+// Platforma özel yetenekler için ortak sözleşmeler. Android gerçekleştirmeleri androidMain'de,
+// iOS gerçekleştirmeleri iosMain'de (yalnız CI'da derlenir).
 
 /** Kamera ile barkod okuma. Kamera önizlemesi UI tarafında bağlanır. */
 interface BarcodeScanner {
@@ -16,9 +16,14 @@ interface TextRecognizer {
     suspend fun recognize(jpegBytes: ByteArray): String
 }
 
-/** Paylaşım ve e-posta. */
+/** Paylaşım, e-posta ve kısa bildirim. */
 interface Sharer {
-    fun shareText(text: String)
+    /** Sistem paylaşım sayfasını açar. */
+    fun shareText(subject: String, text: String, chooserTitle: String)
 
-    fun sendEmail(address: String, subject: String, body: String)
+    /** E-posta uygulamasını açar. Uygulama yoksa false döner. */
+    fun sendEmail(address: String, subject: String, body: String): Boolean
+
+    /** Kısa bildirim (Android: Toast). */
+    fun showToast(message: String)
 }

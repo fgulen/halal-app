@@ -1,6 +1,8 @@
 package com.example.ui.components
 
+import com.example.ui.platform.LocalSharer
 import com.example.ui.platform.RemoteImage
+import com.example.data.util.logWarn
 import com.example.data.model.localizeSampleText
 import com.example.ui.theme.NeutralSlateMid
 import com.example.ui.theme.AppTextSize
@@ -15,10 +17,6 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.AnnotatedString
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -78,7 +76,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -86,9 +83,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 import com.example.data.analyzer.HalalAnalyzer
 import com.example.data.model.AppLanguage
 import com.example.data.model.AppStrings
@@ -131,7 +125,7 @@ fun ProductResultBottomSheet(
     modifier: Modifier = Modifier
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val context = LocalContext.current
+    val sharer = LocalSharer.current
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -315,22 +309,16 @@ fun ProductResultBottomSheet(
                         modifier = Modifier.size(52.dp),
                         shape = CircleShape,
                         onClick = {
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(
-                                    Intent.EXTRA_SUBJECT,
-                                    "${AppStrings.getShareSubjectPrefix(language)}: ${product.name}"
-                                )
-                                putExtra(
-                                    Intent.EXTRA_TEXT,
-                                    "${AppStrings.getShareResultHeader(language)}:\n" +
-                                            "${AppStrings.getShareProductLabel(language)}: ${product.name} (${product.brand})\n" +
-                                            "${AppStrings.getShareBarcodeLabel(language)}: ${product.barcode}\n" +
-                                            "${AppStrings.getShareStatusLabel(language)}: ${AppStrings.getStatusLabel(product.status, language)}\n" +
-                                            "${if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) AppStrings.getShareFlaggedIngredientsLabel(language) + ": " + product.harmfulOrSuspiciousIngredients.joinToString(", ") else ""}"
-                                )
-                            }
-                            context.startActivity(Intent.createChooser(shareIntent, AppStrings.getShareChooserTitle(language)))
+                            sharer.shareText(
+                                subject = "${AppStrings.getShareSubjectPrefix(language)}: ${product.name}",
+                                text = "${AppStrings.getShareResultHeader(language)}:\n" +
+                                        "${AppStrings.getShareProductLabel(language)}: ${product.name} (${product.brand})\n" +
+                                        "${AppStrings.getShareBarcodeLabel(language)}: ${product.barcode}\n" +
+                                        "${AppStrings.getShareStatusLabel(language)}: ${AppStrings.getStatusLabel(product.status, language)}\n" +
+                                        "${if (product.harmfulOrSuspiciousIngredients.isNotEmpty()) AppStrings.getShareFlaggedIngredientsLabel(language) + ": " + product.harmfulOrSuspiciousIngredients.joinToString(", ") else ""}",
+                                chooserTitle = AppStrings.getShareChooserTitle(language)
+                            )
+
                         }
                     ) {
                         Icon(imageVector = Icons.Default.Share, contentDescription = AppStrings.getShare(language))
@@ -342,21 +330,15 @@ fun ProductResultBottomSheet(
                             .testTag("report_error_button"),
                         shape = CircleShape,
                         onClick = {
-                            val reportIntent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = Uri.parse("mailto:${ReportEmail.SUPPORT_EMAIL}")
-                                putExtra(Intent.EXTRA_EMAIL, arrayOf(ReportEmail.SUPPORT_EMAIL))
-                                putExtra(Intent.EXTRA_SUBJECT, ReportEmail.buildSubject(product, language))
-                                putExtra(Intent.EXTRA_TEXT, ReportEmail.buildBody(product, language))
+                            val sent = sharer.sendEmail(
+                                address = ReportEmail.SUPPORT_EMAIL,
+                                subject = ReportEmail.buildSubject(product, language),
+                                body = ReportEmail.buildBody(product, language)
+                            )
+                            if (!sent) {
+                                sharer.showToast("${AppStrings.getNoEmailAppFound(language)}: ${ReportEmail.SUPPORT_EMAIL}")
                             }
-                            try {
-                                context.startActivity(reportIntent)
-                            } catch (_: ActivityNotFoundException) {
-                                Toast.makeText(
-                                    context,
-                                    "${AppStrings.getNoEmailAppFound(language)}: ${ReportEmail.SUPPORT_EMAIL}",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
+
                         }
                     ) {
                         Icon(imageVector = Icons.Default.Report, contentDescription = AppStrings.getReportError(language))
@@ -1104,10 +1086,7 @@ fun ProductShowcaseImageCard(
                         }
                     },
                     error = { throwable ->
-                        android.util.Log.w(
-                            "ProductShowcaseImage",
-                            "Failed to load image for '$productName' from $imageUrl: ${throwable?.message}"
-                        )
+                        logWarn("ProductShowcaseImage", "Failed to load image for '$productName' from $imageUrl: ${throwable?.message}")
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,

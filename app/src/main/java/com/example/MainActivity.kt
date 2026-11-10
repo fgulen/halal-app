@@ -18,6 +18,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.screens.MainHalalScreen
 import com.example.ui.theme.HalalKontrolTheme
+import com.example.ui.platform.LocalSharer
+import com.example.ui.platform.AndroidSharer
+import androidx.compose.runtime.CompositionLocalProvider
 import com.example.ui.viewmodel.HalalScannerViewModel
 import com.example.ui.viewmodel.HalalScannerViewModelFactory
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -53,6 +56,7 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
         setContent {
+            CompositionLocalProvider(LocalSharer provides AndroidSharer(this)) {
             HalalKontrolTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     MainHalalScreen(viewModel = viewModel)
@@ -64,6 +68,7 @@ class MainActivity : ComponentActivity() {
                         launchReviewFlow()
                     }
                 }
+            }
             }
         }
         checkForImmediateUpdate()
