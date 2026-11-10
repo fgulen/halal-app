@@ -1,15 +1,27 @@
 package com.example.data.remote
 
-import android.util.Log
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.json.JSONArray
-import org.json.JSONObject
-import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.data.util.logDebug
+import com.example.data.util.logWarn
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.headers
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpHeaders
+import io.ktor.http.encodeURLParameter
+import io.ktor.http.isSuccess
+import kotlinx.coroutines.CancellationException
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlin.math.floor
 
 private const val TAG = "OpenFoodFactsApi"
+private const val USER_AGENT = "HalalGlobalFoodScanner - Android - Version 1.0 (contact: support@halalglobal.app)"
 
 data class OffResponse(
     val status: Int?,
@@ -18,17 +30,31 @@ data class OffResponse(
     val product: OffProduct?
 )
 
+// org.json'dan (JSONObject/JSONArray) geçişte aynı ayrıştırma davranışını korumak için yardımcılar.
+// Önemli farklar: eksik alan "" döner; JSON null "null" metni olur (org.json öyleydi); sayılar
+// metne çevrilir. Ayrıştırıcı bu kuralların hiçbirini değiştirmez.
+private fun JsonElement.orgString(): String = when (this) {
+    is JsonNull -> "null"
+    is JsonPrimitive -> content
+    else -> toString()
+}
+
+private fun JsonObject.optString(key: String, fallback: String = ""): String =
+    this[key]?.orgString() ?: fallback
+
+private fun JsonObject.optObject(key: String): JsonObject? = this[key] as? JsonObject
+
 class OpenFoodFactsApi(
-    private val client: OkHttpClient = createOkHttpClient()
+    private val client: HttpClient = createOffHttpClient()
 ) {
 
-    suspend fun getProductByBarcode(barcode: String): OffResponse = withContext(Dispatchers.IO) {
+    suspend fun getProductByBarcode(barcode: String): OffResponse {
         val cleanedBarcode = barcode.trim()
         val digitsOnly = cleanedBarcode.filter { it.isDigit() }
         val targetBarcode = if (digitsOnly.isNotEmpty()) digitsOnly else cleanedBarcode
 
         if (targetBarcode.isBlank()) {
-            return@withContext OffResponse(status = 0, statusVerbose = "empty barcode", code = barcode, product = null)
+            return OffResponse(status = 0, statusVerbose = "empty barcode", code = barcode, product = null)
         }
 
         // Generate barcode candidate variations (e.g. leading zero padding for UPC, or removing leading zero)
@@ -88,49 +114,50 @@ class OpenFoodFactsApi(
 
         for (url in urlsToTry) {
             try {
-                val request = Request.Builder()
-                    .url(url)
-                    .header("User-Agent", "HalalGlobalFoodScanner - Android - Version 1.0 (contact: support@halalglobal.app)")
-                    .header("Accept", "application/json")
-                    .get()
-                    .build()
-
-                client.newCall(request).execute().use { response ->
-                    if (request.url.host == "world.openfoodfacts.org" && (response.isSuccessful || response.code == 404)) {
-                        offGaveDefiniteAnswer = true
+                val response = client.get(url) {
+                    headers {
+                        append(HttpHeaders.UserAgent, USER_AGENT)
+                        append(HttpHeaders.Accept, "application/json")
                     }
-                    Log.d(TAG, "GET $url -> HTTP ${response.code}")
-                    if (response.isSuccessful) {
-                        val bodyString = response.body?.string()
-                        if (!bodyString.isNullOrBlank()) {
-                            val json = JSONObject(bodyString)
-                            val parsed = parseOffResponse(json, primaryCandidate)
-                            val product = parsed?.product
-                            // Accept the product as soon as OFF has ANY usable data for it.
-                            // Requiring a non-blank product_name rejected real entries that only
-                            // have brand/ingredients/image data filled in, sending them into the
-                            // "not found" path with no image and no ingredients.
-                            val hasUsableData = product != null && (
-                                !product.productName.isNullOrBlank() ||
+                }
+                if (response.call.request.url.host == "world.openfoodfacts.org" &&
+                    (response.status.isSuccess() || response.status.value == 404)
+                ) {
+                    offGaveDefiniteAnswer = true
+                }
+                logDebug(TAG, "GET $url -> HTTP ${response.status.value}")
+                if (response.status.isSuccess()) {
+                    val bodyString = response.bodyAsText()
+                    if (bodyString.isNotBlank()) {
+                        val json = parseJsonObject(bodyString)
+                        val parsed = parseOffResponse(json, primaryCandidate)
+                        val product = parsed?.product
+                        // Accept the product as soon as OFF has ANY usable data for it.
+                        // Requiring a non-blank product_name rejected real entries that only
+                        // have brand/ingredients/image data filled in, sending them into the
+                        // "not found" path with no image and no ingredients.
+                        val hasUsableData = product != null && (
+                            !product.productName.isNullOrBlank() ||
                                 !product.brands.isNullOrBlank() ||
                                 !product.ingredientsText.isNullOrBlank() ||
                                 !product.imageUrl.isNullOrBlank()
                             )
-                            if (parsed != null && hasUsableData) {
-                                if (hasIngredientData(product)) {
-                                    Log.d(TAG, "Matched barcode=$primaryCandidate name=${product?.productName} image=${product?.imageUrl}")
-                                    return@withContext parsed
-                                }
-                                if (bestPartialMatch == null) {
-                                    Log.d(TAG, "Partial match (no ingredients yet) barcode=$primaryCandidate name=${product?.productName} - still checking remaining endpoints")
-                                    bestPartialMatch = parsed
-                                }
+                        if (parsed != null && hasUsableData) {
+                            if (hasIngredientData(product)) {
+                                logDebug(TAG, "Matched barcode=$primaryCandidate name=${product?.productName} image=${product?.imageUrl}")
+                                return parsed
+                            }
+                            if (bestPartialMatch == null) {
+                                logDebug(TAG, "Partial match (no ingredients yet) barcode=$primaryCandidate name=${product?.productName} - still checking remaining endpoints")
+                                bestPartialMatch = parsed
                             }
                         }
                     }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                Log.w(TAG, "Request failed for $url: ${e.message}")
+                logWarn(TAG, "Request failed for $url: ${e.message}")
                 // try next
             }
         }
@@ -141,31 +168,34 @@ class OpenFoodFactsApi(
                 val searchResults = searchProductsByName(targetBarcode)
                 val exactMatch = searchResults.firstOrNull { it.first == targetBarcode || it.first == primaryCandidate }
                 if (exactMatch != null && hasIngredientData(exactMatch.second)) {
-                    return@withContext OffResponse(status = 1, statusVerbose = "found via search", code = exactMatch.first, product = exactMatch.second)
+                    return OffResponse(status = 1, statusVerbose = "found via search", code = exactMatch.first, product = exactMatch.second)
                 }
                 if (exactMatch != null && bestPartialMatch == null) {
                     bestPartialMatch = OffResponse(status = 1, statusVerbose = "found via search", code = exactMatch.first, product = exactMatch.second)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                Log.w(TAG, "Search fallback failed: ${e.message}")
+                logWarn(TAG, "Search fallback failed: ${e.message}")
             }
         }
 
         // No endpoint/candidate had ingredients, but one had name/brand/image data - better to
         // show that (with the "photo analysis" fallback CTA) than a bare "not found" screen.
-        bestPartialMatch?.let { return@withContext it }
+        bestPartialMatch?.let { return it }
 
         val verbose = if (offGaveDefiniteAnswer) "product not found" else "network error"
-        Log.w(TAG, "Barcode $targetBarcode not found on Open Food Facts after ${urlsToTry.size} attempts ($verbose)")
-        OffResponse(status = 0, statusVerbose = verbose, code = targetBarcode, product = null)
+        logWarn(TAG, "Barcode $targetBarcode not found on Open Food Facts after ${urlsToTry.size} attempts ($verbose)")
+        return OffResponse(status = 0, statusVerbose = verbose, code = targetBarcode, product = null)
     }
 
-    suspend fun searchProductsByName(query: String): List<Pair<String, OffProduct>> = withContext(Dispatchers.IO) {
+    suspend fun searchProductsByName(query: String): List<Pair<String, OffProduct>> {
         val cleanedQuery = query.trim()
-        if (cleanedQuery.isBlank()) return@withContext emptyList()
+        if (cleanedQuery.isBlank()) return emptyList()
 
         val results = mutableListOf<Pair<String, OffProduct>>()
-        val encodedQuery = java.net.URLEncoder.encode(cleanedQuery, "UTF-8")
+        // URLEncoder ile aynı: boşluk '+' olur.
+        val encodedQuery = cleanedQuery.encodeURLParameter(spaceToPlus = true)
         // de/tr subdomains share the same underlying database as world and were dropped here
         // for the same reason as getProductByBarcode: they can't find anything world can't,
         // and their search endpoint doesn't request the same `fields`, so results were inconsistent.
@@ -175,40 +205,37 @@ class OpenFoodFactsApi(
 
         for (searchUrl in searchUrls) {
             try {
-                val request = Request.Builder()
-                    .url(searchUrl)
-                    .header("User-Agent", "HalalGlobalFoodScanner - Android - Version 1.0 (contact: support@halalglobal.app)")
-                    .header("Accept", "application/json")
-                    .get()
-                    .build()
+                val response = client.get(searchUrl) {
+                    headers {
+                        append(HttpHeaders.UserAgent, USER_AGENT)
+                        append(HttpHeaders.Accept, "application/json")
+                    }
+                }
+                if (response.status.isSuccess()) {
+                    val bodyString = response.bodyAsText()
+                    if (bodyString.isNotBlank()) {
+                        val json = parseJsonObject(bodyString)
+                        val productsArray = json["products"] as? JsonArray
+                        if (productsArray != null) {
+                            val queryLower = cleanedQuery.lowercase()
+                            val isNumericQuery = cleanedQuery.all { it.isDigit() }
+                            for (element in productsArray) {
+                                val prodJson = element as? JsonObject ?: continue
+                                val code = prodJson.optString("code", prodJson.optString("_id", ""))
+                                val offProd = parseOffProduct(prodJson)
+                                if (code.isNotBlank() && offProd != null && !offProd.productName.isNullOrBlank() && results.none { it.first == code }) {
+                                    val pName = (offProd.productName ?: "").lowercase()
+                                    val pBrand = (offProd.brands ?: "").lowercase()
+                                    val pCat = (offProd.categories ?: "").lowercase()
 
-                client.newCall(request).execute().use { response ->
-                    if (response.isSuccessful) {
-                        val bodyString = response.body?.string()
-                        if (!bodyString.isNullOrBlank()) {
-                            val json = JSONObject(bodyString)
-                            val productsArray = json.optJSONArray("products")
-                            if (productsArray != null) {
-                                val queryLower = cleanedQuery.lowercase()
-                                val isNumericQuery = cleanedQuery.all { it.isDigit() }
-                                for (i in 0 until productsArray.length()) {
-                                    val prodJson = productsArray.optJSONObject(i) ?: continue
-                                    val code = prodJson.optString("code", prodJson.optString("_id", ""))
-                                    val offProd = parseOffProduct(prodJson)
-                                    if (code.isNotBlank() && offProd != null && !offProd.productName.isNullOrBlank() && results.none { it.first == code }) {
-                                        val pName = (offProd.productName ?: "").lowercase()
-                                        val pBrand = (offProd.brands ?: "").lowercase()
-                                        val pCat = (offProd.categories ?: "").lowercase()
-                                        
-                                        // Verify relevance
-                                        if (isNumericQuery) {
-                                            if (code.contains(cleanedQuery)) {
-                                                results.add(Pair(code, offProd))
-                                            }
-                                        } else {
-                                            if (pName.contains(queryLower) || pBrand.contains(queryLower) || pCat.contains(queryLower) || queryLower.contains(pName) || pName.split(" ").any { queryLower.contains(it) && it.length >= 3 }) {
-                                                results.add(Pair(code, offProd))
-                                            }
+                                    // Verify relevance
+                                    if (isNumericQuery) {
+                                        if (code.contains(cleanedQuery)) {
+                                            results.add(Pair(code, offProd))
+                                        }
+                                    } else {
+                                        if (pName.contains(queryLower) || pBrand.contains(queryLower) || pCat.contains(queryLower) || queryLower.contains(pName) || pName.split(" ").any { queryLower.contains(it) && it.length >= 3 }) {
+                                            results.add(Pair(code, offProd))
                                         }
                                     }
                                 }
@@ -217,24 +244,33 @@ class OpenFoodFactsApi(
                     }
                 }
                 if (results.isNotEmpty()) break
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                Log.w(TAG, "Search request failed for $searchUrl: ${e.message}")
+                logWarn(TAG, "Search request failed for $searchUrl: ${e.message}")
             }
         }
 
-        results
+        return results
     }
 
-    private fun parseOffResponse(json: JSONObject, fallbackCode: String): OffResponse? {
-        val statusRaw = json.opt("status")
-        val statusInt = when (statusRaw) {
-            is Number -> statusRaw.toInt()
-            is String -> statusRaw.toIntOrNull() ?: if (statusRaw.equals("success", ignoreCase = true)) 1 else 0
+    private fun parseJsonObject(body: String): JsonObject = Json.parseToJsonElement(body).jsonObject
+
+    private fun parseOffResponse(json: JsonObject, fallbackCode: String): OffResponse? {
+        val statusEl = json["status"]
+        val statusInt = when (statusEl) {
+            null, is JsonNull -> 0
+            is JsonPrimitive -> if (statusEl.isString) {
+                statusEl.content.toIntOrNull()
+                    ?: if (statusEl.content.equals("success", ignoreCase = true)) 1 else 0
+            } else {
+                statusEl.contentOrNull?.toDoubleOrNull()?.toInt() ?: 0
+            }
             else -> 0
         }
         val statusVerbose = json.optString("status_verbose", "")
         val code = json.optString("code", fallbackCode)
-        val productJson = json.optJSONObject("product")
+        val productJson = json.optObject("product")
 
         val product = if (productJson != null) {
             parseOffProduct(productJson)
@@ -248,7 +284,7 @@ class OpenFoodFactsApi(
         )
     }
 
-    private fun parseOffProduct(json: JSONObject): OffProduct? {
+    private fun parseOffProduct(json: JsonObject): OffProduct? {
         val name = json.optString("product_name").takeIf { it.isNotBlank() }
             ?: json.optString("product_name_en").takeIf { it.isNotBlank() }
             ?: json.optString("product_name_de").takeIf { it.isNotBlank() }
@@ -267,19 +303,20 @@ class OpenFoodFactsApi(
         }
 
         fun extractStringList(key: String): List<String>? {
-            val opt = json.opt(key) ?: return null
-            return when (opt) {
-                is JSONArray -> {
+            val el = json[key] ?: return null
+            return when {
+                el is JsonArray -> {
                     val list = mutableListOf<String>()
-                    for (i in 0 until opt.length()) {
-                        val str = opt.optString(i)
+                    for (item in el) {
+                        val str = item.orgString()
                         if (str.isNotBlank()) list.add(str)
                     }
                     list.takeIf { it.isNotEmpty() }
                 }
-                is String -> {
-                    if (opt.isBlank()) null
-                    else opt.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                el is JsonPrimitive && el.isString -> {
+                    val str = el.content
+                    if (str.isBlank()) null
+                    else str.split(",").map { it.trim() }.filter { it.isNotEmpty() }
                 }
                 else -> null
             }
@@ -307,20 +344,18 @@ class OpenFoodFactsApi(
             if (!direct.isNullOrBlank()) return direct
 
             // 2. selected_images -> front -> display / small / thumb
-            val selected = json.optJSONObject("selected_images")
+            val selected = json.optObject("selected_images")
             if (selected != null) {
-                val front = selected.optJSONObject("front") ?: selected.optJSONObject("ingredients")
+                val front = selected.optObject("front") ?: selected.optObject("ingredients")
                 if (front != null) {
-                    val display = front.optJSONObject("display") ?: front.optJSONObject("small") ?: front.optJSONObject("thumb")
+                    val display = front.optObject("display") ?: front.optObject("small") ?: front.optObject("thumb")
                     if (display != null) {
                         val langs = listOf("de", "en", "fr", "tr", "ar", "it", "es", "nl", "pl", "ru")
                         for (lang in langs) {
                             val u = cleanUrl(display.optString(lang).takeIf { it.isNotBlank() })
                             if (!u.isNullOrBlank()) return u
                         }
-                        val keys = display.keys()
-                        while (keys.hasNext()) {
-                            val k = keys.next()
+                        for (k in display.keys) {
                             val u = cleanUrl(display.optString(k).takeIf { it.isNotBlank() })
                             if (!u.isNullOrBlank()) return u
                         }
@@ -329,15 +364,15 @@ class OpenFoodFactsApi(
             }
 
             // 3. Inspect 'images' dictionary
-            val imagesObj = json.optJSONObject("images")
+            val imagesObj = json.optObject("images")
             if (imagesObj != null) {
                 val frontKeys = listOf("front_tr", "front_en", "front_de", "front_fr", "front_ar", "front", "front_es", "1")
                 for (key in frontKeys) {
-                    val imgObj = imagesObj.optJSONObject(key)
+                    val imgObj = imagesObj.optObject(key)
                     if (imgObj != null) {
-                        val sizes = imgObj.optJSONObject("sizes")
+                        val sizes = imgObj.optObject("sizes")
                         if (sizes != null) {
-                            val size400 = sizes.optJSONObject("400") ?: sizes.optJSONObject("full") ?: sizes.optJSONObject("display") ?: sizes.optJSONObject("200")
+                            val size400 = sizes.optObject("400") ?: sizes.optObject("full") ?: sizes.optObject("display") ?: sizes.optObject("200")
                             val u = cleanUrl(size400?.optString("url")?.takeIf { it.isNotBlank() })
                             if (!u.isNullOrBlank()) return u
                         }
@@ -347,7 +382,7 @@ class OpenFoodFactsApi(
 
             // 4. Fallback to Open Food Facts CDN split barcode path only if 'images' has at least one key
             val rawCode = json.optString("code").takeIf { it.isNotBlank() }
-            if (!rawCode.isNullOrBlank() && imagesObj != null && imagesObj.length() > 0) {
+            if (!rawCode.isNullOrBlank() && imagesObj != null && imagesObj.isNotEmpty()) {
                 val digits = rawCode.trim().filter { it.isDigit() }
                 if (digits.isNotEmpty()) {
                     return if (digits.length <= 8) {
@@ -404,28 +439,16 @@ class OpenFoodFactsApi(
     companion object {
         // Only a plain A..E grade counts; OFF also sends "unknown", "not-applicable" or JSON null
         // (which optString turns into the text "null"), all of which mean "no score".
-        internal fun parseNutriScore(raw: String): String? =
+        fun parseNutriScore(raw: String): String? =
             raw.trim().uppercase().takeIf { it.length == 1 && it[0] in 'A'..'E' }
 
         // OFF sends nova_group as a JSON number (3); "4.0" also appears for some records, so read
         // it as a double and accept only whole numbers 1..4.
-        internal fun parseNovaGroup(raw: String): Int? {
+        fun parseNovaGroup(raw: String): Int? {
             val value = raw.trim().toDoubleOrNull() ?: return null
-            return value.toInt().takeIf { value == Math.floor(value) && it in 1..4 }
+            return value.toInt().takeIf { value == floor(value) && it in 1..4 }
         }
 
-        fun createOkHttpClient(): OkHttpClient {
-            return OkHttpClient.Builder()
-                .followRedirects(true)
-                .followSslRedirects(true)
-                .connectTimeout(6, TimeUnit.SECONDS)
-                .readTimeout(6, TimeUnit.SECONDS)
-                .build()
-        }
-
-        fun create(): OpenFoodFactsApi {
-            return OpenFoodFactsApi(createOkHttpClient())
-        }
+        fun create(): OpenFoodFactsApi = OpenFoodFactsApi(createOffHttpClient())
     }
 }
-

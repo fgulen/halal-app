@@ -151,10 +151,11 @@ class ProductRepository(
             if (!hadNetworkError) {
                 try {
                     val response = openFoodFactsApi.getProductByBarcode(digitsOnly)
-                    if ((response.status == 1 || response.product != null) && response.product != null) {
+                    val offProduct = response.product
+                    if ((response.status == 1 || offProduct != null) && offProduct != null) {
                         val analyzedProduct = HalalAnalyzer.analyzeOpenFoodFactsProduct(
                             response.code ?: digitsOnly,
-                            response.product,
+                            offProduct,
                             language,
                             madhhab
                         )

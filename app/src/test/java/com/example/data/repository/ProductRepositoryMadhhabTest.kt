@@ -3,6 +3,7 @@ package com.example.data.repository
 import androidx.test.core.app.ApplicationProvider
 import com.example.data.local.AppDatabase
 import com.example.data.local.createInMemoryAppDatabase
+import com.example.data.remote.offMockClient
 import com.example.data.local.ProductEntity
 import com.example.data.model.AppLanguage
 import com.example.data.model.HalalStatus
@@ -10,12 +11,6 @@ import com.example.data.model.Madhhab
 import com.example.data.remote.OpenFoodFactsApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import okhttp3.Interceptor
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Protocol
-import okhttp3.Response
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -38,22 +33,9 @@ class ProductRepositoryMadhhabTest {
     """.trimIndent()
 
     private fun repository(offBody: String = cheeseJson, offNetworkError: Boolean = false): ProductRepository {
-        val interceptor = Interceptor { chain ->
-            val request = chain.request()
-            val isOffFood = request.url.host == "world.openfoodfacts.org"
-            if (isOffFood) offFoodCalls++
-            if (isOffFood && offNetworkError) throw java.io.IOException("offline")
-            Response.Builder()
-                .request(request)
-                .protocol(Protocol.HTTP_1_1)
-                .code(if (isOffFood) 200 else 404)
-                .message("test")
-                .body((if (isOffFood) offBody else "{}").toResponseBody("application/json".toMediaType()))
-                .build()
-        }
         return ProductRepository(
             database.productDao(),
-            OpenFoodFactsApi(OkHttpClient.Builder().addInterceptor(interceptor).build())
+            OpenFoodFactsApi(offMockClient(offFoodBody = offBody, onOffFoodRequest = { offFoodCalls++ }, failOffFood = offNetworkError))
         )
     }
 

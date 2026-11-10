@@ -9,6 +9,7 @@ plugins {
   alias(libs.plugins.android.kotlin.multiplatform.library)
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.androidx.room)
+  alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -30,10 +31,21 @@ kotlin {
     commonMain.dependencies {
       implementation(libs.androidx.datastore.preferences.core)
       implementation(libs.androidx.room.runtime)
+      implementation(libs.ktor.client.core)
+      implementation(libs.kotlinx.serialization.json)
       implementation(libs.kotlinx.coroutines.core)
     }
     jvmTest.dependencies {
       implementation(kotlin("test"))
+    }
+    androidMain.dependencies {
+      implementation(libs.ktor.client.okhttp)
+    }
+    jvmMain.dependencies {
+      implementation(libs.ktor.client.okhttp)
+    }
+    iosMain.dependencies {
+      implementation(libs.ktor.client.darwin)
     }
   }
 }
