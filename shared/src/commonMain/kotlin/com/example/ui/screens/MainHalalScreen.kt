@@ -1433,13 +1433,13 @@ fun NaturalEmptyHistoryCard(
 }
 
 /** Index of the E-codes tab. It opens a sheet rather than a screen, so it is never a real screen index. */
-internal const val E_CODES_NAV_INDEX = 2
+const val E_CODES_NAV_INDEX = 2
 
 /**
  * Which bottom-nav tab should look selected. While the E-codes sheet is open that tab is selected;
  * otherwise the last real screen (home or history) stays selected.
  */
-internal fun bottomNavSelectedIndex(isEAdditivesOpen: Boolean, selectedScreenIndex: Int): Int =
+fun bottomNavSelectedIndex(isEAdditivesOpen: Boolean, selectedScreenIndex: Int): Int =
     if (isEAdditivesOpen) E_CODES_NAV_INDEX else selectedScreenIndex
 
 @Composable
