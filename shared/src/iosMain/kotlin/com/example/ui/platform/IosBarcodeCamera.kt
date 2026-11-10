@@ -2,7 +2,12 @@
 
 package com.example.ui.platform
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,8 +65,18 @@ fun IosCameraOverlay(
     onCloseScanner: () -> Unit,
     onOpenManualEntry: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        IosBarcodeCamera(modifier = Modifier.fillMaxSize(), onBarcodeScanned = onBarcodeScanned)
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        // Kamera tam ekran değil: ortada, barkoda odaklı çerçeve.
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .height(240.dp)
+                .padding(horizontal = 24.dp)
+                .clip(RoundedCornerShape(16.dp))
+        ) {
+            IosBarcodeCamera(modifier = Modifier.fillMaxSize(), onBarcodeScanned = onBarcodeScanned)
+        }
         Row(
             modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
         ) {
