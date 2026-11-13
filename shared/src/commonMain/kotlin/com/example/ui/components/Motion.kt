@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,8 +17,27 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import com.example.ui.platform.rememberReducedMotion
+
+// Runs [onUserScroll] only for finger drags (NestedScrollSource.UserInput), not for programmatic
+// scrolls such as bring-into-view when a focused text field scrolls into place.
+@Composable
+fun Modifier.onUserScroll(onUserScroll: () -> Unit): Modifier {
+    val connection = remember(onUserScroll) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (source == NestedScrollSource.UserInput) onUserScroll()
+                return Offset.Zero
+            }
+        }
+    }
+    return this.nestedScroll(connection)
+}
 
 // Visual-only press feedback. It does NOT handle taps: the element keeps its own clickable/onClick,
 // so semantics (TalkBack/VoiceOver), ripple and minimum touch size stay intact.
@@ -51,10 +69,17 @@ fun Modifier.tapPressFeedback(
         }
         .pointerInput(Unit) {
             awaitEachGesture {
-                awaitFirstDown(requireUnconsumed = false)
+                val down = awaitFirstDown(requireUnconsumed = false)
                 pressed = true
                 try {
-                    waitForUpOrCancellation()
+                    // A drag past touch slop is a scroll, not a press: release the visual at once.
+                    // The parent list consumes moves, so waiting for up/cancel alone would stay pressed.
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                        if (!change.pressed) break
+                        if ((change.position - down.position).getDistance() > viewConfiguration.touchSlop) break
+                    }
                 } finally {
                     pressed = false
                 }

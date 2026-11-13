@@ -26,7 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.runtime.LaunchedEffect
+import com.example.ui.components.onUserScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -321,7 +321,8 @@ fun ScanHistoryScreen(
             }
         }
 
-        // List / Empty state
+        // List / Empty state. Hoisted so scroll position survives the empty-state toggle.
+        val listState = rememberLazyListState()
         if (filteredList.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -383,21 +384,18 @@ fun ScanHistoryScreen(
                 }
             }
         } else {
-            val listState = rememberLazyListState()
             val keyboard = LocalSoftwareKeyboardController.current
             val focusManager = LocalFocusManager.current
-            // Same as home: no "Done" key on iOS number/QWERTY pads, so scroll and empty taps close it.
-            LaunchedEffect(listState.isScrollInProgress) {
-                if (listState.isScrollInProgress) {
-                    keyboard?.hide()
-                    focusManager.clearFocus()
-                }
-            }
+            // Same as home: no "Done" key on iOS number/QWERTY pads, so a drag and empty taps close it.
             LazyColumn(
                 state = listState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .pointerInput(Unit) {
+                    .onUserScroll {
+                        keyboard?.hide()
+                        focusManager.clearFocus()
+                    }
+                    .pointerInput(keyboard, focusManager) {
                         detectTapGestures(onTap = {
                             keyboard?.hide()
                             focusManager.clearFocus()

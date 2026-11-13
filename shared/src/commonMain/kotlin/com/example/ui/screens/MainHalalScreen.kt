@@ -108,6 +108,7 @@ import com.example.data.model.HalalStatus
 import com.example.data.model.Madhhab
 import com.example.ui.components.ClearHistoryDialog
 import com.example.ui.components.EAdditiveSheet
+import com.example.ui.components.onUserScroll
 import com.example.ui.components.tapPressFeedback
 import com.example.ui.platform.rememberAppHaptics
 import com.example.ui.components.HalalStatusBadge
@@ -258,23 +259,19 @@ fun MainHalalScreen(
                     .padding(innerPadding)
             )
         } else {
-            val listState = rememberLazyListState()
             val keyboard = LocalSoftwareKeyboardController.current
             val focusManager = LocalFocusManager.current
-            // iOS has no "Done" key on the number/QWERTY pad, so the keyboard closes on scroll
+            // iOS has no "Done" key on the number/QWERTY pad, so the keyboard closes on a finger drag
             // and on a tap in empty space (taps on buttons are consumed by the buttons first).
-            LaunchedEffect(listState.isScrollInProgress) {
-                if (listState.isScrollInProgress) {
-                    keyboard?.hide()
-                    focusManager.clearFocus()
-                }
-            }
             LazyColumn(
-                state = listState,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .pointerInput(Unit) {
+                    .onUserScroll {
+                        keyboard?.hide()
+                        focusManager.clearFocus()
+                    }
+                    .pointerInput(keyboard, focusManager) {
                         detectTapGestures(onTap = {
                             keyboard?.hide()
                             focusManager.clearFocus()
