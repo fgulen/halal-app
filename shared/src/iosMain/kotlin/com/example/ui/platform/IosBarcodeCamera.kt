@@ -3,10 +3,13 @@
 package com.example.ui.platform
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -67,19 +70,21 @@ fun IosCameraOverlay(
     onOpenManualEntry: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-        // Kamera tam ekran değil: ortada, barkoda odaklı çerçeve.
+        // Kamera tam ekran; üstüne yalnızca bir kılavuz çerçevesi çizilir (kutu/maske yok).
+        IosBarcodeCamera(modifier = Modifier.fillMaxSize(), onBarcodeScanned = onBarcodeScanned)
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .fillMaxWidth()
-                .height(240.dp)
-                .padding(horizontal = 24.dp)
-                .clip(RoundedCornerShape(16.dp))
-        ) {
-            IosBarcodeCamera(modifier = Modifier.fillMaxSize(), onBarcodeScanned = onBarcodeScanned)
-        }
+                .fillMaxWidth(0.82f)
+                .height(180.dp)
+                .border(2.dp, Color.White.copy(alpha = 0.9f), RoundedCornerShape(16.dp))
+        )
+        // Kapat düğmesi durum çubuğu/çentik alanının altında kalsın, dokunmalar sistem tarafından yutulmasın.
         Row(
-            modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .windowInsetsPadding(WindowInsets.safeDrawing)
+                .padding(16.dp)
         ) {
             Button(onClick = onCloseScanner) { Text(AppStrings.getClose(language)) }
         }
