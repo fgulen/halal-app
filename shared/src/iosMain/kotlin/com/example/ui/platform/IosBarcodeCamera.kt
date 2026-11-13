@@ -155,6 +155,8 @@ private class MetadataDelegate(private val onCode: (String) -> Unit) :
             ?: return
         if (code == lastCode) return
         lastCode = code
+        // Delegate ana kuyrukta çalışır (dispatch_get_main_queue), UIKit için güvenli.
+        iosSuccessHaptic()
         onCode(code)
     }
 }

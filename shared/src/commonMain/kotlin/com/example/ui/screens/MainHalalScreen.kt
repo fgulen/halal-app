@@ -89,8 +89,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -105,7 +108,8 @@ import com.example.data.model.HalalStatus
 import com.example.data.model.Madhhab
 import com.example.ui.components.ClearHistoryDialog
 import com.example.ui.components.EAdditiveSheet
-import com.example.ui.components.pressScale
+import com.example.ui.components.tapPressFeedback
+import com.example.ui.platform.rememberAppHaptics
 import com.example.ui.components.HalalStatusBadge
 import com.example.ui.components.LanguageSelectionDialog
 import com.example.ui.components.MadhhabSelectionDialog
@@ -254,10 +258,28 @@ fun MainHalalScreen(
                     .padding(innerPadding)
             )
         } else {
+            val listState = rememberLazyListState()
+            val keyboard = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
+            // iOS has no "Done" key on the number/QWERTY pad, so the keyboard closes on scroll
+            // and on a tap in empty space (taps on buttons are consumed by the buttons first).
+            LaunchedEffect(listState.isScrollInProgress) {
+                if (listState.isScrollInProgress) {
+                    keyboard?.hide()
+                    focusManager.clearFocus()
+                }
+            }
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
+                    .padding(innerPadding)
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            keyboard?.hide()
+                            focusManager.clearFocus()
+                        })
+                    },
                 contentPadding = PaddingValues(bottom = 24.dp)
             ) {
                 // Header with Language Selector & E-Codes info trigger
@@ -532,10 +554,10 @@ fun MainHalalScreen(
     }
 
     // One light haptic tick when a verdict appears, so the result feels confirmed without a visual cue alone.
-    val haptic = LocalHapticFeedback.current
+    val verdictHaptics = rememberAppHaptics()
     LaunchedEffect(activeProduct) {
         if (activeProduct != null) {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            verdictHaptics.impact()
         }
     }
 
@@ -800,6 +822,7 @@ fun NaturalAppHeader(
                     color = EmeraldGreenContainer,
                     modifier = Modifier
                         .size(42.dp)
+                        .tapPressFeedback(pressedScale = 0.96f, shape = CircleShape)
                         .testTag("header_ecodes_button")
                 ) {
                     Box(contentAlignment = Alignment.Center) {
@@ -819,6 +842,7 @@ fun NaturalAppHeader(
                     color = EmeraldGreenContainer,
                     modifier = Modifier
                         .size(42.dp)
+                        .tapPressFeedback(pressedScale = 0.96f, shape = CircleShape)
                         .testTag("header_share_app_button")
                 ) {
                     Box(contentAlignment = Alignment.Center) {
@@ -848,7 +872,9 @@ fun NaturalAppHeader(
                 shape = CircleShape,
                 color = NaturalWarmSurface,
                 border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreenBorder),
-                modifier = Modifier.testTag("language_selector_button")
+                modifier = Modifier
+                    .tapPressFeedback(pressedScale = 0.96f, shape = CircleShape)
+                    .testTag("language_selector_button")
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -874,7 +900,9 @@ fun NaturalAppHeader(
                 shape = CircleShape,
                 color = NaturalWarmSurface,
                 border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreenBorder),
-                modifier = Modifier.testTag("madhhab_selector_button")
+                modifier = Modifier
+                    .tapPressFeedback(pressedScale = 0.96f, shape = CircleShape)
+                    .testTag("madhhab_selector_button")
             ) {
                 Text(
                     text = AppStrings.getMadhhabChipLabel(madhhab, language),
@@ -892,7 +920,9 @@ fun NaturalAppHeader(
                 shape = CircleShape,
                 color = NaturalWarmSurface,
                 border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreenBorder),
-                modifier = Modifier.testTag("header_rate_app_button")
+                modifier = Modifier
+                    .tapPressFeedback(pressedScale = 0.96f, shape = CircleShape)
+                    .testTag("header_rate_app_button")
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -935,10 +965,11 @@ fun NaturalHeroScanButton(
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
             val scanInteraction = remember { MutableInteractionSource() }
+            val haptics = rememberAppHaptics()
             Box(
                 modifier = Modifier
                     .size(210.dp)
-                    .pressScale(scanInteraction)
+                    .tapPressFeedback(pressedScale = 0.94f, shape = CircleShape)
                     .shadow(
                         elevation = 24.dp,
                         shape = CircleShape,
@@ -947,7 +978,14 @@ fun NaturalHeroScanButton(
                     )
                     .background(EmeraldPrimary, CircleShape)
                     .clip(CircleShape)
-                    .clickable(interactionSource = scanInteraction, indication = LocalIndication.current, onClick = onScanClick)
+                    .clickable(
+                        interactionSource = scanInteraction,
+                        indication = LocalIndication.current,
+                        onClick = {
+                            haptics.impact()
+                            onScanClick()
+                        }
+                    )
                     .testTag("giant_scan_barcode_button"),
                 contentAlignment = Alignment.Center
             ) {
@@ -1237,6 +1275,7 @@ fun NaturalHistoryItemCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 6.dp)
+            .tapPressFeedback(pressedScale = 0.97f, shape = RoundedCornerShape(AppRadius.Large))
             .testTag("history_item_${product.barcode}")
     ) {
         Row(

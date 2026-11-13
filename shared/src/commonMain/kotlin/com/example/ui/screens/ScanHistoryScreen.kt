@@ -24,6 +24,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -377,9 +383,26 @@ fun ScanHistoryScreen(
                 }
             }
         } else {
+            val listState = rememberLazyListState()
+            val keyboard = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
+            // Same as home: no "Done" key on iOS number/QWERTY pads, so scroll and empty taps close it.
+            LaunchedEffect(listState.isScrollInProgress) {
+                if (listState.isScrollInProgress) {
+                    keyboard?.hide()
+                    focusManager.clearFocus()
+                }
+            }
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            keyboard?.hide()
+                            focusManager.clearFocus()
+                        })
+                    }
                     .testTag("scan_history_list"),
                 contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)

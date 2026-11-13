@@ -936,6 +936,7 @@ fun LegalDisclaimerCard(language: AppLanguage) {
                     fontWeight = FontWeight.Bold,
                     color = EmeraldPrimaryDeep,
                     modifier = Modifier
+                        .tapPressFeedback(pressedScale = 0.97f)
                         .clickable { showHowItWorks = true }
                         .testTag("how_it_works_link")
                 )

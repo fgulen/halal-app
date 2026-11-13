@@ -16,6 +16,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +48,8 @@ fun SearchField(
     onSearchAction: (() -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
 ) {
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -88,9 +92,20 @@ fun SearchField(
             cursorColor = EmeraldPrimary
         ),
         keyboardOptions = KeyboardOptions(
-            imeAction = if (onSearchAction != null) ImeAction.Search else ImeAction.Default
+            imeAction = if (onSearchAction != null) ImeAction.Search else ImeAction.Done
         ),
-        keyboardActions = KeyboardActions(onSearch = { onSearchAction?.invoke() })
+        // Search/Done must also close the keyboard; otherwise it stays open after submitting.
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                keyboard?.hide()
+                focusManager.clearFocus()
+                onSearchAction?.invoke()
+            },
+            onDone = {
+                keyboard?.hide()
+                focusManager.clearFocus()
+            }
+        )
     )
 }
 

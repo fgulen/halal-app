@@ -256,6 +256,7 @@ private fun HowItWorksLinkRow(label: String, url: String) {
         color = EmeraldPrimaryDeep,
         modifier = Modifier
             .fillMaxWidth()
+            .tapPressFeedback(pressedScale = 0.97f)
             .clickable { uriHandler.openUri(url) }
             .padding(vertical = 3.dp)
     )

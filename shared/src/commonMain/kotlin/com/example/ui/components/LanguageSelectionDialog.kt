@@ -87,7 +87,7 @@ fun LanguageSelectionDialog(
                         color = NaturalTextDark
                     )
                 }
-                IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
+                IconButton(onClick = onDismiss) {
                     Icon(imageVector = Icons.Default.Close, contentDescription = AppStrings.getClose(currentLanguage), tint = NaturalTextMuted)
                 }
             }
@@ -103,6 +103,7 @@ fun LanguageSelectionDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(AppRadius.Medium))
+                            .tapPressFeedback(pressedScale = 0.97f, shape = RoundedCornerShape(AppRadius.Medium))
                             .clickable {
                                 onSelectLanguage(lang)
                                 onDismiss()

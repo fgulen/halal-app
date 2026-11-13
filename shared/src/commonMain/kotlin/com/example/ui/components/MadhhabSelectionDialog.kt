@@ -85,7 +85,7 @@ fun MadhhabSelectionDialog(
                         color = NaturalTextDark
                     )
                 }
-                IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
+                IconButton(onClick = onDismiss) {
                     Icon(imageVector = Icons.Default.Close, contentDescription = AppStrings.getClose(language), tint = NaturalTextMuted)
                 }
             }
@@ -106,6 +106,7 @@ fun MadhhabSelectionDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(AppRadius.Medium))
+                            .tapPressFeedback(pressedScale = 0.97f, shape = RoundedCornerShape(AppRadius.Medium))
                             .clickable {
                                 onSelectMadhhab(madhhab)
                                 onDismiss()
