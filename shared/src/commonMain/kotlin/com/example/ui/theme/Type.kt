@@ -69,20 +69,20 @@ val Typography = Typography(
 )
 
 // Named text sizes. Every fontSize in the app points at one of these, so a size change happens in
-// one place. Values are the ones the screens already used, rounded to this scale.
+// one place. Raised one step on 2026-11-14 for readability; screens must use these tokens, not literal sizes.
 object AppTextSize {
-    /** Tags, badges, nav labels, small metadata (was 9-11sp). */
-    val Caption = 11.sp
-    /** Compact labels and chip text (12sp). */
-    val Label = 12.sp
-    /** Secondary body and helper text (13sp). */
-    val Small = 13.sp
-    /** Body text (14sp). */
-    val Body = 14.sp
-    /** Emphasised body and subtitles (15sp). */
-    val Subtitle = 15.sp
-    /** Primary body text (16sp). */
-    val BodyLarge = 16.sp
+    /** Tags, badges, nav labels, small metadata (12sp; was 11). */
+    val Caption = 12.sp
+    /** Compact labels and chip text (13sp; was 12). */
+    val Label = 13.sp
+    /** Secondary body and helper text (14sp; was 13). */
+    val Small = 14.sp
+    /** Body text (15sp; was 14). */
+    val Body = 15.sp
+    /** Emphasised body and subtitles (16sp; was 15). */
+    val Subtitle = 16.sp
+    /** Primary body text (17sp; was 16). */
+    val BodyLarge = 17.sp
     /** Section titles (18-19sp). */
     val Title = 18.sp
     /** Stat numbers and large titles (20-22sp). */

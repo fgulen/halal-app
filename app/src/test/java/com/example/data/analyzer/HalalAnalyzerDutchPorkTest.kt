@@ -24,4 +24,23 @@ class HalalAnalyzerDutchPorkTest {
         val text = "Klassiek varkensvlees, zetmeel, specerijen, specerijenextracten, aroma's, eiwit, suiker, antioxidant, natriumnitriet"
         assertEquals(HalalStatus.HARAM, analyze(text).status)
     }
+
+    @Test
+    fun `footnote mark after varkensvlees is still haram`() {
+        assertEquals(HalalStatus.HARAM, analyze("68% varkensvleesª, water, zout").status)
+    }
+
+    @Test
+    fun `new pork compounds are haram`() {
+        assertEquals(HalalStatus.HARAM, analyze("varkensvet, zout, specerijen").status)
+        assertEquals(HalalStatus.HARAM, analyze("Coscia di suino, sale, destrosio").status)
+        assertEquals(HalalStatus.HARAM, analyze("Jamón de cerdo, sal, agua").status)
+    }
+
+    @Test
+    fun `declared pork-free is not haram by the pork rule`() {
+        assertEquals(HalalStatus.HELAL, analyze("Vegetarische worst, zonder varkensvlees, water, zout").status)
+        assertEquals(HalalStatus.HELAL, analyze("Salchicha, sin cerdo, agua, sal").status)
+        assertEquals(HalalStatus.HELAL, analyze("Würstchen, ohne Schweinefleisch, Wasser, Salz").status)
+    }
 }

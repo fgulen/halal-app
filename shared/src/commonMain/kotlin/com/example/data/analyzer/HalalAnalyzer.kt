@@ -272,7 +272,8 @@ object HalalAnalyzer {
             // "porcine gelatin" matched before, not "porcine" followed by any other word.
             keywords = listOf("pork", "pig", "swine", "porc", "porcine", "cochon", "jambon", "~schwein", "schweinefleisch", "speck", "lard", "bacon", "ham", "pork fat", "carne de cerdo", "manteca de cerdo", "domuz", "domuz eti", "domuz yağı",
                 // Dutch / Italian / Scandinavian / Polish-Baltic pork words (OFF labels often use the source language).
-                "varkensvlees", "varkens", "maiale", "suino", "suini", "cerdo", "svinekød", "svinjetina", "wieprzowina",
+                "varkensvlees", "varkens", "varkensvet", "maiale", "suino", "suini", "cerdo", "strutto", "lardo", "tocino",
+                "fläsk", "flæsk", "spek", "słonina", "svinekød", "svinjetina", "wieprzowina",
                 // Arabic: the article/conjunction prefix ("الخنزير", "دهن الخنزير") is handled in
                 // containsKeyword, so the bare noun covers them.
                 "خنزير"),
@@ -1185,6 +1186,9 @@ object HalalAnalyzer {
     // matching rather than special-cased in containsKeyword, since new negated phrases are far
     // easier to add to this list than to a boundary algorithm.
     private val NEGATION_PHRASES = listOf(
+        // Declared pork-free: "zonder varkensvlees", "sin cerdo", "senza maiale" must not trip the pork rule.
+        "zonder varkensvlees", "zonder varkens", "sin cerdo", "sin carne de cerdo", "senza maiale",
+        "senza suino", "ohne schweinefleisch", "ohne schwein", "sans porc", "without pork", "no pork",
         // Compound "modifier + alcoholic-beverage noun" phrases MUST be listed (and stripped)
         // before the bare modifier phrases further down: "beer"/"bier"/"bière"/"wine"/"wein"/
         // "vin" are themselves bare Haram keywords, so a declared "non-alcoholic beer" or
@@ -1325,9 +1329,8 @@ object HalalAnalyzer {
     //
     // [text] must already be normalizeForMatching()'d; the keyword is normalized here so every
     // rule list can stay written in natural spelling (e.g. "peynir mayası", "şirden").
-    // Footnote marks (ª º ¹ ² ³ superscripts) are not part of a word: "varkensvleesª" must match "varkensvlees".
-    private fun isWordChar(c: Char): Boolean =
-        c.isLetterOrDigit() && c != 'ª' && c != 'º' && c !in '²'..'³' && c != '¹' && c !in '⁰'..'₟'
+    // Ordinal footnote marks (ª º) are letters in Unicode but not part of a word: "varkensvleesª" must match "varkensvlees".
+    private fun isWordChar(c: Char): Boolean = c.isLetterOrDigit() && c != 'ª' && c != 'º'
 
     private fun containsKeyword(text: String, keyword: String): Boolean {
         if (keyword == BARE_LAB_KEYWORD) return containsBareLab(text)

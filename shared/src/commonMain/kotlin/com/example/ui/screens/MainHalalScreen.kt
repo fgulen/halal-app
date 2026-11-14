@@ -812,25 +812,7 @@ fun NaturalAppHeader(
             )
 
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                // E-Codes Info Button
-                Surface(
-                    onClick = onECodesClick,
-                    shape = CircleShape,
-                    color = EmeraldGreenContainer,
-                    modifier = Modifier
-                        .size(42.dp)
-                        .tapPressFeedback(pressedScale = 0.96f, shape = CircleShape)
-                        .testTag("header_ecodes_button")
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.AutoStories,
-                            contentDescription = AppStrings.getNavECodes(language),
-                            tint = EmeraldPrimaryDeep,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
+                // E-Codes sekmesi alt menüde; üst barda ayrı bir E-Codes düğmesi yok.
 
                 // Share App Button
                 Surface(
@@ -965,7 +947,7 @@ fun NaturalHeroScanButton(
             val haptics = rememberAppHaptics()
             Box(
                 modifier = Modifier
-                    .size(210.dp)
+                    .size(176.dp)
                     .tapPressFeedback(pressedScale = 0.94f, shape = CircleShape)
                     .shadow(
                         elevation = 24.dp,
@@ -994,7 +976,7 @@ fun NaturalHeroScanButton(
                         imageVector = Icons.Default.QrCodeScanner,
                         contentDescription = AppStrings.getScanBarcode(language),
                         tint = Color.White,
-                        modifier = Modifier.size(54.dp)
+                        modifier = Modifier.size(46.dp)
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -1004,7 +986,9 @@ fun NaturalHeroScanButton(
                         color = Color.White,
                         fontSize = AppTextSize.Title,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp
+                        letterSpacing = 0.5.sp,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2
                     )
                 }
             }

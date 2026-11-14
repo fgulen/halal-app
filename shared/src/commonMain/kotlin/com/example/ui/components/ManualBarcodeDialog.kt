@@ -80,7 +80,7 @@ fun ManualBarcodeDialog(
         sheetState = sheetState,
         containerColor = NaturalWarmBg,
         modifier = modifier
-            .border(1.dp, PopupBorder, BottomSheetDefaults.ExpandedShape)
+            // kenarlık yok (ince çizgi temizliği)
             .testTag("manual_barcode_bottom_sheet")
     ) {
         Column(

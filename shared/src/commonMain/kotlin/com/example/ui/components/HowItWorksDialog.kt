@@ -56,7 +56,7 @@ fun HowItWorksDialog(language: AppLanguage, onDismiss: () -> Unit) {
         containerColor = NaturalWarmBg,
         dragHandle = null,
         modifier = Modifier
-            .border(1.dp, PopupBorder, BottomSheetDefaults.ExpandedShape)
+            // kenarlık yok (ince çizgi temizliği)
             .testTag("how_it_works_sheet")
     ) {
         Column(

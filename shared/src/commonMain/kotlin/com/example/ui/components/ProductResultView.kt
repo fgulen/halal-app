@@ -132,8 +132,8 @@ fun ProductResultBottomSheet(
         sheetState = sheetState,
         containerColor = NaturalWarmBg,
         dragHandle = null,
+        // Kenarlık yok: önceki E-Codes temizliğinde olduğu gibi ince koyu çizgi çıkmasın.
         modifier = modifier
-            .border(1.dp, PopupBorder, BottomSheetDefaults.ExpandedShape)
             .testTag("product_result_bottom_sheet")
     ) {
         Column(

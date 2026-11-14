@@ -111,7 +111,7 @@ fun PhotoIngredientsDialog(
         sheetState = sheetState,
         containerColor = NaturalWarmBg,
         modifier = modifier
-            .border(1.dp, PopupBorder, BottomSheetDefaults.ExpandedShape)
+            // kenarlık yok (ince çizgi temizliği)
             .testTag("photo_ingredients_bottom_sheet")
     ) {
         Column(
