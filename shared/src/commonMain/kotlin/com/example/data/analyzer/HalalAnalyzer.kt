@@ -272,7 +272,7 @@ object HalalAnalyzer {
             // "porcine gelatin" matched before, not "porcine" followed by any other word.
             keywords = listOf("pork", "pig", "swine", "porc", "porcine", "cochon", "jambon", "~schwein", "schweinefleisch", "speck", "lard", "bacon", "ham", "pork fat", "carne de cerdo", "manteca de cerdo", "domuz", "domuz eti", "domuz yağı",
                 // Dutch / Italian / Scandinavian / Polish-Baltic pork words (OFF labels often use the source language).
-                "varkensvlees", "varkens", "maiale", "svinekød", "svinjetina", "wieprzowina",
+                "varkensvlees", "varkens", "maiale", "suino", "suini", "cerdo", "svinekød", "svinjetina", "wieprzowina",
                 // Arabic: the article/conjunction prefix ("الخنزير", "دهن الخنزير") is handled in
                 // containsKeyword, so the bare noun covers them.
                 "خنزير"),
@@ -1325,6 +1325,10 @@ object HalalAnalyzer {
     //
     // [text] must already be normalizeForMatching()'d; the keyword is normalized here so every
     // rule list can stay written in natural spelling (e.g. "peynir mayası", "şirden").
+    // Footnote marks (ª º ¹ ² ³ superscripts) are not part of a word: "varkensvleesª" must match "varkensvlees".
+    private fun isWordChar(c: Char): Boolean =
+        c.isLetterOrDigit() && c != 'ª' && c != 'º' && c !in '²'..'³' && c != '¹' && c !in '⁰'..'₟'
+
     private fun containsKeyword(text: String, keyword: String): Boolean {
         if (keyword == BARE_LAB_KEYWORD) return containsBareLab(text)
         if (keyword.startsWith(STEM_MARKER)) return containsStem(text, normalizedKeyword(keyword).removePrefix(STEM_MARKER))
@@ -1333,9 +1337,9 @@ object HalalAnalyzer {
         while (true) {
             val idx = text.indexOf(kw, fromIndex)
             if (idx == -1) return false
-            val beforeIsBoundary = idx == 0 || !text[idx - 1].isLetterOrDigit() || hasArabicCliticPrefix(text, idx)
+            val beforeIsBoundary = idx == 0 || !isWordChar(text[idx - 1]) || hasArabicCliticPrefix(text, idx)
             val afterIndex = idx + kw.length
-            val afterIsBoundary = afterIndex >= text.length || !text[afterIndex].isLetterOrDigit()
+            val afterIsBoundary = afterIndex >= text.length || !isWordChar(text[afterIndex])
             if (beforeIsBoundary && afterIsBoundary) return true
             fromIndex = idx + 1
         }
