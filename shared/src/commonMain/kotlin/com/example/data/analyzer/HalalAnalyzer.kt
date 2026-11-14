@@ -271,6 +271,8 @@ object HalalAnalyzer {
             // containsKeyword's word-boundary check means only the E441 rule's exact phrase
             // "porcine gelatin" matched before, not "porcine" followed by any other word.
             keywords = listOf("pork", "pig", "swine", "porc", "porcine", "cochon", "jambon", "~schwein", "schweinefleisch", "speck", "lard", "bacon", "ham", "pork fat", "carne de cerdo", "manteca de cerdo", "domuz", "domuz eti", "domuz yağı",
+                // Dutch / Italian / Scandinavian / Polish-Baltic pork words (OFF labels often use the source language).
+                "varkensvlees", "varkens", "maiale", "svinekød", "svinjetina", "wieprzowina",
                 // Arabic: the article/conjunction prefix ("الخنزير", "دهن الخنزير") is handled in
                 // containsKeyword, so the bare noun covers them.
                 "خنزير"),
